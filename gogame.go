@@ -12,8 +12,7 @@ import (
 var jq = jquery.NewJQuery
 var console = js.Global.Get("console")
 
-var canvas *js.Object
-var ctx *js.Object
+var canvas *Canvas
 
 // Ready returns a channel that will send one item before closing, signaling that the
 // page has loaded and gogame is ready to be used.
@@ -22,7 +21,6 @@ func Ready() chan struct{} {
 	jq("body").SetAttr("onload", func() {
 		SetCanvas(jq("canvas").Get(0))
 		log.Println("gogame ready")
-		console.Call("log", canvas)
 		ch <- struct{}{}
 		close(ch)
 	})
@@ -31,31 +29,18 @@ func Ready() chan struct{} {
 
 // SetCanvas changes the canvas being used. Only one canvas may be used at a time. If
 // unset then gogame will default to the first canvas in the DOM.
-func SetCanvas(newCanvas *js.Object) {
-	canvas = newCanvas
-	ctx = canvas.Call("getContext", "2d")
+func SetCanvas(c *js.Object) {
+	canvas = newCanvas(c)
 }
 
-// Canvas returns the canvas object being used
-func Canvas() *js.Object {
+// GetCanvas returns the canvas object being used
+func GetCanvas() *Canvas {
 	return canvas
-}
-
-// SetCanvasResolution sets the width and height of the pixels within the canvas
-func SetCanvasResolution(width, height int) {
-	canvas.Set("width", width)
-	canvas.Set("height", height)
 }
 
 // SetFullscreen sets or unsetd fullscreen mode
 func SetFullscreen(fullscreen bool) {
 
-}
-
-// FillCanvas fills the whole canvas with one color
-func FillCanvas(color Color) {
-	ctx.Set("fillStyle", color)
-	ctx.Call("fillRect", 0, 0, canvas.Get("width"), canvas.Get("height"))
 }
 
 // Log prints to the console
