@@ -8,8 +8,6 @@ type Surface interface {
 	Height() int
 	//Copy() Surface
 	//Scroll(dx, dy int)
-	//SetColorKey(Color)
-	//GetColorKey(Color)
 	//GetAt(x, y int) Color
 	//SetAt(x, y int, Color)
 	//SetClip(Rect)

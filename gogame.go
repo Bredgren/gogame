@@ -40,7 +40,9 @@ func GetCanvas() *Canvas {
 
 // SetFullscreen sets or unsetd fullscreen mode
 func SetFullscreen(fullscreen bool) {
-
+	//canvas.canvas.Call("requestFullScreen")
+	canvas.canvas.Call("webkitRequestFullScreen")
+	//canvas.canvas.Call("mozRequestFullScreen")
 }
 
 // Log prints to the console
