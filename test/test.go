@@ -55,47 +55,105 @@ func appendResultSection(sectionName string, results []*result) {
 func testRect() {
 	var results []*result
 
-	results = append(results, testRectInflate()...)
-	results = append(results, testRectInflateIP()...)
-	// results = append(results, testRectClamp()...)
-	// results = append(results, testRectClampIP()...)
-	// results = append(results, testRectIntersect()...)
-	// results = append(results, testRectUnion()...)
-	// results = append(results, testRectUnionIP()...)
-	// results = append(results, testRectUnionAll()...)
-	// results = append(results, testRectFit()...)
-	// results = append(results, testRectNormalize()...)
-	// results = append(results, testRectContains()...)
-	// results = append(results, testRectCollidePoint()...)
-	// results = append(results, testRectCollideRect()...)
-	// results = append(results, testRectCollideList()...)
-	// results = append(results, testRectCollideListAll()...)
+	results = append(results, testRectInflate())
+	results = append(results, testRectInflateIP())
+	results = append(results, testRectClamp())
+	results = append(results, testRectClampIP())
+	// results = append(results, testRectIntersect())
+	// results = append(results, testRectUnion())
+	// results = append(results, testRectUnionIP())
+	// results = append(results, testRectUnionAll())
+	// results = append(results, testRectFit())
+	// results = append(results, testRectNormalize())
+	// results = append(results, testRectContains())
+	// results = append(results, testRectCollidePoint())
+	// results = append(results, testRectCollideRect())
+	// results = append(results, testRectCollideList())
+	// results = append(results, testRectCollideListAll())
 
 	appendResultSection("Rect", results)
 }
 
-func testRectInflate() []*result {
-	var results []*result
+func testRectInflate() *result {
 	res := result{TestName: "Inflate", Errors: []string{}}
+
 	rect := gogame.Rect{X: 1, Y: 1, W: 5, H: 5}
 	rect2 := rect.Inflate(2, 2)
 	want := gogame.Rect{X: 0, Y: 0, W: 7, H: 7}
 	if rect2 != want {
-		res.Errors = append(res.Errors, fmt.Sprintf("got: %#v, expected: %#v", rect2, want))
+		res.Errors = append(res.Errors, fmt.Sprintf("got: %#v, want: %#v", rect2, want))
 	}
-	results = append(results, &res)
-	return results
+
+	return &res
 }
 
-func testRectInflateIP() []*result {
-	var results []*result
+func testRectInflateIP() *result {
 	res := result{TestName: "InflateIP", Errors: []string{}}
+
 	rect := gogame.Rect{X: 1, Y: 1, W: 5, H: 5}
 	rect.InflateIP(2, 2)
 	want := gogame.Rect{X: 0, Y: 0, W: 7, H: 7}
 	if rect != want {
-		res.Errors = append(res.Errors, fmt.Sprintf("got: %#v, expected: %#v", rect, want))
+		res.Errors = append(res.Errors, fmt.Sprintf("got: %#v, want: %#v", rect, want))
 	}
-	results = append(results, &res)
-	return results
+
+	return &res
+}
+
+func testRectClamp() *result {
+	res := result{TestName: "Clamp", Errors: []string{}}
+
+	rect := gogame.Rect{X: 1, Y: 1, W: 5, H: 5}
+
+	rect2 := gogame.Rect{X: 0, Y: 0, W: 1, H: 1}
+	want := gogame.Rect{X: 1, Y: 1, W: 1, H: 1}
+	got := rect2.Clamp(&rect)
+	if got != want {
+		res.Errors = append(res.Errors, fmt.Sprintf("Top left: got: %#v, want: %#v", got, want))
+	}
+
+	rect2 = gogame.Rect{X: 7, Y: 6, W: 1, H: 1}
+	want = gogame.Rect{X: 5, Y: 5, W: 1, H: 1}
+	got = rect2.Clamp(&rect)
+	if got != want {
+		res.Errors = append(res.Errors, fmt.Sprintf("Bottom right: got: %#v, want: %#v", got, want))
+	}
+
+	rect2 = gogame.Rect{X: 7, Y: 6, W: 7, H: 7}
+	want = gogame.Rect{X: 0, Y: 0, W: 7, H: 7}
+	got = rect2.Clamp(&rect)
+	if got != want {
+		res.Errors = append(res.Errors, fmt.Sprintf("Too big: got: %#v, want: %#v", got, want))
+	}
+
+	return &res
+}
+
+func testRectClampIP() *result {
+	res := result{TestName: "ClampIP", Errors: []string{}}
+
+	rect := gogame.Rect{X: 1, Y: 1, W: 5, H: 5}
+
+	got := gogame.Rect{X: 0, Y: 0, W: 1, H: 1}
+	want := gogame.Rect{X: 1, Y: 1, W: 1, H: 1}
+	got.ClampIP(&rect)
+	if got != want {
+		res.Errors = append(res.Errors, fmt.Sprintf("Top left: got: %#v, want: %#v", got, want))
+	}
+
+	got = gogame.Rect{X: 7, Y: 6, W: 1, H: 1}
+	want = gogame.Rect{X: 5, Y: 5, W: 1, H: 1}
+	got.ClampIP(&rect)
+	if got != want {
+		res.Errors = append(res.Errors, fmt.Sprintf("Bottom right: got: %#v, want: %#v", got, want))
+	}
+
+	got = gogame.Rect{X: 7, Y: 6, W: 7, H: 7}
+	want = gogame.Rect{X: 0, Y: 0, W: 7, H: 7}
+	got.ClampIP(&rect)
+	if got != want {
+		res.Errors = append(res.Errors, fmt.Sprintf("Too big: got: %#v, want: %#v", got, want))
+	}
+
+	return &res
 }
