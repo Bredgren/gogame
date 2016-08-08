@@ -6,21 +6,23 @@ import (
 )
 
 // Color is an rgba color
-type Color string
+type Color struct {
+	R, G, B, A float64
+}
 
-const (
+var (
 	// Black is the color black
-	Black Color = "rgba(0, 0, 0, 1.0)"
+	Black = Color{0, 0, 0, 1.0}
 )
 
 // GetColor creates a Color with the specified values. All values should be between 0.0
 // and 1.0 (inclusive). An alpha of 0.0 is transparent.
-func GetColor(r, g, b, a float64) Color {
-	return Color(fmt.Sprintf("rgba(%d, %d, %d, %f)",
-		clampToInt(255*r, 0, 255),
-		clampToInt(255*g, 0, 255),
-		clampToInt(255*b, 0, 255),
-		clampToFloat(a, 0.0, 1.0)))
+func (c *Color) String() string {
+	return fmt.Sprintf("rgba(%d, %d, %d, %f)",
+		clampToInt(255*c.R, 0, 255),
+		clampToInt(255*c.G, 0, 255),
+		clampToInt(255*c.B, 0, 255),
+		clampToFloat(c.A, 0.0, 1.0))
 }
 
 func clampToInt(v, min, max float64) int {

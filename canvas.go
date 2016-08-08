@@ -24,7 +24,7 @@ func (c *Canvas) Blit(source Surface, x, y int) {
 
 // Fill fills the whole canvas with one color
 func (c *Canvas) Fill(color Color) {
-	c.ctx.Set("fillStyle", color)
+	c.ctx.Set("fillStyle", color.String())
 	c.ctx.Call("fillRect", 0, 0, c.canvas.Get("width"), c.canvas.Get("height"))
 }
 
