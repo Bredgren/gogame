@@ -258,7 +258,7 @@ func (r *Rect) ClampIP(bounds *Rect) {
 
 // Intersect returns a new Rect that is within both Rects. If there is no intersection
 // the returned Rect will have 0 size.
-func (r *Rect) Intersect(other Rect) Rect {
+func (r *Rect) Intersect(other *Rect) Rect {
 	newX := maxInt(r.X, other.X)
 	newY := maxInt(r.Y, other.Y)
 	return Rect{
