@@ -86,4 +86,8 @@ func (s *surface) DrawRect(r *Rect, c Color, width float64) {
 	s.ctx.Call("restore")
 }
 
-// func (s *surface) DrawPolygon(pointList []Point, c Color, width float64)
+// func (s *surface) DrawCircle(pos Point, radius float64, c Color, width float64)
+// func (s *surface) DrawElipse(r *Rect, c Color, width float64)
+// func (s *surface) DrawArc(r *Rect, startAngle, stopAngle float64, c Color, width float64)
+// func (s *surface) DrawLine(startPos, endPos Point, c Color, width float64)
+// func (s *surface) DrawLines(pointList []Point, closed bool, c Color, width float64)
