@@ -15,9 +15,9 @@ func testRect() {
 	results = append(results, testRectClampIP())
 	results = append(results, testRectIntersect())
 	results = append(results, testRectUnion())
-	// results = append(results, testRectUnionIP())
-	// results = append(results, testRectUnionAll())
-	// results = append(results, testRectFit())
+	results = append(results, testRectUnionIP())
+	results = append(results, testRectUnionAll())
+	results = append(results, testRectFit())
 	// results = append(results, testRectNormalize())
 	// results = append(results, testRectContains())
 	// results = append(results, testRectCollidePoint())
@@ -179,6 +179,90 @@ func testRectUnion() *result {
 	got = rect2.Union(&rect)
 	if got != want {
 		res.Errors = append(res.Errors, fmt.Sprintf("Outside: got: %#v, want: %#v", got, want))
+	}
+
+	return &res
+}
+
+func testRectUnionIP() *result {
+	res := result{TestName: "UnionIP", Errors: []string{}}
+
+	rect := gogame.Rect{X: 1, Y: 1, W: 5, H: 5}
+
+	got := gogame.Rect{X: 0, Y: 0, W: 1, H: 1}
+	want := gogame.Rect{X: 0, Y: 0, W: 6, H: 6}
+	got.UnionIP(&rect)
+	if got != want {
+		res.Errors = append(res.Errors, fmt.Sprintf("Top left: got: %#v, want: %#v", got, want))
+	}
+
+	got = gogame.Rect{X: 4, Y: 3, W: 3, H: 3}
+	want = gogame.Rect{X: 1, Y: 1, W: 6, H: 5}
+	got.UnionIP(&rect)
+	if got != want {
+		res.Errors = append(res.Errors, fmt.Sprintf("Bottom right: got: %#v, want: %#v", got, want))
+	}
+
+	got = gogame.Rect{X: 2, Y: 2, W: 2, H: 2}
+	want = gogame.Rect{X: 1, Y: 1, W: 5, H: 5}
+	got.UnionIP(&rect)
+	if got != want {
+		res.Errors = append(res.Errors, fmt.Sprintf("Inside: got: %#v, want: %#v", got, want))
+	}
+
+	got = gogame.Rect{X: 7, Y: 6, W: 7, H: 7}
+	want = gogame.Rect{X: 1, Y: 1, W: 13, H: 12}
+	got.UnionIP(&rect)
+	if got != want {
+		res.Errors = append(res.Errors, fmt.Sprintf("Outside: got: %#v, want: %#v", got, want))
+	}
+
+	return &res
+}
+
+func testRectUnionAll() *result {
+	res := result{TestName: "UnionAll", Errors: []string{}}
+
+	rect := gogame.Rect{X: 1, Y: 1, W: 5, H: 5}
+
+	rects := []*gogame.Rect{
+		&gogame.Rect{X: 0, Y: 2, W: 3, H: 6},
+		&gogame.Rect{X: 4, Y: -1, W: 4, H: 4},
+	}
+
+	want := gogame.Rect{X: 0, Y: -1, W: 8, H: 9}
+	got := rect.UnionAll(rects)
+	if got != want {
+		res.Errors = append(res.Errors, fmt.Sprintf("got: %#v, want: %#v", got, want))
+	}
+
+	return &res
+}
+
+func testRectFit() *result {
+	res := result{TestName: "Fit", Errors: []string{}}
+
+	rect1 := gogame.Rect{X: 1, Y: 1, W: 6, H: 3}
+	rect2 := gogame.Rect{X: 2, Y: 2, W: 3, H: 6}
+	rect3 := gogame.Rect{X: 3, Y: 3, W: 8, H: 2}
+	rect4 := gogame.Rect{X: 4, Y: 4, W: 2, H: 8}
+
+	cases := []struct {
+		r1, r2, want *gogame.Rect
+	}{
+		{&rect1, &rect2, &gogame.Rect{X: 2, Y: 2, W: 3, H: 1.5}},
+		{&rect1, &rect3, &gogame.Rect{X: 3, Y: 3, W: 4, H: 2}},
+		{&rect1, &rect4, &gogame.Rect{X: 4, Y: 4, W: 2, H: 1}},
+		{&rect2, &rect1, &gogame.Rect{X: 1, Y: 1, W: 1.5, H: 3}},
+		{&rect2, &rect3, &gogame.Rect{X: 3, Y: 3, W: 1, H: 2}},
+		{&rect2, &rect4, &gogame.Rect{X: 4, Y: 4, W: 2, H: 4}},
+	}
+
+	for i, c := range cases {
+		got := c.r1.Fit(c.r2)
+		if got != *c.want {
+			res.Errors = append(res.Errors, fmt.Sprintf("%d: got: %#v, want: %#v", i, got, c.want))
+		}
 	}
 
 	return &res
