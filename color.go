@@ -12,7 +12,8 @@ type Color struct {
 
 var (
 	// Black is the color black
-	Black = Color{0, 0, 0, 1.0}
+	Black = Color{0.0, 0.0, 0.0, 1.0}
+	White = Color{1.0, 1.0, 1.0, 1.0}
 )
 
 // GetColor creates a Color with the specified values. All values should be between 0.0

@@ -7,15 +7,13 @@ var _ Surface = &Display{}
 // Display is the main canvas in the web page and implements the Surface interface.
 type Display struct {
 	surface
-	canvas *js.Object
-	ctx    *js.Object
 }
 
 func newDisplay(canvas *js.Object) *Display {
-	return &Display{
-		canvas: canvas,
-		ctx:    canvas.Call("getContext", "2d"),
-	}
+	d := &Display{}
+	d.canvas = canvas
+	d.ctx = canvas.Call("getContext", "2d")
+	return d
 }
 
 // SetWidth returns the width of the canvas in pixels

@@ -73,10 +73,14 @@ func (s *surface) Height() float64 {
 // by the width parameter, if it is <= zero then the rectangle will be filled.
 func (s *surface) DrawRect(r *Rect, c Color, width float64) {
 	s.ctx.Call("save")
-	s.ctx.Set("fillStyle", c.String())
-	f := "strokeRect"
+	f := ""
 	if width <= 0 {
 		f = "fillRect"
+		s.ctx.Set("fillStyle", c.String())
+	} else {
+		f = "strokeRect"
+		s.ctx.Set("strokeStyle", c.String())
+		s.ctx.Set("lineWidth", width)
 	}
 	s.ctx.Call(f, r.X, r.Y, r.W, r.H)
 	s.ctx.Call("restore")
