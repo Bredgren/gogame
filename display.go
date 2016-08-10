@@ -17,11 +17,11 @@ func newDisplay(canvas *js.Object) *Display {
 }
 
 // SetWidth returns the width of the canvas in pixels
-func (c *Display) SetWidth(width float64) {
+func (c *Display) SetWidth(width int) {
 	c.canvas.Set("width", width)
 }
 
 // SetHeight returns the height of the canvas in pixels
-func (c *Display) SetHeight(height float64) {
+func (c *Display) SetHeight(height int) {
 	c.canvas.Set("height", height)
 }

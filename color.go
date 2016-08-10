@@ -13,6 +13,7 @@ type Color struct {
 var (
 	// Black is the color black
 	Black = Color{0.0, 0.0, 0.0, 1.0}
+	// White is the color white
 	White = Color{1.0, 1.0, 1.0, 1.0}
 )
 

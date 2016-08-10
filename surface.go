@@ -8,8 +8,8 @@ type Surface interface {
 	Blit(source Surface, x, y float64)
 	BlitArea(source Surface, area *Rect, x, y float64)
 	Fill(Color)
-	Width() float64
-	Height() float64
+	Width() int
+	Height() int
 	//Copy() Surface
 	//Scroll(dx, dy int)
 	//GetAt(x, y int) Color
@@ -60,13 +60,13 @@ func (s *surface) Fill(color Color) {
 }
 
 // Width returns the width of the surface in pixels
-func (s *surface) Width() float64 {
-	return s.canvas.Get("width").Float()
+func (s *surface) Width() int {
+	return s.canvas.Get("width").Int()
 }
 
 // Height returns the height of the surface in pixels
-func (s *surface) Height() float64 {
-	return s.canvas.Get("height").Float()
+func (s *surface) Height() int {
+	return s.canvas.Get("height").Int()
 }
 
 // DrawRect draws a rectangle on the surface. The thickness of the outer edge is determined
@@ -85,3 +85,5 @@ func (s *surface) DrawRect(r *Rect, c Color, width float64) {
 	s.ctx.Call(f, r.X, r.Y, r.W, r.H)
 	s.ctx.Call("restore")
 }
+
+// func (s *surface) DrawPolygon(pointList []Point, c Color, width float64)
