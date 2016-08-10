@@ -69,20 +69,19 @@ func (s *surface) Height() int {
 	return s.canvas.Get("height").Int()
 }
 
-// DrawRect draws a rectangle on the surface. The thickness of the outer edge is determined
-// by the width parameter, if it is <= zero then the rectangle will be filled.
-func (s *surface) DrawRect(r *Rect, c Color, width float64) {
+// DrawRect draws am unfilled rectangle on the surface
+func (s *surface) DrawRect(r *Rect, style *StrokeStyle) {
 	s.ctx.Call("save")
-	f := ""
-	if width <= 0 {
-		f = "fillRect"
-		s.ctx.Set("fillStyle", c.String())
-	} else {
-		f = "strokeRect"
-		s.ctx.Set("strokeStyle", c.String())
-		s.ctx.Set("lineWidth", width)
-	}
-	s.ctx.Call(f, r.X, r.Y, r.W, r.H)
+	s.ctx.Set("strokeStyle", style.Color.String())
+	s.ctx.Set("lineWidth", style.Width)
+	s.ctx.Call("strokeRect", r.X, r.Y, r.W, r.H)
+	s.ctx.Call("restore")
+}
+
+func (s *surface) DrawRectFill(r *Rect, style *FillStyle) {
+	s.ctx.Call("save")
+	s.ctx.Set("fillStyle", style.Color.String())
+	s.ctx.Call("fillRect", r.X, r.Y, r.W, r.H)
 	s.ctx.Call("restore")
 }
 

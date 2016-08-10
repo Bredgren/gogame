@@ -5,7 +5,7 @@ import (
 	"math"
 )
 
-// Color is an rgba color
+// Color is an rgba color TODO: gradient, pattern
 type Color struct {
 	R, G, B, A float64
 }
