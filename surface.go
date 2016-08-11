@@ -1,6 +1,10 @@
 package gogame
 
-import "github.com/gopherjs/gopherjs/js"
+import (
+	"math"
+
+	"github.com/gopherjs/gopherjs/js"
+)
 
 // Surface represents an image or drawable sureface
 type Surface interface {
@@ -44,13 +48,15 @@ func (s *surface) GetCanvas() *js.Object {
 
 // Blit draws the given surface to this one at the given position
 func (s *surface) Blit(source Surface, x, y float64) {
-	s.canvas.Call("drawImage", source.GetCanvas(), x, y)
+	s.canvas.Call("drawImage", source.GetCanvas(), math.Floor(x), math.Floor(y))
 }
 
 // BlitArea draws the given portion of the source surface defined by the Rect to this
 // one at the given position
 func (s *surface) BlitArea(source Surface, area *Rect, x, y float64) {
-	s.canvas.Call("drawImage", source.GetCanvas(), area.X, area.Y, area.W, area.H, x, y, area.W, area.H)
+	s.canvas.Call("drawImage", source.GetCanvas(), math.Floor(area.X), math.Floor(area.Y),
+		math.Floor(area.W), math.Floor(area.H), math.Floor(x), math.Floor(y), math.Floor(area.W),
+		math.Floor(area.H))
 }
 
 // Fill fills the whole surface with one color
@@ -74,14 +80,14 @@ func (s *surface) DrawRect(r *Rect, style *StrokeStyle) {
 	s.ctx.Call("save")
 	s.ctx.Set("strokeStyle", style.Color.String())
 	s.ctx.Set("lineWidth", style.Width)
-	s.ctx.Call("strokeRect", r.X, r.Y, r.W, r.H)
+	s.ctx.Call("strokeRect", math.Floor(r.X), math.Floor(r.Y), math.Floor(r.W), math.Floor(r.H))
 	s.ctx.Call("restore")
 }
 
 func (s *surface) DrawRectFill(r *Rect, style *FillStyle) {
 	s.ctx.Call("save")
 	s.ctx.Set("fillStyle", style.Color.String())
-	s.ctx.Call("fillRect", r.X, r.Y, r.W, r.H)
+	s.ctx.Call("fillRect", math.Floor(r.X), math.Floor(r.Y), math.Floor(r.W), math.Floor(r.H))
 	s.ctx.Call("restore")
 }
 
