@@ -253,9 +253,18 @@ func testRectFit() *result {
 		{&rect1, &rect2, &gogame.Rect{X: 2, Y: 2, W: 3, H: 1.5}},
 		{&rect1, &rect3, &gogame.Rect{X: 3, Y: 3, W: 4, H: 2}},
 		{&rect1, &rect4, &gogame.Rect{X: 4, Y: 4, W: 2, H: 1}},
-		{&rect2, &rect1, &gogame.Rect{X: 1, Y: 1, W: 1.5, H: 3}},
+
+		{&rect2, &rect1, &gogame.Rect{X: 2, Y: 1, W: 1.5, H: 3}},
 		{&rect2, &rect3, &gogame.Rect{X: 3, Y: 3, W: 1, H: 2}},
 		{&rect2, &rect4, &gogame.Rect{X: 4, Y: 4, W: 2, H: 4}},
+
+		{&rect3, &rect1, &gogame.Rect{X: 1, Y: 4 - 6.0/4.0, W: 6, H: 6.0 / 4.0}},
+		{&rect3, &rect2, &gogame.Rect{X: 2, Y: 3, W: 3, H: 3.0 / 4.0}},
+		{&rect3, &rect4, &gogame.Rect{X: 4, Y: 4, W: 2, H: 2.0 / 4.0}},
+
+		{&rect4, &rect1, &gogame.Rect{X: 4, Y: 1, W: 3.0 / 4.0, H: 3}},
+		{&rect4, &rect2, &gogame.Rect{X: 5 - 6.0/4.0, Y: 2, W: 6.0 / 4.0, H: 6}},
+		{&rect4, &rect3, &gogame.Rect{X: 4, Y: 3, W: 2.0 / 4.0, H: 2.0}},
 	}
 
 	for i, c := range cases {
