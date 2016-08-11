@@ -18,9 +18,9 @@ func testRect() {
 	results = append(results, testRectUnionIP())
 	results = append(results, testRectUnionAll())
 	results = append(results, testRectFit())
-	// results = append(results, testRectNormalize())
-	// results = append(results, testRectContains())
-	// results = append(results, testRectCollidePoint())
+	results = append(results, testRectNormalize())
+	results = append(results, testRectContains())
+	results = append(results, testRectCollidePoint())
 	// results = append(results, testRectCollideRect())
 	// results = append(results, testRectCollideList())
 	// results = append(results, testRectCollideListAll())
@@ -270,6 +270,63 @@ func testRectFit() *result {
 	for i, c := range cases {
 		got := c.r1.Fit(c.r2)
 		if got != *c.want {
+			res.Errors = append(res.Errors, fmt.Sprintf("%d: got: %#v, want: %#v", i, got, c.want))
+		}
+	}
+
+	return &res
+}
+
+func testRectNormalize() *result {
+	res := result{TestName: "Normalize", Errors: []string{}}
+
+	got := gogame.Rect{X: 1, Y: 1, W: -4, H: -2}
+	want := gogame.Rect{X: -3, Y: -1, W: 4, H: 2}
+	got.Normalize()
+	if got != want {
+		res.Errors = append(res.Errors, fmt.Sprintf("got: %#v, want: %#v", got, want))
+	}
+
+	return &res
+}
+
+func testRectContains() *result {
+	res := result{TestName: "Contains", Errors: []string{}}
+
+	rect1 := gogame.Rect{X: 1, Y: 1, W: 5, H: 5}
+	rect2 := gogame.Rect{X: 2, Y: 2, W: 5, H: 2}
+	rect3 := gogame.Rect{X: 2, Y: 2, W: 4, H: 2}
+
+	if rect1.Contains(&rect2) {
+		res.Errors = append(res.Errors, fmt.Sprintf("got: rect1 contains rect2, want: rect1 DOESN'T contain rect2"))
+	}
+
+	if rect1.Contains(&rect3) {
+		res.Errors = append(res.Errors, fmt.Sprintf("got: rect1 doesn't contain rect3, want: rect1 DOES contain rect3"))
+	}
+
+	return &res
+}
+
+func testRectCollidePoint() *result {
+	res := result{TestName: "CollidePoint", Errors: []string{}}
+
+	rect := gogame.Rect{X: 1, Y: 1, W: 5, H: 5}
+
+	cases := []struct {
+		x, y float64
+		want bool
+	}{
+		{0, 0, false},
+		{1, 1, true},
+		{4, 4, true},
+		{5, 5, true},
+		{6, 6, false},
+	}
+
+	for i, c := range cases {
+		got := rect.CollidePoint(c.x, c.y)
+		if got != c.want {
 			res.Errors = append(res.Errors, fmt.Sprintf("%d: got: %#v, want: %#v", i, got, c.want))
 		}
 	}
