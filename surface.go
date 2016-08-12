@@ -1,6 +1,7 @@
 package gogame
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/gopherjs/gopherjs/js"
@@ -75,19 +76,12 @@ func (s *surface) Height() int {
 	return s.canvas.Get("height").Int()
 }
 
-// DrawRect draws am unfilled rectangle on the surface
-func (s *surface) DrawRect(r *Rect, style *StrokeStyle) {
+// DrawRect draws a rectangle on the surface
+func (s *surface) DrawRect(r *Rect, style Styler) {
 	s.ctx.Call("save")
-	s.ctx.Set("strokeStyle", style.Color.String())
-	s.ctx.Set("lineWidth", style.Width)
-	s.ctx.Call("strokeRect", math.Floor(r.X), math.Floor(r.Y), math.Floor(r.W), math.Floor(r.H))
-	s.ctx.Call("restore")
-}
-
-func (s *surface) DrawRectFill(r *Rect, style *FillStyle) {
-	s.ctx.Call("save")
-	s.ctx.Set("fillStyle", style.Color.String())
-	s.ctx.Call("fillRect", math.Floor(r.X), math.Floor(r.Y), math.Floor(r.W), math.Floor(r.H))
+	style.Style(s.ctx)
+	s.ctx.Call(fmt.Sprintf("%sRect", style.DrawType()), math.Floor(r.X), math.Floor(r.Y),
+		math.Floor(r.W), math.Floor(r.H))
 	s.ctx.Call("restore")
 }
 
@@ -95,4 +89,7 @@ func (s *surface) DrawRectFill(r *Rect, style *FillStyle) {
 // func (s *surface) DrawElipse(r *Rect, width float64, c Color)
 // func (s *surface) DrawArc(r *Rect, startAngle, stopAngle, width float64, c Color)
 // func (s *surface) DrawLine(startX startY, endX, endY, width float64, c Color)
-// func (s *surface) DrawLines(pointList [][2]float64, closed bool, width float64, c Color)
+// func (s *surface) DrawLines(pointList [][2]float64, closed bool, width float64, c Color)// func (s *surface) DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY, float64, style Styler)
+// func (s *surface) DrawQuadraticCurves(points [][2]float64, cPoints [][2]float64, style Styler)
+// func (s *surface) DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, style Styler)
+// func (s *surface) DrawBezierCurves(points [][2]float64, cPoints [][2]float64, style Styler)
