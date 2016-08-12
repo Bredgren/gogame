@@ -21,9 +21,15 @@ type Color struct {
 
 var (
 	// Black is the color black
-	Black = Color{0.0, 0.0, 0.0, 1.0}
+	Black = &Color{0.0, 0.0, 0.0, 1.0}
 	// White is the color white
-	White = Color{1.0, 1.0, 1.0, 1.0}
+	White = &Color{1.0, 1.0, 1.0, 1.0}
+	// Red is the color red
+	Red = &Color{1.0, 0.0, 0.0, 1.0}
+	// Green is the color green
+	Green = &Color{0.0, 1.0, 0.0, 1.0}
+	// Blue is the color blue
+	Blue = &Color{0.0, 0.0, 1.0, 1.0}
 )
 
 // Color implements the Colorer interface
@@ -51,7 +57,7 @@ func clampToFloat(v, min, max float64) float64 {
 // is from 0.0 to 1.0 and is its relative position in the gradient.
 type ColorStop struct {
 	Position float64
-	Color
+	*Color
 }
 
 var _ Colorer = &LinearGradient{}

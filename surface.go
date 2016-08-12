@@ -12,7 +12,7 @@ type Surface interface {
 	GetCanvas() *js.Object
 	Blit(source Surface, x, y float64)
 	BlitArea(source Surface, area *Rect, x, y float64)
-	Fill(Color)
+	Fill(*FillStyle)
 	Width() int
 	Height() int
 	//Copy() Surface
@@ -61,9 +61,11 @@ func (s *surface) BlitArea(source Surface, area *Rect, x, y float64) {
 }
 
 // Fill fills the whole surface with one color
-func (s *surface) Fill(color Color) {
-	s.ctx.Set("fillStyle", color.String())
+func (s *surface) Fill(style *FillStyle) {
+	s.ctx.Call("save")
+	style.Style(s.ctx)
 	s.ctx.Call("fillRect", 0, 0, s.canvas.Get("width"), s.canvas.Get("height"))
+	s.ctx.Call("restore")
 }
 
 // Width returns the width of the surface in pixels
