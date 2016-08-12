@@ -91,8 +91,8 @@ func (s *surface) DrawRectFill(r *Rect, style *FillStyle) {
 	s.ctx.Call("restore")
 }
 
-// func (s *surface) DrawCircle(pos Point, radius float64, c Color, width float64)
-// func (s *surface) DrawElipse(r *Rect, c Color, width float64)
-// func (s *surface) DrawArc(r *Rect, startAngle, stopAngle float64, c Color, width float64)
-// func (s *surface) DrawLine(startPos, endPos Point, c Color, width float64)
-// func (s *surface) DrawLines(pointList []Point, closed bool, c Color, width float64)
+// func (s *surface) DrawCircle(posX, posY, radius, width float64, c Color)
+// func (s *surface) DrawElipse(r *Rect, width float64, c Color)
+// func (s *surface) DrawArc(r *Rect, startAngle, stopAngle, width float64, c Color)
+// func (s *surface) DrawLine(startX startY, endX, endY, width float64, c Color)
+// func (s *surface) DrawLines(pointList [][2]float64, closed bool, width float64, c Color)
