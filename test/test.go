@@ -98,4 +98,9 @@ func testCanvas() {
 		Colorer: &pattern,
 		Width:   10,
 	})
+
+	display.DrawEllipse(&gogame.Rect{X: 70, Y: 70, W: 110, H: 50}, &gogame.StrokeStyle{
+		Colorer: gogame.White,
+		Width:   2,
+	})
 }
