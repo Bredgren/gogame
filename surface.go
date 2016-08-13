@@ -25,6 +25,7 @@ type Surface interface {
 	//GetParent() Surface
 	//GetRect() Rect
 	DrawRect(*Rect, Styler)
+	DrawCircle(posX, posY, radius float64, style Styler)
 }
 
 var _ Surface = &surface{}
@@ -90,8 +91,17 @@ func (s *surface) DrawRect(r *Rect, style Styler) {
 	s.ctx.Call("restore")
 }
 
-// func (s *surface) DrawCircle(posX, posY, radius, width float64, c Color)
-// func (s *surface) DrawElipse(r *Rect, width float64, c Color)
+// DrawCircle draws a circle on the surface
+func (s *surface) DrawCircle(posX, posY, radius float64, style Styler) {
+	s.ctx.Call("save")
+	style.Style(s.ctx)
+	s.ctx.Call("translate", posX, posY)
+	s.ctx.Call("arc", 0, 0, radius, 0, math.Pi*2)
+	s.ctx.Call(string(style.DrawType()))
+	s.ctx.Call("restore")
+}
+
+// func (s *surface) DrawElipse(r *Rect, style Styler)
 // func (s *surface) DrawArc(r *Rect, startAngle, stopAngle, width float64, c Color)
 // func (s *surface) DrawLine(startX startY, endX, endY, width float64, c Color)
 // func (s *surface) DrawLines(pointList [][2]float64, closed bool, width float64, c Color)// func (s *surface) DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY, float64, style Styler)
