@@ -27,7 +27,7 @@ type Surface interface {
 	DrawRect(*Rect, Styler)
 	DrawCircle(posX, posY, radius float64, s Styler)
 	DrawEllipse(*Rect, Styler)
-	// DrawArc(r *Rect, startAngle, stopAngle float64, s Styler)
+	DrawArc(r *Rect, startAngle, stopAngle float64, s Styler)
 }
 
 var _ Surface = &surface{}
@@ -115,8 +115,16 @@ func (s *surface) DrawEllipse(r *Rect, style Styler) {
 	s.ctx.Call("restore")
 }
 
-// func (s *surface) DrawArc(r *Rect, startAngle, stopAngle float64, style Styler) {
-// }
+func (s *surface) DrawArc(r *Rect, startAngle, stopAngle float64, style Styler) {
+	s.ctx.Call("save")
+	style.Style(s.ctx)
+	s.ctx.Call("translate", r.X, r.Y)
+	s.ctx.Call("beginPath")
+	s.ctx.Call("ellipse", r.Width()/2, r.Height()/2, r.Width()/2, r.Height()/2, 0,
+		2*math.Pi-startAngle, 2*math.Pi-stopAngle, true)
+	s.ctx.Call(string(style.DrawType()))
+	s.ctx.Call("restore")
+}
 
 // func (s *surface) DrawLine(startX startY, endX, endY, width float64, c Color)
 // func (s *surface) DrawLines(pointList [][2]float64, closed bool, width float64, c Color)// func (s *surface) DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY, float64, style Styler)

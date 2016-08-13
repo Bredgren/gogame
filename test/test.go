@@ -3,6 +3,8 @@
 package main
 
 import (
+	"math"
+
 	"github.com/Bredgren/gogame"
 	"github.com/gopherjs/jquery"
 )
@@ -101,6 +103,11 @@ func testCanvas() {
 
 	display.DrawEllipse(&gogame.Rect{X: 70, Y: 70, W: 110, H: 50}, &gogame.StrokeStyle{
 		Colorer: gogame.White,
+		Width:   2,
+	})
+
+	display.DrawArc(&gogame.Rect{X: 190, Y: 70, W: 110, H: 50}, 0, 0.75*math.Pi, &gogame.StrokeStyle{
+		Colorer: &gogame.Color{R: 1.0, G: 1.0, A: 1.0},
 		Width:   2,
 	})
 }
