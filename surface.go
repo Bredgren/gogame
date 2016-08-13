@@ -24,6 +24,7 @@ type Surface interface {
 	//GetSubsurface(Rect) Surface
 	//GetParent() Surface
 	//GetRect() Rect
+	DrawRect(*Rect, Styler)
 }
 
 var _ Surface = &surface{}
@@ -35,7 +36,9 @@ type surface struct {
 
 // NewSurface creates a new Surface
 func NewSurface(width, height float64) Surface {
-	canvas := jq("<canvas>").Get()
+	canvas := jq("<canvas>").Get(0)
+	canvas.Set("width", width)
+	canvas.Set("height", height)
 	return &surface{
 		canvas: canvas,
 		ctx:    canvas.Call("getContext", "2d"),
@@ -49,13 +52,13 @@ func (s *surface) GetCanvas() *js.Object {
 
 // Blit draws the given surface to this one at the given position
 func (s *surface) Blit(source Surface, x, y float64) {
-	s.canvas.Call("drawImage", source.GetCanvas(), math.Floor(x), math.Floor(y))
+	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(x), math.Floor(y))
 }
 
 // BlitArea draws the given portion of the source surface defined by the Rect to this
 // one at the given position
 func (s *surface) BlitArea(source Surface, area *Rect, x, y float64) {
-	s.canvas.Call("drawImage", source.GetCanvas(), math.Floor(area.X), math.Floor(area.Y),
+	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(area.X), math.Floor(area.Y),
 		math.Floor(area.W), math.Floor(area.H), math.Floor(x), math.Floor(y), math.Floor(area.W),
 		math.Floor(area.H))
 }
@@ -82,8 +85,8 @@ func (s *surface) Height() int {
 func (s *surface) DrawRect(r *Rect, style Styler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
-	s.ctx.Call(fmt.Sprintf("%sRect", style.DrawType()), math.Floor(r.X), math.Floor(r.Y),
-		math.Floor(r.W), math.Floor(r.H))
+	s.ctx.Call("translate", math.Floor(r.X), math.Floor(r.Y))
+	s.ctx.Call(fmt.Sprintf("%sRect", style.DrawType()), 0, 0, math.Floor(r.W), math.Floor(r.H))
 	s.ctx.Call("restore")
 }
 
