@@ -30,6 +30,8 @@ type Surface interface {
 	DrawArc(r *Rect, startAngle, stopAngle float64, s Styler)
 	DrawLine(startX, startY, endX, endY float64, s Styler)
 	DrawLines(pointList [][2]float64, s Styler)
+
+	DrawText(text string, x, y float64, s *FontStyler)
 }
 
 var _ Surface = &surface{}
@@ -160,3 +162,12 @@ func (s *surface) DrawLines(pointList [][2]float64, style Styler) {
 // func (s *surface) DrawQuadraticCurves(points [][2]float64, cPoints [][2]float64, style Styler)
 // func (s *surface) DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, style Styler)
 // func (s *surface) DrawBezierCurves(points [][2]float64, cPoints [][2]float64, style Styler)
+
+// DrawText draws the given text to the surface
+func (s *surface) DrawText(text string, x, y float64, style *FontStyler) {
+	s.ctx.Call("save")
+	style.Style(s.ctx)
+	s.ctx.Call("translate", math.Floor(x), math.Floor(y))
+	s.ctx.Call(fmt.Sprintf("%sText", style.DrawType()), text, 0, 0)
+	s.ctx.Call("restore")
+}

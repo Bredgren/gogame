@@ -170,4 +170,30 @@ func testCanvas() {
 	display.DrawLines([][2]float64{{390, 130}, {440, 130}, {390, 180}}, &gogame.FillStyle{
 		Colorer: gogame.White,
 	})
+
+	font := gogame.Font{
+		Size: 50,
+	}
+	display.DrawText("Hello", 10, 190, &gogame.FontStyler{
+		Font:         &font,
+		Colorer:      gogame.White,
+		TextBaseline: gogame.TextBaselineHanging,
+		LineWidth:    2,
+	})
+	w := (&gogame.FontStyler{
+		Font:    &font,
+		Colorer: gogame.White,
+	}).Width("Hello")
+	display.DrawText("World!", float64(10+w), 200, &gogame.FontStyler{
+		Font: &font,
+		Colorer: &gogame.LinearGradient{
+			X1: 0, Y1: 0, X2: float64(w), Y2: 0,
+			ColorStops: []gogame.ColorStop{
+				{0.0, gogame.Blue},
+				{1.0, gogame.Green},
+			},
+		},
+		Filled:       true,
+		TextBaseline: gogame.TextBaselineMiddle,
+	})
 }
