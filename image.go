@@ -1,6 +1,6 @@
 package gogame
 
-// LoadImage loads the given image and returns it as a Surface
+// LoadImage loads the given image and returns it as a Surface.
 // Supported formats:
 //  - PNG
 //  - JPG

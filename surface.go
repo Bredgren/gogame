@@ -23,11 +23,13 @@ type Surface interface {
 	//GetClip() Rect
 	//GetSubsurface(Rect) Surface
 	//GetParent() Surface
-	//GetRect() Rect
+	GetRect() Rect
+	// SetScale(w, h float64)
+	// SetRotation(radians float64)
 	DrawRect(*Rect, Styler)
 	DrawCircle(posX, posY, radius float64, s Styler)
 	DrawEllipse(*Rect, Styler)
-	DrawArc(r *Rect, startAngle, stopAngle float64, s Styler)
+	DrawArc(r *Rect, startRadians, stopRadians float64, s Styler)
 	DrawLine(startX, startY, endX, endY float64, s Styler)
 	DrawLines(pointList [][2]float64, s Styler)
 
@@ -88,6 +90,10 @@ func (s *surface) Height() int {
 	return s.canvas.Get("height").Int()
 }
 
+func (s *surface) GetRect() Rect {
+	return Rect{X: 0, Y: 0, W: float64(s.Width()), H: float64(s.Height())}
+}
+
 // DrawRect draws a rectangle on the surface
 func (s *surface) DrawRect(r *Rect, style Styler) {
 	s.ctx.Call("save")
@@ -122,13 +128,13 @@ func (s *surface) DrawEllipse(r *Rect, style Styler) {
 
 // DrawArc draws an arc on the canvas within the given Rect between the given angles.
 // Angles are counter clockwise
-func (s *surface) DrawArc(r *Rect, startAngle, stopAngle float64, style Styler) {
+func (s *surface) DrawArc(r *Rect, startRadians, stopRadians float64, style Styler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
 	s.ctx.Call("translate", math.Floor(r.X), math.Floor(r.Y))
 	s.ctx.Call("beginPath")
 	s.ctx.Call("ellipse", math.Floor(r.Width()/2), math.Floor(r.Height()/2), math.Floor(r.Width()/2),
-		math.Floor(r.Height()/2), 0, 2*math.Pi-startAngle, 2*math.Pi-stopAngle, true)
+		math.Floor(r.Height()/2), 0, 2*math.Pi-startRadians, 2*math.Pi-stopRadians, true)
 	s.ctx.Call(string(style.DrawType()))
 	s.ctx.Call("restore")
 }
