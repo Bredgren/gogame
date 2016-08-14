@@ -28,6 +28,7 @@ type Surface interface {
 	DrawCircle(posX, posY, radius float64, s Styler)
 	DrawEllipse(*Rect, Styler)
 	DrawArc(r *Rect, startAngle, stopAngle float64, s Styler)
+	DrawLine(startX, startY, endX, endY float64, s Styler)
 }
 
 var _ Surface = &surface{}
@@ -97,36 +98,50 @@ func (s *surface) DrawRect(r *Rect, style Styler) {
 func (s *surface) DrawCircle(posX, posY, radius float64, style Styler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
-	s.ctx.Call("translate", posX, posY)
+	s.ctx.Call("translate", math.Floor(posX), math.Floor(posY))
 	s.ctx.Call("beginPath")
 	s.ctx.Call("arc", 0, 0, radius, 0, 2*math.Pi)
 	s.ctx.Call(string(style.DrawType()))
 	s.ctx.Call("restore")
 }
 
-// DrawEllipse draws and ellipse on the canvas within the given Rect
+// DrawEllipse draws an ellipse on the canvas within the given Rect
 func (s *surface) DrawEllipse(r *Rect, style Styler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
-	s.ctx.Call("translate", r.X, r.Y)
+	s.ctx.Call("translate", math.Floor(r.X), math.Floor(r.Y))
 	s.ctx.Call("beginPath")
-	s.ctx.Call("ellipse", r.Width()/2, r.Height()/2, r.Width()/2, r.Height()/2, 0, 0, 2*math.Pi)
+	s.ctx.Call("ellipse", math.Floor(r.Width()/2), math.Floor(r.Height()/2), math.Floor(r.Width()/2),
+		math.Floor(r.Height()/2), 0, 0, 2*math.Pi)
 	s.ctx.Call(string(style.DrawType()))
 	s.ctx.Call("restore")
 }
 
+// DrawArc draws an arc on the canvas within the given Rect between the given angles.
+// Angles are counter clockwise
 func (s *surface) DrawArc(r *Rect, startAngle, stopAngle float64, style Styler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
-	s.ctx.Call("translate", r.X, r.Y)
+	s.ctx.Call("translate", math.Floor(r.X), math.Floor(r.Y))
 	s.ctx.Call("beginPath")
-	s.ctx.Call("ellipse", r.Width()/2, r.Height()/2, r.Width()/2, r.Height()/2, 0,
-		2*math.Pi-startAngle, 2*math.Pi-stopAngle, true)
+	s.ctx.Call("ellipse", math.Floor(r.Width()/2), math.Floor(r.Height()/2), math.Floor(r.Width()/2),
+		math.Floor(r.Height()/2), 0, 2*math.Pi-startAngle, 2*math.Pi-stopAngle, true)
 	s.ctx.Call(string(style.DrawType()))
 	s.ctx.Call("restore")
 }
 
-// func (s *surface) DrawLine(startX startY, endX, endY, width float64, c Color)
+// DrawsLine draws a line on the canvas
+func (s *surface) DrawLine(startX, startY, endX, endY float64, style Styler) {
+	s.ctx.Call("save")
+	style.Style(s.ctx)
+	s.ctx.Call("translate", startX, startY)
+	s.ctx.Call("beginPath")
+	s.ctx.Call("moveTo", 0, 0)
+	s.ctx.Call("lineTo", endX-startX, endY-startY)
+	s.ctx.Call(string(style.DrawType()))
+	s.ctx.Call("restore")
+}
+
 // func (s *surface) DrawLines(pointList [][2]float64, closed bool, width float64, c Color)// func (s *surface) DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY, float64, style Styler)
 // func (s *surface) DrawQuadraticCurves(points [][2]float64, cPoints [][2]float64, style Styler)
 // func (s *surface) DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, style Styler)

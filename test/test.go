@@ -110,4 +110,39 @@ func testCanvas() {
 		Colorer: &gogame.Color{R: 1.0, G: 1.0, A: 1.0},
 		Width:   2,
 	})
+
+	display.DrawLine(10, 130, 60, 180, &gogame.StrokeStyle{
+		Colorer: gogame.White,
+		Width:   2,
+	})
+
+	display.DrawLine(70, 130, 70, 180, &gogame.StrokeStyle{
+		Colorer: gogame.White,
+		Cap:     gogame.LineCapRound,
+		Width:   1,
+	})
+
+	display.DrawLine(75.5, 130, 75.5, 180, &gogame.StrokeStyle{
+		Colorer: gogame.White,
+		Cap:     gogame.LineCapSquare,
+		Width:   1,
+	})
+
+	display.DrawLine(80, 130, 80, 180, &gogame.StrokeStyle{
+		Colorer: gogame.White,
+		Cap:     gogame.LineCapRound,
+		Width:   2,
+	})
+
+	display.DrawLine(85.5, 130, 85.5, 180, &gogame.StrokeStyle{
+		Colorer: gogame.White,
+		Cap:     gogame.LineCapSquare,
+		Width:   2,
+	})
+
+	display.DrawLine(100, 130, 200, 130, &gogame.StrokeStyle{
+		Colorer: gogame.White,
+		Width:   2,
+		Dash:    []float64{5, 1, 4, 2, 3, 3, 2, 4, 1, 5},
+	})
 }
