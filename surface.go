@@ -29,6 +29,7 @@ type Surface interface {
 	DrawEllipse(*Rect, Styler)
 	DrawArc(r *Rect, startAngle, stopAngle float64, s Styler)
 	DrawLine(startX, startY, endX, endY float64, s Styler)
+	DrawLines(pointList [][2]float64, s Styler)
 }
 
 var _ Surface = &surface{}
@@ -130,7 +131,7 @@ func (s *surface) DrawArc(r *Rect, startAngle, stopAngle float64, style Styler) 
 	s.ctx.Call("restore")
 }
 
-// DrawsLine draws a line on the canvas
+// DrawLine draws a line on the canvas
 func (s *surface) DrawLine(startX, startY, endX, endY float64, style Styler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
@@ -142,7 +143,20 @@ func (s *surface) DrawLine(startX, startY, endX, endY float64, style Styler) {
 	s.ctx.Call("restore")
 }
 
-// func (s *surface) DrawLines(pointList [][2]float64, closed bool, width float64, c Color)// func (s *surface) DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY, float64, style Styler)
+// DrawLines draws multiple connectd lines to the surface
+func (s *surface) DrawLines(pointList [][2]float64, style Styler) {
+	s.ctx.Call("save")
+	style.Style(s.ctx)
+	s.ctx.Call("beginPath")
+	s.ctx.Call("moveTo", pointList[0][0], pointList[0][1])
+	for _, p := range pointList[1:] {
+		s.ctx.Call("lineTo", p[0], p[1])
+	}
+	s.ctx.Call(string(style.DrawType()))
+	s.ctx.Call("restore")
+}
+
+// func (s *surface) DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY, float64, style Styler)
 // func (s *surface) DrawQuadraticCurves(points [][2]float64, cPoints [][2]float64, style Styler)
 // func (s *surface) DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, style Styler)
 // func (s *surface) DrawBezierCurves(points [][2]float64, cPoints [][2]float64, style Styler)

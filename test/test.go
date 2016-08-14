@@ -145,4 +145,29 @@ func testCanvas() {
 		Width:   2,
 		Dash:    []float64{5, 1, 4, 2, 3, 3, 2, 4, 1, 5},
 	})
+
+	display.DrawLines([][2]float64{{210, 130}, {260, 130}, {210, 180}}, &gogame.StrokeStyle{
+		Colorer: gogame.White,
+		Join:    gogame.LineJoinRound,
+		Cap:     gogame.LineCapRound,
+		Width:   6,
+	})
+
+	display.DrawLines([][2]float64{{270, 130}, {320, 130}, {270, 180}}, &gogame.StrokeStyle{
+		Colorer: gogame.White,
+		Join:    gogame.LineJoinMiter,
+		Cap:     gogame.LineCapSquare,
+		Width:   6,
+	})
+
+	display.DrawLines([][2]float64{{330, 130}, {380, 130}, {330, 180}}, &gogame.StrokeStyle{
+		Colorer: gogame.White,
+		Join:    gogame.LineJoinBevel,
+		Cap:     gogame.LineCapButt,
+		Width:   6,
+	})
+
+	display.DrawLines([][2]float64{{390, 130}, {440, 130}, {390, 180}}, &gogame.FillStyle{
+		Colorer: gogame.White,
+	})
 }
