@@ -7,7 +7,7 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
-// Surface represents an image or drawable sureface
+// Surface represents an image or drawable sureface.
 type Surface interface {
 	GetCanvas() *js.Object
 	Blit(source Surface, x, y float64)
@@ -51,7 +51,7 @@ type surface struct {
 	scaleY   float64
 }
 
-// NewSurface creates a new Surface
+// NewSurface creates a new Surface.
 func NewSurface(width, height float64) Surface {
 	canvas := jq("<canvas>").Get(0)
 	canvas.Set("width", width)
@@ -65,25 +65,26 @@ func NewSurface(width, height float64) Surface {
 	}
 }
 
-// GetCanvas returns the surface as an HTML canvas
+// GetCanvas returns the surface as an HTML canvas.
 func (s *surface) GetCanvas() *js.Object {
 	return s.canvas
 }
 
-// Blit draws the given surface to this one at the given position
+// Blit draws the given surface to this one at the given position. Source's top-left corner
+// fill be drawn at (x, y).
 func (s *surface) Blit(source Surface, x, y float64) {
 	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(x), math.Floor(y))
 }
 
 // BlitArea draws the given portion of the source surface defined by the Rect to this
-// one at the given position
+// one at the given position.
 func (s *surface) BlitArea(source Surface, area *Rect, x, y float64) {
 	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(area.X), math.Floor(area.Y),
 		math.Floor(area.W), math.Floor(area.H), math.Floor(x), math.Floor(y), math.Floor(area.W),
 		math.Floor(area.H))
 }
 
-// Fill fills the whole surface with one color
+// Fill fills the whole surface with the given style.
 func (s *surface) Fill(style *FillStyle) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
@@ -91,36 +92,38 @@ func (s *surface) Fill(style *FillStyle) {
 	s.ctx.Call("restore")
 }
 
-// Width returns the width of the surface in pixels
+// Width returns the width of the surface in pixels.
 func (s *surface) Width() int {
 	return s.canvas.Get("width").Int()
 }
 
-// Height returns the height of the surface in pixels
+// Height returns the height of the surface in pixels.
 func (s *surface) Height() int {
 	return s.canvas.Get("height").Int()
 }
 
-// Rotation returns the rotation of this surface in radians
-func (s *surface) Rotation() float64 {
-	return s.rotation
-}
-
+// Scale returns the x and y scales of the this surface.
 func (s *surface) Scale() (x, y float64) {
 	return s.scaleX, s.scaleY
 }
 
+// SetScale sets the x and y scales of this surface.
 func (s *surface) SetScale(x, y float64) {
 	s.scaleX = x
 	s.scaleY = y
 }
 
-// SetRotation sets the rotation of this surface in radians
+// Rotation returns the rotation (counter-clockwise) of this surface in radians.
+func (s *surface) Rotation() float64 {
+	return s.rotation
+}
+
+// SetRotation sets the rotation (counter-clockwise) of this surface in radians.
 func (s *surface) SetRotation(radians float64) {
 	s.rotation = radians
 }
 
-// GetRect returns the bouding rectangle for the surface, taking into acount rotation and scale
+// GetRect returns the bouding rectangle for the surface, taking into acount rotation and scale.
 func (s *surface) GetRect() Rect {
 	w := float64(s.Width()) * s.scaleX
 	h := float64(s.Height()) * s.scaleY
@@ -142,7 +145,7 @@ func (s *surface) GetRect() Rect {
 	return Rect{X: 0, Y: 0, W: w, H: h}
 }
 
-// DrawRect draws a rectangle on the surface
+// DrawRect draws a rectangle on the surface.
 func (s *surface) DrawRect(r *Rect, style Styler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
@@ -151,7 +154,7 @@ func (s *surface) DrawRect(r *Rect, style Styler) {
 	s.ctx.Call("restore")
 }
 
-// DrawCircle draws a circle on the surface
+// DrawCircle draws a circle on the surface.
 func (s *surface) DrawCircle(posX, posY, radius float64, style Styler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
@@ -162,7 +165,7 @@ func (s *surface) DrawCircle(posX, posY, radius float64, style Styler) {
 	s.ctx.Call("restore")
 }
 
-// DrawEllipse draws an ellipse on the canvas within the given Rect
+// DrawEllipse draws an ellipse on the canvas within the given Rect.
 func (s *surface) DrawEllipse(r *Rect, style Styler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
@@ -175,7 +178,7 @@ func (s *surface) DrawEllipse(r *Rect, style Styler) {
 }
 
 // DrawArc draws an arc on the canvas within the given Rect between the given angles.
-// Angles are counter clockwise
+// Angles are counter-clockwise.
 func (s *surface) DrawArc(r *Rect, startRadians, stopRadians float64, style Styler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
@@ -187,7 +190,7 @@ func (s *surface) DrawArc(r *Rect, startRadians, stopRadians float64, style Styl
 	s.ctx.Call("restore")
 }
 
-// DrawLine draws a line on the canvas
+// DrawLine draws a line on the canvas.
 func (s *surface) DrawLine(startX, startY, endX, endY float64, style Styler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
@@ -199,7 +202,7 @@ func (s *surface) DrawLine(startX, startY, endX, endY float64, style Styler) {
 	s.ctx.Call("restore")
 }
 
-// DrawLines draws multiple connectd lines to the surface
+// DrawLines draws multiple connectd lines to the surface.
 func (s *surface) DrawLines(pointList [][2]float64, style Styler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
@@ -212,7 +215,7 @@ func (s *surface) DrawLines(pointList [][2]float64, style Styler) {
 	s.ctx.Call("restore")
 }
 
-// DrawText draws the given text to the surface
+// DrawText draws the given text to the surface.
 func (s *surface) DrawText(text string, x, y float64, style *FontStyler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
