@@ -141,8 +141,22 @@ func (s *surface) GetRect() Rect {
 		corner[0] = nx
 		corner[1] = ny
 	}
-	//TODO
-	return Rect{X: 0, Y: 0, W: w, H: h}
+	minX, maxX, minY, maxY := corners[0][0], corners[0][0], corners[0][1], corners[0][1]
+	for _, corner := range corners[1:] {
+		if corner[0] < minX {
+			minX = corner[0]
+		}
+		if corner[0] > maxX {
+			maxX = corner[0]
+		}
+		if corner[1] < minY {
+			minY = corner[1]
+		}
+		if corner[1] > maxY {
+			maxY = corner[1]
+		}
+	}
+	return Rect{X: 0, Y: 0, W: maxX - minX, H: maxY - minY}
 }
 
 // DrawRect draws a rectangle on the surface.
