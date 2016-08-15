@@ -24,23 +24,31 @@ type Surface interface {
 	//GetSubsurface(Rect) Surface
 	//GetParent() Surface
 	GetRect() Rect
-	// SetScale(w, h float64)
-	// SetRotation(radians float64)
+	Scale() (x, y float64)
+	SetScale(x, y float64)
+	Rotation() float64
+	SetRotation(radians float64)
 	DrawRect(*Rect, Styler)
 	DrawCircle(posX, posY, radius float64, s Styler)
 	DrawEllipse(*Rect, Styler)
 	DrawArc(r *Rect, startRadians, stopRadians float64, s Styler)
 	DrawLine(startX, startY, endX, endY float64, s Styler)
 	DrawLines(pointList [][2]float64, s Styler)
-
+	//DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY, float64, s Styler)
+	//DrawQuadraticCurves(points [][2]float64, cPoints [][2]float64, s Styler)
+	//DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, s Styler)
+	//DrawBezierCurves(points [][2]float64, cPoints [][2]float64, s Styler)
 	DrawText(text string, x, y float64, s *FontStyler)
 }
 
 var _ Surface = &surface{}
 
 type surface struct {
-	canvas *js.Object
-	ctx    *js.Object
+	canvas   *js.Object
+	ctx      *js.Object
+	rotation float64
+	scaleX   float64
+	scaleY   float64
 }
 
 // NewSurface creates a new Surface
@@ -49,8 +57,11 @@ func NewSurface(width, height float64) Surface {
 	canvas.Set("width", width)
 	canvas.Set("height", height)
 	return &surface{
-		canvas: canvas,
-		ctx:    canvas.Call("getContext", "2d"),
+		canvas:   canvas,
+		ctx:      canvas.Call("getContext", "2d"),
+		rotation: 0,
+		scaleX:   1,
+		scaleY:   1,
 	}
 }
 
@@ -90,8 +101,45 @@ func (s *surface) Height() int {
 	return s.canvas.Get("height").Int()
 }
 
+// Rotation returns the rotation of this surface in radians
+func (s *surface) Rotation() float64 {
+	return s.rotation
+}
+
+func (s *surface) Scale() (x, y float64) {
+	return s.scaleX, s.scaleY
+}
+
+func (s *surface) SetScale(x, y float64) {
+	s.scaleX = x
+	s.scaleY = y
+}
+
+// SetRotation sets the rotation of this surface in radians
+func (s *surface) SetRotation(radians float64) {
+	s.rotation = radians
+}
+
+// GetRect returns the bouding rectangle for the surface, taking into acount rotation and scale
 func (s *surface) GetRect() Rect {
-	return Rect{X: 0, Y: 0, W: float64(s.Width()), H: float64(s.Height())}
+	w := float64(s.Width()) * s.scaleX
+	h := float64(s.Height()) * s.scaleY
+	cx, cy := w/2, h/2
+	cos, sin := math.Cos(s.rotation), math.Sin(s.rotation)
+	corners := [][2]float64{
+		{0.0, 0.0},
+		{w, 0.0},
+		{0.0, h},
+		{w, h},
+	}
+	for _, corner := range corners {
+		nx := cx + (corner[0]-cx)*cos + (corner[1]-cy)*sin
+		ny := cy - (corner[0]-cx)*sin + (corner[1]-cy)*cos
+		corner[0] = nx
+		corner[1] = ny
+	}
+	//TODO
+	return Rect{X: 0, Y: 0, W: w, H: h}
 }
 
 // DrawRect draws a rectangle on the surface
@@ -163,11 +211,6 @@ func (s *surface) DrawLines(pointList [][2]float64, style Styler) {
 	s.ctx.Call(string(style.DrawType()))
 	s.ctx.Call("restore")
 }
-
-// func (s *surface) DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY, float64, style Styler)
-// func (s *surface) DrawQuadraticCurves(points [][2]float64, cPoints [][2]float64, style Styler)
-// func (s *surface) DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, style Styler)
-// func (s *surface) DrawBezierCurves(points [][2]float64, cPoints [][2]float64, style Styler)
 
 // DrawText draws the given text to the surface
 func (s *surface) DrawText(text string, x, y float64, style *FontStyler) {
