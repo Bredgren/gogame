@@ -49,6 +49,9 @@ type surface struct {
 	rotation float64
 	scaleX   float64
 	scaleY   float64
+	// if needed we can cache the Rect for GetRect, which would only need to change when
+	// scaleX/Y or rotation change.
+	// rect *Rect
 }
 
 // NewSurface creates a new Surface.
@@ -71,14 +74,16 @@ func (s *surface) GetCanvas() *js.Object {
 }
 
 // Blit draws the given surface to this one at the given position. Source's top-left corner
-// fill be drawn at (x, y).
+// (according to GetRect) fill be drawn at (x, y).
 func (s *surface) Blit(source Surface, x, y float64) {
+	// TODO: scale and rotate
 	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(x), math.Floor(y))
 }
 
 // BlitArea draws the given portion of the source surface defined by the Rect to this
-// one at the given position.
+// one with its top-left corner (according to GetRect) at the given position.
 func (s *surface) BlitArea(source Surface, area *Rect, x, y float64) {
+	// TODO: scale and rotate
 	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(area.X), math.Floor(area.Y),
 		math.Floor(area.W), math.Floor(area.H), math.Floor(x), math.Floor(y), math.Floor(area.W),
 		math.Floor(area.H))
@@ -92,12 +97,14 @@ func (s *surface) Fill(style *FillStyle) {
 	s.ctx.Call("restore")
 }
 
-// Width returns the width of the surface in pixels.
+// Width returns the unrotated, unscaled width of the surface in pixels. To get the width
+// after scaling and rotating use GetRect.
 func (s *surface) Width() int {
 	return s.canvas.Get("width").Int()
 }
 
-// Height returns the height of the surface in pixels.
+// Height returns the unrotated, unscaled height of the surface in pixels. To get the height
+// after scaling and rotating use GetRect.
 func (s *surface) Height() int {
 	return s.canvas.Get("height").Int()
 }
