@@ -127,33 +127,20 @@ func (s *surface) getRotatedSize(radians float64) (w, h int) {
 	width, height := float64(s.Width()), float64(s.Height())
 	cx, cy := width/2, height/2
 	cos, sin := math.Cos(radians), math.Sin(radians)
-	corners := [][2]float64{
-		{0.0, 0.0},
-		{width, 0.0},
-		{0.0, height},
-		{width, height},
-	}
-	for _, corner := range corners {
-		nx := cx + (corner[0]-cx)*cos + (corner[1]-cy)*sin
-		ny := cy - (corner[0]-cx)*sin + (corner[1]-cy)*cos
-		corner[0] = nx
-		corner[1] = ny
-	}
-	minX, maxX, minY, maxY := corners[0][0], corners[0][0], corners[0][1], corners[0][1]
-	for _, corner := range corners[1:] {
-		if corner[0] < minX {
-			minX = corner[0]
-		}
-		if corner[0] > maxX {
-			maxX = corner[0]
-		}
-		if corner[1] < minY {
-			minY = corner[1]
-		}
-		if corner[1] > maxY {
-			maxY = corner[1]
-		}
-	}
+
+	x1 := cx + (0-cx)*cos + (0-cy)*sin
+	y1 := cy - (0-cx)*sin + (0-cy)*cos
+	x2 := cx + (width-cx)*cos + (0-cy)*sin
+	y2 := cy - (width-cx)*sin + (0-cy)*cos
+	x3 := cx + (0-cx)*cos + (height-cy)*sin
+	y3 := cy - (0-cx)*sin + (height-cy)*cos
+	x4 := cx + (width-cx)*cos + (height-cy)*sin
+	y4 := cy - (width-cx)*sin + (height-cy)*cos
+	maxX := math.Max(x1, math.Max(x2, math.Max(x3, x4)))
+	minX := math.Min(x1, math.Min(x2, math.Min(x3, x4)))
+	maxY := math.Max(y1, math.Max(y2, math.Max(y3, y4)))
+	minY := math.Min(y1, math.Min(y2, math.Min(y3, y4)))
+
 	return int(maxX - minX), int(maxY - minY)
 }
 
