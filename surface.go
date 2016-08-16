@@ -115,9 +115,9 @@ func (s *surface) Rotated(radians float64) Surface {
 	ctx := newS.(*surface).ctx
 	ctx.Call("save")
 	cx, cy := newW/2, newH/2
-	s.ctx.Call("translate", cx, cy)
-	s.ctx.Call("rotate", -radians)
-	s.ctx.Call("translate", -cx, -cy)
+	ctx.Call("translate", cx, cy)
+	ctx.Call("rotate", -radians)
+	ctx.Call("translate", -cx, -cy)
 	ctx.Call("drawImage", s.canvas, 0, 0)
 	ctx.Call("restore")
 	return newS
@@ -136,6 +136,7 @@ func (s *surface) getRotatedSize(radians float64) (w, h int) {
 	y3 := cy - (0-cx)*sin + (height-cy)*cos
 	x4 := cx + (width-cx)*cos + (height-cy)*sin
 	y4 := cy - (width-cx)*sin + (height-cy)*cos
+
 	maxX := math.Max(x1, math.Max(x2, math.Max(x3, x4)))
 	minX := math.Min(x1, math.Min(x2, math.Min(x3, x4)))
 	maxY := math.Max(y1, math.Max(y2, math.Max(y3, y4)))
