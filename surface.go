@@ -23,11 +23,6 @@ type Surface interface {
 	//GetClip() Rect
 	//GetSubsurface(Rect) Surface
 	//GetParent() Surface
-	// Scale() (x, y float64)
-	// SetScale(x, y float64)
-	// Rotation() float64
-	// SetRotation(radians float64)
-	// Transformed() Surface
 	Scaled(x, y float64) Surface
 	Rotated(radians float64) Surface
 	GetRect() Rect
@@ -47,14 +42,8 @@ type Surface interface {
 var _ Surface = &surface{}
 
 type surface struct {
-	canvas   *js.Object
-	ctx      *js.Object
-	rotation float64
-	scaleX   float64
-	scaleY   float64
-	// if needed we can cache the Rect for GetRect, which would only need to change when
-	// scaleX/Y or rotation change.
-	// rect *Rect
+	canvas *js.Object
+	ctx    *js.Object
 }
 
 // NewSurface creates a new Surface.
@@ -63,11 +52,8 @@ func NewSurface(width, height int) Surface {
 	canvas.Set("width", width)
 	canvas.Set("height", height)
 	return &surface{
-		canvas:   canvas,
-		ctx:      canvas.Call("getContext", "2d"),
-		rotation: 0,
-		scaleX:   1,
-		scaleY:   1,
+		canvas: canvas,
+		ctx:    canvas.Call("getContext", "2d"),
 	}
 }
 
@@ -79,45 +65,15 @@ func (s *surface) GetCanvas() *js.Object {
 // Blit draws the given surface to this one at the given position. Source's top-left corner
 // (according to GetRect) fill be drawn at (x, y).
 func (s *surface) Blit(source Surface, x, y float64) {
-	// 	s.ctx.Call("save")
-
-	// 	sx, sy := source.Scale()
-	// 	s.ctx.Call("scale", sx, sy)
-
-	// 	rect := source.GetRect()
-	// 	rect.X = x
-	// 	rect.Y = y
-	// 	cx, cy := math.Floor(rect.CenterX()), math.Floor(rect.CenterY())
-	// 	s.ctx.Call("translate", cx, cy)
-	// 	s.ctx.Call("rotate", -source.Rotation())
-	// 	s.ctx.Call("translate", -cx, -cy)
-
 	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(x), math.Floor(y))
-
-	// s.ctx.Call("restore")
 }
 
 // BlitArea draws the given portion of the source surface defined by the Rect to this
 // one with its top-left corner (according to GetRect) at the given position.
 func (s *surface) BlitArea(source Surface, area *Rect, x, y float64) {
-	// s.ctx.Call("save")
-
-	// sx, sy := source.Scale()
-	// s.ctx.Call("scale", sx, sy)
-
-	// rect := source.GetRect()
-	// rect.X = x
-	// rect.Y = y
-	// cx, cy := math.Floor(rect.CenterX()), math.Floor(rect.CenterY())
-	// s.ctx.Call("translate", cx, cy)
-	// s.ctx.Call("rotate", -source.Rotation())
-	// s.ctx.Call("translate", -cx, -cy)
-
 	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(area.X), math.Floor(area.Y),
 		math.Floor(area.W), math.Floor(area.H), math.Floor(x), math.Floor(y), math.Floor(area.W),
 		math.Floor(area.H))
-
-	// s.ctx.Call("restore")
 }
 
 // Fill fills the whole surface with the given style.
@@ -140,17 +96,6 @@ func (s *surface) Height() int {
 	return s.canvas.Get("height").Int()
 }
 
-// // Scale returns the x and y scales of the this surface.
-// func (s *surface) Scale() (x, y float64) {
-// 	return s.scaleX, s.scaleY
-// }
-
-// // SetScale sets the x and y scales of this surface.
-// func (s *surface) SetScale(x, y float64) {
-// 	s.scaleX = x
-// 	s.scaleY = y
-// }
-
 // Scaled returns a new Surface that is equivalent to this one scaled by the given amount.
 func (s *surface) Scaled(x, y float64) Surface {
 	newS := NewSurface(int(float64(s.Width())*x), int(float64(s.Height())*y))
@@ -161,16 +106,6 @@ func (s *surface) Scaled(x, y float64) Surface {
 	ctx.Call("restore")
 	return newS
 }
-
-// // Rotation returns the rotation (counter-clockwise) of this surface in radians.
-// func (s *surface) Rotation() float64 {
-// 	return s.rotation
-// }
-
-// // SetRotation sets the rotation (counter-clockwise) of this surface in radians.
-// func (s *surface) SetRotation(radians float64) {
-// 	s.rotation = radians
-// }
 
 // Rotated returns a new Surface that is equivalent to this one but rotated counter-clockwise
 // by the given amount.
@@ -188,19 +123,10 @@ func (s *surface) Rotated(radians float64) Surface {
 	return newS
 }
 
-// // Transformed returns a new Surface that is equivalent to this one but with the scale and
-// // rotation trnsforms applied.
-// func (s *surface) Transformed() Surface {
-// 	rect := s.GetRect()
-// 	newS := NewSurface(int(rect.W), int(rect.H))
-// 	newS.Blit(s, 0, 0)
-// 	return newS
-// }
-
 func (s *surface) getRotatedSize(radians float64) (w, h int) {
 	width, height := float64(s.Width()), float64(s.Height())
 	cx, cy := width/2, height/2
-	cos, sin := math.Cos(s.rotation), math.Sin(s.rotation)
+	cos, sin := math.Cos(radians), math.Sin(radians)
 	corners := [][2]float64{
 		{0.0, 0.0},
 		{width, 0.0},
@@ -233,38 +159,6 @@ func (s *surface) getRotatedSize(radians float64) (w, h int) {
 
 // GetRect returns the bouding rectangle for the surface, taking into acount rotation and scale.
 func (s *surface) GetRect() Rect {
-	// w := float64(s.Width()) * s.scaleX
-	// h := float64(s.Height()) * s.scaleY
-	// cx, cy := w/2, h/2
-	// cos, sin := math.Cos(s.rotation), math.Sin(s.rotation)
-	// corners := [][2]float64{
-	// 	{0.0, 0.0},
-	// 	{w, 0.0},
-	// 	{0.0, h},
-	// 	{w, h},
-	// }
-	// for _, corner := range corners {
-	// 	nx := cx + (corner[0]-cx)*cos + (corner[1]-cy)*sin
-	// 	ny := cy - (corner[0]-cx)*sin + (corner[1]-cy)*cos
-	// 	corner[0] = nx
-	// 	corner[1] = ny
-	// }
-	// minX, maxX, minY, maxY := corners[0][0], corners[0][0], corners[0][1], corners[0][1]
-	// for _, corner := range corners[1:] {
-	// 	if corner[0] < minX {
-	// 		minX = corner[0]
-	// 	}
-	// 	if corner[0] > maxX {
-	// 		maxX = corner[0]
-	// 	}
-	// 	if corner[1] < minY {
-	// 		minY = corner[1]
-	// 	}
-	// 	if corner[1] > maxY {
-	// 		maxY = corner[1]
-	// 	}
-	// }
-	// return Rect{X: 0, Y: 0, W: maxX - minX, H: maxY - minY}
 	return Rect{X: 0, Y: 0, W: float64(s.Width()), H: float64(s.Height())}
 }
 
