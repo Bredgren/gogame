@@ -33,19 +33,19 @@ func SetDisplayCanvas(c *js.Object) {
 	display = newDisplay(c)
 }
 
-// GetDisplay returns the canvas object being used
+// GetDisplay returns the canvas object being used.
 func GetDisplay() *Display {
 	return display
 }
 
-// SetFullscreen sets or unsetd fullscreen mode
+// SetFullscreen sets or unsetd fullscreen mode.
 func SetFullscreen(fullscreen bool) {
 	//canvas.canvas.Call("requestFullScreen")
 	display.canvas.Call("webkitRequestFullScreen")
 	//canvas.canvas.Call("mozRequestFullScreen")
 }
 
-// Log prints to the console
+// Log prints to the console.
 func Log(args ...interface{}) {
 	console.Call("log", args)
 }

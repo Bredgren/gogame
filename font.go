@@ -8,7 +8,7 @@ import (
 
 var _ Styler = &FontStyler{}
 
-// FontStyler styles a font for drawing
+// FontStyler styles a font for drawing.
 type FontStyler struct {
 	Font *Font
 	Colorer
@@ -19,7 +19,7 @@ type FontStyler struct {
 	Direction    TextDirection
 }
 
-// Style implements the Styler interface
+// Style implements the Styler interface.
 func (f *FontStyler) Style(ctx *js.Object) {
 	ctx.Set("font", f.Font.String())
 	if f.LineWidth > 0 {
@@ -41,7 +41,7 @@ func (f *FontStyler) Style(ctx *js.Object) {
 	}
 }
 
-// DrawType implements the Styler interface
+// DrawType implements the Styler interface.
 func (f *FontStyler) DrawType() DrawType {
 	if f.Filled {
 		return Fill
@@ -49,7 +49,8 @@ func (f *FontStyler) DrawType() DrawType {
 	return Stroke
 }
 
-// Width returns the width needed to draw the given text
+// Width returns the width needed to draw the given text. This function requires that
+// gogame is ready with a valid display.
 func (f *FontStyler) Width(text string) int {
 	ctx := display.ctx
 	ctx.Call("save")
@@ -60,51 +61,51 @@ func (f *FontStyler) Width(text string) int {
 	return width
 }
 
-// TextAlign aligns the text horizontally
+// TextAlign aligns the text horizontally.
 type TextAlign string
 
 const (
-	// TextAlignStart aligns text at the start of the line according to locale, it is the default
+	// TextAlignStart aligns text at the start of the line according to locale, it is the default.
 	TextAlignStart TextAlign = "start"
-	// TextAlignEnd aligns text at the end of the line according to locale
+	// TextAlignEnd aligns text at the end of the line according to locale.
 	TextAlignEnd TextAlign = "end"
-	// TextAlignLeft alignes text to the left
+	// TextAlignLeft alignes text to the left.
 	TextAlignLeft TextAlign = "left"
-	// TextAlignRight alignes text to the right
+	// TextAlignRight alignes text to the right.
 	TextAlignRight TextAlign = "right"
-	// TextAlignCenter alignes text to the center
+	// TextAlignCenter alignes text to the center.
 	TextAlignCenter TextAlign = "center"
 )
 
-// TextBaseline aligns the text verically
+// TextBaseline aligns the text verically.
 type TextBaseline string
 
 const (
-	// TextBaselineAlphabetic is the default
+	// TextBaselineAlphabetic is the default.
 	TextBaselineAlphabetic TextBaseline = "alphabetic"
-	// TextBaselineTop puts the baseline at the top
+	// TextBaselineTop puts the baseline at the top.
 	TextBaselineTop TextBaseline = "top"
-	// TextBaselineBottom puts the baseline at the bottom
+	// TextBaselineBottom puts the baseline at the bottom.
 	TextBaselineBottom TextBaseline = "bottom"
-	// TextBaselineHanging is the hanging baseline
+	// TextBaselineHanging is the hanging baseline.
 	TextBaselineHanging TextBaseline = "hanging"
-	// TextBaselineMiddle puts the baseline in the middle
+	// TextBaselineMiddle puts the baseline in the middle.
 	TextBaselineMiddle TextBaseline = "middle"
-	// TextBaselineIdeographic is the bottom of the characters if they go beneath the alphabetic baseline
+	// TextBaselineIdeographic is the bottom of the characters if they go beneath the alphabetic baseline.
 	TextBaselineIdeographic TextBaseline = "ideographic"
 )
 
-// TextDirection is the horizontal direction of the text
+// TextDirection is the horizontal direction of the text.
 type TextDirection string
 
 const (
-	// TextDirectionLtoR is left to right (the default)
+	// TextDirectionLtoR is left to right (the default).
 	TextDirectionLtoR TextDirection = "ltr"
-	// TextDirectionRtoL is right to left
+	// TextDirectionRtoL is right to left.
 	TextDirectionRtoL TextDirection = "rtl"
 )
 
-// Font describes the style of text
+// Font describes the style of text.
 type Font struct {
 	Size       int
 	LineHeight int
@@ -114,6 +115,8 @@ type Font struct {
 	Weight     FontWeight
 }
 
+// String implements the Stringer interface. The format of the returned string is the same
+// as one would use to set the font attribute in CSS.
 func (f *Font) String() string {
 	s := ""
 	if f.Style != "" {
@@ -157,50 +160,50 @@ func (f *Font) String() string {
 	return s
 }
 
-// FontStyle is the style of the font
+// FontStyle is the style of the font.
 type FontStyle string
 
 const (
-	// FontStyleNormal is the default style
+	// FontStyleNormal is the default style.
 	FontStyleNormal FontStyle = "normal"
-	// FontStyleItalic makes the font italics
+	// FontStyleItalic makes the font italics.
 	FontStyleItalic FontStyle = "italic"
-	// FontStyleOblique makes the font oblique
+	// FontStyleOblique makes the font oblique.
 	FontStyleOblique FontStyle = "oblique"
 )
 
-// FontVariant normal or caps
+// FontVariant normal or caps.
 type FontVariant string
 
 const (
-	// FontVariantNormal is the default variant
+	// FontVariantNormal is the default variant.
 	FontVariantNormal FontVariant = "normal"
-	// FontVariantSmallCaps makes the font all capital letters
+	// FontVariantSmallCaps makes the font all capital letters.
 	FontVariantSmallCaps FontVariant = "small-caps"
 )
 
-// FontWeight normal or bold
+// FontWeight normal or bold.
 type FontWeight string
 
 const (
-	// FontWeightNormal is the default weight
+	// FontWeightNormal is the default weight.
 	FontWeightNormal FontWeight = "normal"
-	// FontWeightBold makes the font bold
+	// FontWeightBold makes the font bold.
 	FontWeightBold FontWeight = "bold"
 )
 
-// FontFamily is the overall appearence of the font
+// FontFamily is the overall appearence of the font.
 type FontFamily string
 
 const (
-	// FontFamilySerif has strokes at the ends of the characters
+	// FontFamilySerif has strokes at the ends of the characters.
 	FontFamilySerif FontFamily = "serif"
-	// FontFamilySansSerif has plain endings
+	// FontFamilySansSerif has plain endings.
 	FontFamilySansSerif FontFamily = "sans-serif"
-	// FontFamilyMonospace gives equal width to all characters
+	// FontFamilyMonospace gives equal width to all characters.
 	FontFamilyMonospace FontFamily = "monospace"
-	// FontFamilyCursive gives the characters a somewhat handwritten look
+	// FontFamilyCursive gives the characters a somewhat handwritten look.
 	FontFamilyCursive FontFamily = "cursive"
-	// FontFamilyFantasy is bit of a decorative kind of font
+	// FontFamilyFantasy is bit of a decorative kind of font.
 	FontFamilyFantasy FontFamily = "fantasy"
 )
