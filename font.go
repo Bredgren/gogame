@@ -119,21 +119,22 @@ func (f *Font) String() string {
 	if f.Style != "" {
 		s = string(f.Style)
 	}
+	const sep = " "
 	if f.Variant != "" {
 		if s != "" {
-			s += " "
+			s += sep
 		}
 		s += string(f.Variant)
 	}
 	if f.Weight != "" {
 		if s != "" {
-			s += " "
+			s += sep
 		}
 		s += string(f.Weight)
 	}
 
 	if s != "" {
-		s += " "
+		s += sep
 	}
 	s += fmt.Sprintf("%dpx", f.Size)
 
@@ -149,7 +150,7 @@ func (f *Font) String() string {
 		family = FontFamilySerif
 	}
 	if s != "" {
-		s += " "
+		s += sep
 	}
 	s += string(family)
 

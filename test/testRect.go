@@ -21,9 +21,7 @@ func testRect() {
 	results = append(results, testRectNormalize())
 	results = append(results, testRectContains())
 	results = append(results, testRectCollidePoint())
-	// results = append(results, testRectCollideRect())
-	// results = append(results, testRectCollideList())
-	// results = append(results, testRectCollideListAll())
+	results = append(results, testRectCollideRect())
 
 	appendResultSection("Rect", results)
 }
@@ -326,6 +324,33 @@ func testRectCollidePoint() *result {
 
 	for i, c := range cases {
 		got := rect.CollidePoint(c.x, c.y)
+		if got != c.want {
+			res.Errors = append(res.Errors, fmt.Sprintf("%d: got: %#v, want: %#v", i, got, c.want))
+		}
+	}
+
+	return &res
+}
+
+func testRectCollideRect() *result {
+	res := result{TestName: "CollideRect", Errors: []string{}}
+
+	rect := gogame.Rect{X: 1, Y: 1, W: 5, H: 5}
+
+	cases := []struct {
+		r    gogame.Rect
+		want bool
+	}{
+		{gogame.Rect{X: 0, Y: 0, W: 7, H: 1}, false},
+		{gogame.Rect{X: 0, Y: 0, W: 1, H: 7}, false},
+		{gogame.Rect{X: 6, Y: 0, W: 2, H: 7}, false},
+		{gogame.Rect{X: 0, Y: 6, W: 7, H: 2}, false},
+		{gogame.Rect{X: 0, Y: 0, W: 2, H: 2}, true},
+		{gogame.Rect{X: 5, Y: 5, W: 2, H: 2}, true},
+	}
+
+	for i, c := range cases {
+		got := rect.CollideRect(&c.r)
 		if got != c.want {
 			res.Errors = append(res.Errors, fmt.Sprintf("%d: got: %#v, want: %#v", i, got, c.want))
 		}

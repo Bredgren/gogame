@@ -7,171 +7,171 @@ type Rect struct {
 	X, Y, W, H float64
 }
 
-// Top returns the top boundary
+// Top returns the top boundary.
 func (r *Rect) Top() (top float64) {
 	return r.Y
 }
 
-// SetTop sets the top boundary
+// SetTop sets the top boundary.
 func (r *Rect) SetTop(top float64) {
 	r.Y = top
 }
 
-// Bottom returns the bottom boundary
+// Bottom returns the bottom boundary.
 func (r *Rect) Bottom() float64 {
 	return r.Y + r.H
 }
 
-// SetBottom sets the bottom boundary
+// SetBottom sets the bottom boundary.
 func (r *Rect) SetBottom(bottom float64) {
 	r.Y = bottom - r.H
 }
 
-// Left returns the left boundary
+// Left returns the left boundary.
 func (r *Rect) Left() float64 {
 	return r.X
 }
 
-// SetLeft sets the left boundary
+// SetLeft sets the left boundary.
 func (r *Rect) SetLeft(left float64) {
 	r.X = left
 }
 
-// Right returns the right boundary
+// Right returns the right boundary.
 func (r *Rect) Right() float64 {
 	return r.X + r.W
 }
 
-// SetRight sets the right boundary
+// SetRight sets the right boundary.
 func (r *Rect) SetRight(right float64) {
 	r.X = right - r.W
 }
 
-// Width returns the width
+// Width returns the width.
 func (r *Rect) Width() float64 {
 	return r.W
 }
 
-// SetWidth sets the width
+// SetWidth sets the width.
 func (r *Rect) SetWidth(w float64) {
 	r.W = w
 }
 
-// Height returns the height
+// Height returns the height.
 func (r *Rect) Height() float64 {
 	return r.H
 }
 
-// SetHeight sets the height
+// SetHeight sets the height.
 func (r *Rect) SetHeight(h float64) {
 	r.H = h
 }
 
-// Size returns the width and height
+// Size returns the width and height.
 func (r *Rect) Size() (w, h float64) {
 	return r.W, r.H
 }
 
-// SetSize sets the width and height
+// SetSize sets the width and height.
 func (r *Rect) SetSize(w, h float64) {
 	r.SetWidth(w)
 	r.SetHeight(h)
 }
 
-// TopLeft returns the coordinates of the top left corner
+// TopLeft returns the coordinates of the top left corner.
 func (r *Rect) TopLeft() (x, y float64) {
 	return r.Left(), r.Top()
 }
 
-// SetTopLeft sets the coordinates of the top left corner
+// SetTopLeft sets the coordinates of the top left corner.
 func (r *Rect) SetTopLeft(x, y float64) {
 	r.SetLeft(x)
 	r.SetRight(y)
 }
 
-// BottomLeft returns the coordinates of the bottom left corner
+// BottomLeft returns the coordinates of the bottom left corner.
 func (r *Rect) BottomLeft() (x, y float64) {
 	return r.Left(), r.Bottom()
 }
 
-// SetBottomLeft set the coordinates of the bottom left corner
+// SetBottomLeft set the coordinates of the bottom left corner.
 func (r *Rect) SetBottomLeft(x, y float64) {
 	r.SetLeft(x)
 	r.SetBottom(y)
 }
 
-// TopRight returns the coordinates of the top right corner
+// TopRight returns the coordinates of the top right corner.
 func (r *Rect) TopRight() (x, y float64) {
 	return r.Right(), r.Top()
 }
 
-// SetTopRight sets the coordinates of the top right corner
+// SetTopRight sets the coordinates of the top right corner.
 func (r *Rect) SetTopRight(x, y float64) {
 	r.SetRight(x)
 	r.SetTop(y)
 }
 
-// BottomRight returns the coordinates of the bottom right corner
+// BottomRight returns the coordinates of the bottom right corner.
 func (r *Rect) BottomRight() (x, y float64) {
 	return r.Right(), r.Bottom()
 }
 
-// SetBottomRight sets the coordinates of the bottom right corner
+// SetBottomRight sets the coordinates of the bottom right corner.
 func (r *Rect) SetBottomRight(x, y float64) {
 	r.SetRight(x)
 	r.SetBottom(y)
 }
 
-// MidTop returns the coordinates at the top of the rectangle above the center
+// MidTop returns the coordinates at the top of the rectangle above the center.
 func (r *Rect) MidTop() (x, y float64) {
 	return r.CenterX(), r.Top()
 }
 
-// SetMidTop sets the coordinates at the top of the rectangle above the center
+// SetMidTop sets the coordinates at the top of the rectangle above the center.
 func (r *Rect) SetMidTop(x, y float64) {
 	r.SetCenterX(x)
 	r.SetTop(y)
 }
 
-// MidBottom returns the coordinates at the bottom of the rectangle bellow the center
+// MidBottom returns the coordinates at the bottom of the rectangle below the center.
 func (r *Rect) MidBottom() (x, y float64) {
 	return r.CenterX(), r.Bottom()
 }
 
-// SetMidBottom sets the coordinates at the bottom of the rectangle bellow the center
+// SetMidBottom sets the coordinates at the bottom of the rectangle below the center.
 func (r *Rect) SetMidBottom(x, y float64) {
 	r.SetCenterX(x)
 	r.SetBottom(y)
 }
 
-// MidLeft returns the coordinates at the left of the rectangle in line with the center
+// MidLeft returns the coordinates at the left of the rectangle in line with the center.
 func (r *Rect) MidLeft() (x, y float64) {
 	return r.Left(), r.CenterY()
 }
 
-// SetMidLeft sets the coordinates at the left of the rectangle in line with the center
+// SetMidLeft sets the coordinates at the left of the rectangle in line with the center.
 func (r *Rect) SetMidLeft(x, y float64) {
 	r.SetLeft(x)
 	r.SetCenterY(y)
 }
 
-// MidRight returns the coordinates at the right of the rectangle in line with the center
+// MidRight returns the coordinates at the right of the rectangle in line with the center.
 func (r *Rect) MidRight() (x, y float64) {
 	return r.Right(), r.CenterY()
 }
 
-// SetMidRight sets the coordinates at the right of the rectangle in line with the center
+// SetMidRight sets the coordinates at the right of the rectangle in line with the center.
 func (r *Rect) SetMidRight(x, y float64) {
 	r.SetRight(x)
 	r.SetCenterY(y)
 }
 
-// Center returns the center coordinates
+// Center returns the center coordinates.
 func (r *Rect) Center() (x, y float64) {
 	return r.CenterX(), r.CenterY()
 }
 
-// SetCenter sets the center coordinates
+// SetCenter sets the center coordinates.
 func (r *Rect) SetCenter(x, y float64) {
 	r.SetCenterX(x)
 	r.SetCenterY(y)
@@ -182,43 +182,43 @@ func (r *Rect) CenterX() float64 {
 	return r.X + r.W/2
 }
 
-// SetCenterX sets the center x coordinates
+// SetCenterX sets the center x coordinates.
 func (r *Rect) SetCenterX(x float64) {
 	r.X = x - r.W/2
 }
 
-// CenterY returns the center y coordinates
+// CenterY returns the center y coordinates.
 func (r *Rect) CenterY() float64 {
 	return r.Y + r.H/2
 }
 
-// SetCenterY set the center y coordinates
+// SetCenterY set the center y coordinates.
 func (r *Rect) SetCenterY(y float64) {
 	r.Y = y - r.H/2
 }
 
-// Copy returns a new Rect that is idential to this one
+// Copy returns a new Rect that is idential to this one.
 func (r *Rect) Copy() Rect {
 	return Rect{X: r.X, Y: r.Y, W: r.W, H: r.H}
 }
 
-// Move returns a new Rect moved by the given offset relative to this one
+// Move returns a new Rect moved by the given offset relative to this one.
 func (r *Rect) Move(dx, dy float64) Rect {
 	return Rect{X: r.X + dx, Y: r.Y + dy, W: r.W, H: r.H}
 }
 
-// MoveIP moves the Rect by the given offset, in place
+// MoveIP moves the Rect by the given offset, in place.
 func (r *Rect) MoveIP(dx, dy float64) {
 	r.X += dx
 	r.Y += dy
 }
 
-// Inflate returns a new Rect with the same center whose size is chaged by the given amount
+// Inflate returns a new Rect with the same center whose size is chaged by the given amount.
 func (r *Rect) Inflate(dw, dh float64) Rect {
 	return Rect{X: r.X - dw/2, Y: r.Y - dh/2, W: r.W + dw, H: r.H + dh}
 }
 
-// InflateIP keeps the same center but changes the size by the given amount, in place
+// InflateIP keeps the same center but changes the size by the given amount, in place.
 func (r *Rect) InflateIP(dw, dh float64) {
 	r.X -= dw / 2
 	r.Y -= dh / 2
@@ -271,7 +271,7 @@ func (r *Rect) Intersect(other *Rect) Rect {
 	}
 }
 
-// Union returns a Rect that contains both Rects
+// Union returns a Rect that contains both Rects.
 func (r *Rect) Union(other *Rect) Rect {
 	newX := math.Min(r.X, other.X)
 	newY := math.Min(r.Y, other.Y)
@@ -293,7 +293,7 @@ func (r *Rect) UnionIP(other *Rect) {
 	r.Y = newY
 }
 
-// UnionAll returns a Rect that contains all Rects
+// UnionAll returns a Rect that contains all Rects.
 func (r *Rect) UnionAll(others []*Rect) Rect {
 	newX, newY := r.X, r.Y
 	for _, other := range others {
@@ -311,7 +311,7 @@ func (r *Rect) UnionAll(others []*Rect) Rect {
 }
 
 // Fit returns a new Rect that is moved and resized to fit within bounds while maintaining
-// its original aspect ratio
+// its original aspect ratio.
 func (r *Rect) Fit(bounds *Rect) Rect {
 	newW := bounds.H * (r.W / r.H)
 	if newW <= bounds.W {
@@ -321,7 +321,7 @@ func (r *Rect) Fit(bounds *Rect) Rect {
 	return Rect{X: bounds.X, Y: clamp(r.Y, bounds.Y, bounds.Bottom()-newH), W: bounds.W, H: newH}
 }
 
-// Normalize fips the Rect in place if its size is negative
+// Normalize fips the Rect in place if its size is negative.
 func (r *Rect) Normalize() {
 	if r.W < 0 {
 		r.X += r.W
@@ -333,7 +333,7 @@ func (r *Rect) Normalize() {
 	}
 }
 
-// Contains returns true if other is completely inside this one
+// Contains returns true if other is completely inside this one.
 func (r *Rect) Contains(other *Rect) bool {
 	return other.X >= r.X && other.Y >= r.W && other.Right() <= r.Right() && other.Bottom() <= r.Bottom()
 }
@@ -344,13 +344,13 @@ func (r *Rect) CollidePoint(x, y float64) bool {
 	return x >= r.X && x < r.Right() && y >= r.Y && y < r.Bottom()
 }
 
-// CollideRect returns true if the Rects overlap
+// CollideRect returns true if the Rects overlap.
 func (r *Rect) CollideRect(other *Rect) bool {
 	return r.X < other.Right() && r.Right() > other.X && r.Y < other.Bottom() && r.Bottom() > other.Y
 }
 
 // CollideList returns the index of the first Rect this one collides with, or -1 if it
-// collides with none
+// collides with none.
 func (r *Rect) CollideList(others []*Rect) int {
 	for i, other := range others {
 		if r.CollideRect(other) {
@@ -361,7 +361,7 @@ func (r *Rect) CollideList(others []*Rect) int {
 }
 
 // CollideListAll returns a list of indices of the Rects that collide with this one, or an
-// empty list if none
+// empty list if none.
 func (r *Rect) CollideListAll(others []*Rect) []int {
 	list := make([]int, 0, len(others))
 	for i, other := range others {
