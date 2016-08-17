@@ -193,5 +193,20 @@ func testCanvas() {
 		TextBaseline: gogame.TextBaselineMiddle,
 	})
 
+	grid := gogame.NewSurface(50, 50)
+	grid.DrawRect(&gogame.Rect{X: 0, Y: 0, W: 50, H: 50},
+		&gogame.FillStyle{Colorer: &pattern})
+
+	display.Blit(grid, 10, 250)
+
+	scaledGrid := grid.Scaled(2, 2)
+	display.Blit(scaledGrid, 70, 250)
+
+	rotatedGrid := grid.Rotated(0.12 * math.Pi)
+	display.Blit(rotatedGrid, 180, 250)
+
+	rotatedScaledGrid := scaledGrid.Rotated(0.25 * math.Pi)
+	display.Blit(rotatedScaledGrid, 250, 250)
+
 	display.Flip()
 }

@@ -142,7 +142,7 @@ func (s *surface) Rotated(radians float64) Surface {
 	cx, cy := newW/2, newH/2
 	ctx.Call("translate", cx, cy)
 	ctx.Call("rotate", -radians)
-	ctx.Call("translate", -cx, -cy)
+	ctx.Call("translate", -s.Width()/2, -s.Height()/2)
 	ctx.Call("drawImage", s.canvas, 0, 0)
 	ctx.Call("restore")
 	return newS

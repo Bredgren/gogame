@@ -18862,8 +18862,8 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 	};
 	surface.prototype.Scaled = function(x, y) { return this.$val.Scaled(x, y); };
 	surface.ptr.prototype.Rotated = function(radians) {
-		var $ptr, _q, _q$1, _r, _tmp, _tmp$1, _tuple, ctx, cx, cy, newH, newS, newW, radians, s, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _q = $f._q; _q$1 = $f._q$1; _r = $f._r; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tuple = $f._tuple; ctx = $f.ctx; cx = $f.cx; cy = $f.cy; newH = $f.newH; newS = $f.newS; newW = $f.newW; radians = $f.radians; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var $ptr, _q, _q$1, _q$2, _q$3, _r, _tmp, _tmp$1, _tuple, ctx, cx, cy, newH, newS, newW, radians, s, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _q = $f._q; _q$1 = $f._q$1; _q$2 = $f._q$2; _q$3 = $f._q$3; _r = $f._r; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tuple = $f._tuple; ctx = $f.ctx; cx = $f.cx; cy = $f.cy; newH = $f.newH; newS = $f.newS; newW = $f.newW; radians = $f.radians; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		s = this;
 		_tuple = s.getRotatedSize(radians);
 		newW = _tuple[0];
@@ -18878,11 +18878,11 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		cy = _tmp$1;
 		ctx.translate(cx, cy);
 		ctx.rotate(-radians);
-		ctx.translate(-cx, -cy);
+		ctx.translate((_q$2 = -s.Width() / 2, (_q$2 === _q$2 && _q$2 !== 1/0 && _q$2 !== -1/0) ? _q$2 >> 0 : $throwRuntimeError("integer divide by zero")), (_q$3 = -s.Height() / 2, (_q$3 === _q$3 && _q$3 !== 1/0 && _q$3 !== -1/0) ? _q$3 >> 0 : $throwRuntimeError("integer divide by zero")));
 		ctx.drawImage(s.canvas, 0, 0);
 		ctx.restore();
 		return newS;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: surface.ptr.prototype.Rotated }; } $f.$ptr = $ptr; $f._q = _q; $f._q$1 = _q$1; $f._r = _r; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tuple = _tuple; $f.ctx = ctx; $f.cx = cx; $f.cy = cy; $f.newH = newH; $f.newS = newS; $f.newW = newW; $f.radians = radians; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: surface.ptr.prototype.Rotated }; } $f.$ptr = $ptr; $f._q = _q; $f._q$1 = _q$1; $f._q$2 = _q$2; $f._q$3 = _q$3; $f._r = _r; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tuple = _tuple; $f.ctx = ctx; $f.cx = cx; $f.cy = cy; $f.newH = newH; $f.newS = newS; $f.newW = newW; $f.radians = radians; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	surface.prototype.Rotated = function(radians) { return this.$val.Rotated(radians); };
 	surface.ptr.prototype.getRotatedSize = function(radians) {
@@ -19197,8 +19197,8 @@ $packages["github.com/Bredgren/gogame/test"] = (function() {
 		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: appendResultSection }; } $f.$ptr = $ptr; $f._i = _i; $f._i$1 = _i$1; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$17 = _r$17; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._ref = _ref; $f._ref$1 = _ref$1; $f.e = e; $f.errors = errors; $f.res = res; $f.result$1 = result$1; $f.results = results; $f.section = section; $f.sectionName = sectionName; $f.sectionRes = sectionRes; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	testCanvas = function() {
-		var $ptr, _r, _r$1, _tmp, _tmp$1, display, font, height, pattern, s, w, width, x, x$1, x$10, x$11, x$12, x$13, x$2, x$3, x$4, x$5, x$6, x$7, x$8, x$9, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; display = $f.display; font = $f.font; height = $f.height; pattern = $f.pattern; s = $f.s; w = $f.w; width = $f.width; x = $f.x; x$1 = $f.x$1; x$10 = $f.x$10; x$11 = $f.x$11; x$12 = $f.x$12; x$13 = $f.x$13; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; x$5 = $f.x$5; x$6 = $f.x$6; x$7 = $f.x$7; x$8 = $f.x$8; x$9 = $f.x$9; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var $ptr, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _tmp, _tmp$1, display, font, grid, height, pattern, rotatedGrid, rotatedScaledGrid, s, scaledGrid, w, width, x, x$1, x$10, x$11, x$12, x$13, x$2, x$3, x$4, x$5, x$6, x$7, x$8, x$9, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; display = $f.display; font = $f.font; grid = $f.grid; height = $f.height; pattern = $f.pattern; rotatedGrid = $f.rotatedGrid; rotatedScaledGrid = $f.rotatedScaledGrid; s = $f.s; scaledGrid = $f.scaledGrid; w = $f.w; width = $f.width; x = $f.x; x$1 = $f.x$1; x$10 = $f.x$10; x$11 = $f.x$11; x$12 = $f.x$12; x$13 = $f.x$13; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; x$5 = $f.x$5; x$6 = $f.x$6; x$7 = $f.x$7; x$8 = $f.x$8; x$9 = $f.x$9; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		font = [font];
 		pattern = [pattern];
 		_tmp = 900;
@@ -19235,8 +19235,21 @@ $packages["github.com/Bredgren/gogame/test"] = (function() {
 		_r$1 = font[0].Width("Hello", new gogame.TextStyle.ptr($ifaceNil, 0, "", "", "", "")); /* */ $s = 24; case 24: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		w = _r$1;
 		$r = display.surface.DrawText("World!", (10 + w >> 0), 200, font[0], new gogame.TextStyle.ptr(new gogame.LinearGradient.ptr(0, 0, w, 0, new sliceType$2([new gogame.ColorStop.ptr(0, $clone(gogame.Blue, gogame.Color)), new gogame.ColorStop.ptr(1, $clone(gogame.Green, gogame.Color))])), 0, "fill", "", "middle", "")); /* */ $s = 25; case 25: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.Flip(); /* */ $s = 26; case 26: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: testCanvas }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f.display = display; $f.font = font; $f.height = height; $f.pattern = pattern; $f.s = s; $f.w = w; $f.width = width; $f.x = x; $f.x$1 = x$1; $f.x$10 = x$10; $f.x$11 = x$11; $f.x$12 = x$12; $f.x$13 = x$13; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.x$8 = x$8; $f.x$9 = x$9; $f.$s = $s; $f.$r = $r; return $f;
+		_r$2 = gogame.NewSurface(50, 50); /* */ $s = 26; case 26: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		grid = _r$2;
+		$r = grid.DrawRect(new gogame.Rect.ptr(0, 0, 50, 50), new gogame.FillStyle.ptr(pattern[0])); /* */ $s = 27; case 27: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.Blit(grid, 10, 250); /* */ $s = 28; case 28: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		_r$3 = grid.Scaled(2, 2); /* */ $s = 29; case 29: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		scaledGrid = _r$3;
+		$r = display.surface.Blit(scaledGrid, 70, 250); /* */ $s = 30; case 30: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		_r$4 = grid.Rotated(0.3769911184307752); /* */ $s = 31; case 31: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+		rotatedGrid = _r$4;
+		$r = display.surface.Blit(rotatedGrid, 180, 250); /* */ $s = 32; case 32: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		_r$5 = scaledGrid.Rotated(0.7853981633974483); /* */ $s = 33; case 33: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+		rotatedScaledGrid = _r$5;
+		$r = display.surface.Blit(rotatedScaledGrid, 250, 250); /* */ $s = 34; case 34: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.Flip(); /* */ $s = 35; case 35: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: testCanvas }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f.display = display; $f.font = font; $f.grid = grid; $f.height = height; $f.pattern = pattern; $f.rotatedGrid = rotatedGrid; $f.rotatedScaledGrid = rotatedScaledGrid; $f.s = s; $f.scaledGrid = scaledGrid; $f.w = w; $f.width = width; $f.x = x; $f.x$1 = x$1; $f.x$10 = x$10; $f.x$11 = x$11; $f.x$12 = x$12; $f.x$13 = x$13; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.x$8 = x$8; $f.x$9 = x$9; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	testRect = function() {
 		var $ptr, _r, _r$1, _r$10, _r$11, _r$12, _r$2, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, results, $s, $r;
