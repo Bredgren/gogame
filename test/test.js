@@ -13776,7 +13776,7 @@ $packages["reflect"] = (function() {
 	return $pkg;
 })();
 $packages["fmt"] = (function() {
-	var $pkg = {}, $init, errors, io, math, os, reflect, strconv, sync, utf8, fmtFlags, fmt, State, Formatter, Stringer, GoStringer, buffer, pp, runeUnreader, scanError, ss, ssave, sliceType, sliceType$1, ptrType, arrayType, arrayType$1, ptrType$1, arrayType$2, sliceType$2, ptrType$2, ptrType$5, ptrType$25, funcType, padZeroBytes, padSpaceBytes, trueBytes, falseBytes, commaSpaceBytes, nilAngleBytes, nilParenBytes, nilBytes, mapBytes, percentBangBytes, missingBytes, badIndexBytes, panicBytes, extraBytes, irparenBytes, bytesBytes, badWidthBytes, badPrecBytes, noVerbBytes, ppFree, intBits, uintptrBits, byteType, space, ssFree, complexError, boolError, _r, _r$1, init, doPrec, newPrinter, Sprintf, Sprint, Sprintln, getField, tooLarge, parsenum, intFromArg, parseArgNumber, isSpace, notSpace, indexRune;
+	var $pkg = {}, $init, errors, io, math, os, reflect, strconv, sync, utf8, fmtFlags, fmt, State, Formatter, Stringer, GoStringer, buffer, pp, runeUnreader, scanError, ss, ssave, sliceType, sliceType$1, ptrType, arrayType, arrayType$1, ptrType$1, arrayType$2, sliceType$2, ptrType$2, ptrType$5, ptrType$25, funcType, padZeroBytes, padSpaceBytes, trueBytes, falseBytes, commaSpaceBytes, nilAngleBytes, nilParenBytes, nilBytes, mapBytes, percentBangBytes, missingBytes, badIndexBytes, panicBytes, extraBytes, irparenBytes, bytesBytes, badWidthBytes, badPrecBytes, noVerbBytes, ppFree, intBits, uintptrBits, byteType, space, ssFree, complexError, boolError, _r, _r$1, init, doPrec, newPrinter, Sprintf, Errorf, Sprint, Sprintln, getField, tooLarge, parsenum, intFromArg, parseArgNumber, isSpace, notSpace, indexRune;
 	errors = $packages["errors"];
 	io = $packages["io"];
 	math = $packages["math"];
@@ -14597,6 +14597,16 @@ $packages["fmt"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Sprintf }; } $f.$ptr = $ptr; $f._r$2 = _r$2; $f.a = a; $f.format = format; $f.p = p; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Sprintf = Sprintf;
+	Errorf = function(format, a) {
+		var $ptr, _r$2, _r$3, a, format, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r$2 = $f._r$2; _r$3 = $f._r$3; a = $f.a; format = $f.format; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		_r$2 = Sprintf(format, a); /* */ $s = 1; case 1: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		_r$3 = errors.New(_r$2); /* */ $s = 2; case 2: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		/* */ $s = 3; case 3:
+		return _r$3;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Errorf }; } $f.$ptr = $ptr; $f._r$2 = _r$2; $f._r$3 = _r$3; $f.a = a; $f.format = format; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.Errorf = Errorf;
 	Sprint = function(a) {
 		var $ptr, _r$2, a, p, s, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r$2 = $f._r$2; a = $f.a; p = $f.p; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -17758,7 +17768,7 @@ $packages["log"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/Bredgren/gogame"] = (function() {
-	var $pkg = {}, $init, fmt, js, jquery, log, math, Colorer, Color, ColorStop, LinearGradient, RadialGradient, RepeatType, Pattern, Display, TextStyle, TextAlign, TextBaseline, TextDirection, Font, FontStyle, FontVariant, FontWeight, FontFamily, Rect, Styler, DrawType, FillStyle, LineCap, LineJoin, StrokeStyle, Surface, surface, ptrType, sliceType, structType, funcType, sliceType$1, sliceType$2, ptrType$1, arrayType, ptrType$2, sliceType$3, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, sliceType$4, ptrType$9, ptrType$10, sliceType$5, jq, console, display, clampToInt, clampToFloat, newDisplay, Ready, SetDisplayCanvas, GetDisplay, clamp, NewSurface, NewSurfaceFromCanvas;
+	var $pkg = {}, $init, fmt, js, jquery, log, math, Colorer, Color, ColorStop, LinearGradient, RadialGradient, RepeatType, Pattern, Display, TextStyle, TextAlign, TextBaseline, TextDirection, Font, FontStyle, FontVariant, FontWeight, FontFamily, Rect, Styler, DrawType, FillStyle, LineCap, LineJoin, StrokeStyle, Surface, surface, ptrType, sliceType, structType, funcType, sliceType$1, sliceType$2, ptrType$1, arrayType, ptrType$2, sliceType$3, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, sliceType$4, ptrType$9, ptrType$10, sliceType$5, jq, console, display, clampToInt, clampToFloat, NewDisplay, Ready, SetMainDisplay, GetDisplay, clamp, NewSurface, NewSurfaceFromCanvas;
 	fmt = $packages["fmt"];
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	jquery = $packages["github.com/gopherjs/jquery"];
@@ -18041,12 +18051,19 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Pattern.ptr.prototype.Color }; } $f.$ptr = $ptr; $f._r = _r; $f.ctx = ctx; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	Pattern.prototype.Color = function(ctx) { return this.$val.Color(ctx); };
-	newDisplay = function(canvas) {
-		var $ptr, canvas, d;
+	NewDisplay = function(canvas) {
+		var $ptr, _r, _tuple, canvas, d, err, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _tuple = $f._tuple; canvas = $f.canvas; d = $f.d; err = $f.err; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		d = new Display.ptr(new surface.ptr(null, null), $ifaceNil);
-		d.frontSurface = NewSurfaceFromCanvas(canvas);
-		return d;
+		err = $ifaceNil;
+		_r = NewSurfaceFromCanvas(canvas); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		d.frontSurface = _tuple[0];
+		err = _tuple[1];
+		return [d, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: NewDisplay }; } $f.$ptr = $ptr; $f._r = _r; $f._tuple = _tuple; $f.canvas = canvas; $f.d = d; $f.err = err; $f.$s = $s; $f.$r = $r; return $f;
 	};
+	$pkg.NewDisplay = NewDisplay;
 	Display.ptr.prototype.SetMode = function(width, height) {
 		var $ptr, _r, _r$1, _r$2, _r$3, d, height, width, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; d = $f.d; height = $f.height; width = $f.width; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -18171,26 +18188,33 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		ch[0] = new $Chan(structType, 1);
 		_r = jq(new sliceType([new $String("body")])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_r$1 = _r.SetAttr(new sliceType([new $String("onload"), new funcType((function(ch) { return function $b() {
-			var $ptr, _r$1, _r$2, $s, $r;
-			/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r$1 = $f._r$1; _r$2 = $f._r$2; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+			var $ptr, _r$1, _r$2, _r$3, _tuple, d, err, $s, $r;
+			/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _tuple = $f._tuple; d = $f.d; err = $f.err; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 			_r$1 = jq(new sliceType([new $String("canvas")])); /* */ $s = 1; case 1: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 			_r$2 = _r$1.Get(new sliceType([new $Int(0)])); /* */ $s = 2; case 2: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-			$r = SetDisplayCanvas(_r$2); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			_r$3 = NewDisplay(_r$2); /* */ $s = 3; case 3: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+			_tuple = _r$3;
+			d = _tuple[0];
+			err = _tuple[1];
+			if (!($interfaceIsEqual(err, $ifaceNil))) {
+				$panic(new $String("gogame requires there to be a canvas in the DOM"));
+			}
+			SetMainDisplay(d);
 			$r = log.Println(new sliceType([new $String("gogame ready")])); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			$r = $send(ch[0], new structType.ptr()); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			$close(ch[0]);
-			/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: $b }; } $f.$ptr = $ptr; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.$s = $s; $f.$r = $r; return $f;
+			/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: $b }; } $f.$ptr = $ptr; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._tuple = _tuple; $f.d = d; $f.err = err; $f.$s = $s; $f.$r = $r; return $f;
 		}; })(ch))])); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		_r$1;
 		return ch[0];
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Ready }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f.ch = ch; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Ready = Ready;
-	SetDisplayCanvas = function(c) {
-		var $ptr, c;
-		display = newDisplay(c);
+	SetMainDisplay = function(d) {
+		var $ptr, d;
+		display = d;
 	};
-	$pkg.SetDisplayCanvas = SetDisplayCanvas;
+	$pkg.SetMainDisplay = SetMainDisplay;
 	GetDisplay = function() {
 		var $ptr;
 		return display;
@@ -18762,8 +18786,17 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 	};
 	$pkg.NewSurface = NewSurface;
 	NewSurfaceFromCanvas = function(canvas) {
-		var $ptr, canvas;
-		return new surface.ptr(canvas, canvas.getContext($externalize("2d", $String)));
+		var $ptr, _r, canvas, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; canvas = $f.canvas; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		/* */ if (canvas === null || canvas === undefined) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (canvas === null || canvas === undefined) { */ case 1:
+			_r = fmt.Errorf("invalid canvas: %v", new sliceType([new $jsObjectPtr(canvas)])); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			/* */ $s = 4; case 4:
+			return [$ifaceNil, _r];
+		/* } */ case 2:
+		return [new surface.ptr(canvas, canvas.getContext($externalize("2d", $String))), $ifaceNil];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: NewSurfaceFromCanvas }; } $f.$ptr = $ptr; $f._r = _r; $f.canvas = canvas; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.NewSurfaceFromCanvas = NewSurfaceFromCanvas;
 	surface.ptr.prototype.GetCanvas = function() {

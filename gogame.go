@@ -15,11 +15,17 @@ var console = js.Global.Get("console")
 var display *Display
 
 // Ready returns a channel that will send one item before closing, signaling that the
-// page has loaded and gogame is ready to be used.
+// page has loaded and gogame is ready to be used. There must be a canvas element in the
+// DOM for Ready to succeed. It will use this canvas as the main Display. A different
+// canvas may be specified afterward, if desired, using the SetMainDisplay function.
 func Ready() chan struct{} {
 	ch := make(chan struct{}, 1)
 	jq("body").SetAttr("onload", func() {
-		SetDisplayCanvas(jq("canvas").Get(0))
+		d, err := NewDisplay(jq("canvas").Get(0))
+		if err != nil {
+			panic("gogame requires there to be a canvas in the DOM")
+		}
+		SetMainDisplay(d)
 		log.Println("gogame ready")
 		ch <- struct{}{}
 		close(ch)
@@ -27,13 +33,13 @@ func Ready() chan struct{} {
 	return ch
 }
 
-// SetDisplayCanvas changes the canvas being used. Only one canvas may be used at a time. If
-// unset then gogame will default to the first canvas in the DOM.
-func SetDisplayCanvas(c *js.Object) {
-	display = newDisplay(c)
+// SetMainDisplay changes the main canvas being used. If unset then gogame will default
+// to the first canvas in the DOM.
+func SetMainDisplay(d *Display) {
+	display = d
 }
 
-// GetDisplay returns the canvas object being used.
+// GetDisplay returns the main Display being used.
 func GetDisplay() *Display {
 	return display
 }

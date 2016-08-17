@@ -57,12 +57,29 @@ func NewSurface(width, height int) Surface {
 	}
 }
 
-// NewSurfaceFromCanvas creates a new Surface from the given canvas.
-func NewSurfaceFromCanvas(canvas *js.Object) Surface {
+// NewSurfaceFromCanvas creates a new Surface from the given canvas. An error is returned
+// if canvas is nil or undefined.
+func NewSurfaceFromCanvas(canvas *js.Object) (Surface, error) {
+	if canvas == nil || canvas == js.Undefined {
+		return nil, fmt.Errorf("invalid canvas: %v", canvas)
+	}
 	return &surface{
 		canvas: canvas,
 		ctx:    canvas.Call("getContext", "2d"),
+	}, nil
+}
+
+// NewSurfaceFromCanvasID creates a new Surface using the canvas with the given ID. An
+// error is returned if no canvas was found.
+func NewSurfaceFromCanvasID(canvasID string) (Surface, error) {
+	canvas := jq("#" + canvasID).Get(0)
+	if canvas == js.Undefined {
+		return nil, fmt.Errorf("no canvas found with ID '%s'", canvasID)
 	}
+	return &surface{
+		canvas: canvas,
+		ctx:    canvas.Call("getContext", "2d"),
+	}, nil
 }
 
 // GetCanvas returns the surface as an HTML canvas.
