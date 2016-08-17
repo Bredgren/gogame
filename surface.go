@@ -57,6 +57,14 @@ func NewSurface(width, height int) Surface {
 	}
 }
 
+// NewSurfaceFromCanvas creates a new Surface from the given canvas.
+func NewSurfaceFromCanvas(canvas *js.Object) Surface {
+	return &surface{
+		canvas: canvas,
+		ctx:    canvas.Call("getContext", "2d"),
+	}
+}
+
 // GetCanvas returns the surface as an HTML canvas.
 func (s *surface) GetCanvas() *js.Object {
 	return s.canvas
