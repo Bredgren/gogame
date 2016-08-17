@@ -6,30 +6,28 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
-var _ Styler = &FontStyler{}
+var _ Styler = &TextStyle{}
 
-// FontStyler styles a font for drawing.
-type FontStyler struct {
-	Font *Font
+// TextStyle styles a font for drawing.
+type TextStyle struct {
 	Colorer
 	LineWidth    float64
-	Filled       bool
+	Type         DrawType
 	TextAlign    TextAlign
 	TextBaseline TextBaseline
 	Direction    TextDirection
 }
 
 // Style implements the Styler interface.
-func (f *FontStyler) Style(ctx *js.Object) {
-	ctx.Set("font", f.Font.String())
+func (f *TextStyle) Style(ctx *js.Object) {
 	if f.LineWidth > 0 {
 		ctx.Set("lineWidth", f.LineWidth)
 	}
-	if f.Filled {
-		ctx.Set("fillStyle", f.Color(ctx))
-	} else {
-		ctx.Set("strokeStyle", f.Color(ctx))
+	color := DefaultColor.Color(ctx)
+	if f.Colorer != nil {
+		color = f.Color(ctx)
 	}
+	ctx.Set(fmt.Sprintf("%sStyle", f.DrawType()), color)
 	if f.TextAlign != "" {
 		ctx.Set("textAlign", f.TextAlign)
 	}
@@ -42,23 +40,8 @@ func (f *FontStyler) Style(ctx *js.Object) {
 }
 
 // DrawType implements the Styler interface.
-func (f *FontStyler) DrawType() DrawType {
-	if f.Filled {
-		return Fill
-	}
-	return Stroke
-}
-
-// Width returns the width needed to draw the given text. This function requires that
-// gogame is ready with a valid display.
-func (f *FontStyler) Width(text string) int {
-	ctx := display.ctx
-	ctx.Call("save")
-	f.Style(ctx)
-	t := ctx.Call("measureText", text)
-	width := t.Get("width").Int()
-	ctx.Call("restore")
-	return width
+func (f *TextStyle) DrawType() DrawType {
+	return f.Type
 }
 
 // TextAlign aligns the text horizontally.
@@ -107,12 +90,24 @@ const (
 
 // Font describes the style of text.
 type Font struct {
-	Size       int
-	LineHeight int
-	Family     FontFamily
-	Style      FontStyle
-	Variant    FontVariant
-	Weight     FontWeight
+	// Size is the Font's height in pixels
+	Size    int
+	Family  FontFamily
+	Style   FontStyle
+	Variant FontVariant
+	Weight  FontWeight
+}
+
+// Width returns the width needed to draw the given text. This function requires that
+// gogame is ready with a valid display.
+func (f *Font) Width(text string, style *TextStyle) int {
+	ctx := display.ctx
+	ctx.Call("save")
+	style.Style(ctx)
+	t := ctx.Call("measureText", text)
+	width := t.Get("width").Int()
+	ctx.Call("restore")
+	return width
 }
 
 // String implements the Stringer interface. The format of the returned string is the same
@@ -140,13 +135,6 @@ func (f *Font) String() string {
 		s += sep
 	}
 	s += fmt.Sprintf("%dpx", f.Size)
-
-	if f.LineHeight != 0 {
-		if s != "" {
-			s += "/"
-		}
-		s += fmt.Sprintf("%dpx", f.Size)
-	}
 
 	family := f.Family
 	if f.Family == "" {

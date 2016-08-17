@@ -7,6 +7,9 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
+// DefaultColor is the color used for a nil Colorer.
+var DefaultColor Colorer = Transparent
+
 // Colorer is a type suitable to be used as a fill or line style.
 type Colorer interface {
 	Color(ctx *js.Object) interface{}
@@ -21,26 +24,28 @@ type Color struct {
 }
 
 var (
+	// Transparent is no color (the default).
+	Transparent = Color{}
 	// Black is the color black.
-	Black = &Color{0.0, 0.0, 0.0, 1.0}
+	Black = Color{0.0, 0.0, 0.0, 1.0}
 	// White is the color white.
-	White = &Color{1.0, 1.0, 1.0, 1.0}
+	White = Color{1.0, 1.0, 1.0, 1.0}
 	// Red is the color red.
-	Red = &Color{1.0, 0.0, 0.0, 1.0}
+	Red = Color{1.0, 0.0, 0.0, 1.0}
 	// Green is the color green.
-	Green = &Color{0.0, 1.0, 0.0, 1.0}
+	Green = Color{0.0, 1.0, 0.0, 1.0}
 	// Blue is the color blue.
-	Blue = &Color{0.0, 0.0, 1.0, 1.0}
+	Blue = Color{0.0, 0.0, 1.0, 1.0}
 )
 
 // Color implements the Colorer interface.
-func (c *Color) Color(*js.Object) interface{} {
+func (c Color) Color(*js.Object) interface{} {
 	return c.String()
 }
 
 // String implements the Stringer interface. The format of the returned string is of a
 // CSS color, i.e. "rgba(r, g, b, a)".
-func (c *Color) String() string {
+func (c Color) String() string {
 	return fmt.Sprintf("rgba(%d, %d, %d, %f)",
 		clampToInt(255*c.R, 0, 255),
 		clampToInt(255*c.G, 0, 255),
@@ -61,7 +66,7 @@ func clampToFloat(v, min, max float64) float64 {
 // and 1.0 being the end.
 type ColorStop struct {
 	Position float64
-	*Color
+	Color
 }
 
 var _ Colorer = &LinearGradient{}

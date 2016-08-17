@@ -17758,7 +17758,7 @@ $packages["log"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/Bredgren/gogame"] = (function() {
-	var $pkg = {}, $init, fmt, js, jquery, log, math, Colorer, Color, ColorStop, LinearGradient, RadialGradient, RepeatType, Pattern, Display, FontStyler, TextAlign, TextBaseline, TextDirection, Font, FontStyle, FontVariant, FontWeight, FontFamily, Rect, Styler, DrawType, FillStyle, LineCap, LineJoin, StrokeStyle, Surface, surface, ptrType, sliceType, structType, funcType, sliceType$1, sliceType$2, arrayType, sliceType$3, ptrType$1, ptrType$2, sliceType$4, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, sliceType$5, ptrType$9, ptrType$10, ptrType$11, jq, console, display, clampToInt, clampToFloat, newDisplay, Ready, SetDisplayCanvas, GetDisplay, clamp, NewSurface;
+	var $pkg = {}, $init, fmt, js, jquery, log, math, Colorer, Color, ColorStop, LinearGradient, RadialGradient, RepeatType, Pattern, Display, TextStyle, TextAlign, TextBaseline, TextDirection, Font, FontStyle, FontVariant, FontWeight, FontFamily, Rect, Styler, DrawType, FillStyle, LineCap, LineJoin, StrokeStyle, Surface, surface, ptrType, sliceType, structType, funcType, sliceType$1, sliceType$2, ptrType$1, arrayType, ptrType$2, sliceType$3, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, sliceType$4, ptrType$9, ptrType$10, sliceType$5, jq, console, display, clampToInt, clampToFloat, newDisplay, Ready, SetDisplayCanvas, GetDisplay, clamp, NewSurface, NewSurfaceFromCanvas;
 	fmt = $packages["fmt"];
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	jquery = $packages["github.com/gopherjs/jquery"];
@@ -17783,7 +17783,7 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.Position = 0;
-			this.Color = ptrType$2.nil;
+			this.Color = new Color.ptr(0, 0, 0, 0);
 			return;
 		}
 		this.Position = Position_;
@@ -17796,7 +17796,7 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 			this.Y1 = 0;
 			this.X2 = 0;
 			this.Y2 = 0;
-			this.ColorStops = sliceType$4.nil;
+			this.ColorStops = sliceType$3.nil;
 			return;
 		}
 		this.X1 = X1_;
@@ -17814,7 +17814,7 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 			this.X2 = 0;
 			this.Y2 = 0;
 			this.R2 = 0;
-			this.ColorStops = sliceType$4.nil;
+			this.ColorStops = sliceType$3.nil;
 			return;
 		}
 		this.X1 = X1_;
@@ -17836,30 +17836,30 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		this.Source = Source_;
 		this.Type = Type_;
 	});
-	Display = $pkg.Display = $newType(0, $kindStruct, "gogame.Display", "Display", "github.com/Bredgren/gogame", function(surface_) {
+	Display = $pkg.Display = $newType(0, $kindStruct, "gogame.Display", "Display", "github.com/Bredgren/gogame", function(surface_, frontSurface_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.surface = new surface.ptr(null, null, 0, 0, 0);
+			this.surface = new surface.ptr(null, null);
+			this.frontSurface = $ifaceNil;
 			return;
 		}
 		this.surface = surface_;
+		this.frontSurface = frontSurface_;
 	});
-	FontStyler = $pkg.FontStyler = $newType(0, $kindStruct, "gogame.FontStyler", "FontStyler", "github.com/Bredgren/gogame", function(Font_, Colorer_, LineWidth_, Filled_, TextAlign_, TextBaseline_, Direction_) {
+	TextStyle = $pkg.TextStyle = $newType(0, $kindStruct, "gogame.TextStyle", "TextStyle", "github.com/Bredgren/gogame", function(Colorer_, LineWidth_, Type_, TextAlign_, TextBaseline_, Direction_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Font = ptrType$6.nil;
 			this.Colorer = $ifaceNil;
 			this.LineWidth = 0;
-			this.Filled = false;
+			this.Type = "";
 			this.TextAlign = "";
 			this.TextBaseline = "";
 			this.Direction = "";
 			return;
 		}
-		this.Font = Font_;
 		this.Colorer = Colorer_;
 		this.LineWidth = LineWidth_;
-		this.Filled = Filled_;
+		this.Type = Type_;
 		this.TextAlign = TextAlign_;
 		this.TextBaseline = TextBaseline_;
 		this.Direction = Direction_;
@@ -17867,11 +17867,10 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 	TextAlign = $pkg.TextAlign = $newType(8, $kindString, "gogame.TextAlign", "TextAlign", "github.com/Bredgren/gogame", null);
 	TextBaseline = $pkg.TextBaseline = $newType(8, $kindString, "gogame.TextBaseline", "TextBaseline", "github.com/Bredgren/gogame", null);
 	TextDirection = $pkg.TextDirection = $newType(8, $kindString, "gogame.TextDirection", "TextDirection", "github.com/Bredgren/gogame", null);
-	Font = $pkg.Font = $newType(0, $kindStruct, "gogame.Font", "Font", "github.com/Bredgren/gogame", function(Size_, LineHeight_, Family_, Style_, Variant_, Weight_) {
+	Font = $pkg.Font = $newType(0, $kindStruct, "gogame.Font", "Font", "github.com/Bredgren/gogame", function(Size_, Family_, Style_, Variant_, Weight_) {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.Size = 0;
-			this.LineHeight = 0;
 			this.Family = "";
 			this.Style = "";
 			this.Variant = "";
@@ -17879,7 +17878,6 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 			return;
 		}
 		this.Size = Size_;
-		this.LineHeight = LineHeight_;
 		this.Family = Family_;
 		this.Style = Style_;
 		this.Variant = Variant_;
@@ -17936,21 +17934,15 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		this.DashOffset = DashOffset_;
 	});
 	Surface = $pkg.Surface = $newType(8, $kindInterface, "gogame.Surface", "Surface", "github.com/Bredgren/gogame", null);
-	surface = $pkg.surface = $newType(0, $kindStruct, "gogame.surface", "surface", "github.com/Bredgren/gogame", function(canvas_, ctx_, rotation_, scaleX_, scaleY_) {
+	surface = $pkg.surface = $newType(0, $kindStruct, "gogame.surface", "surface", "github.com/Bredgren/gogame", function(canvas_, ctx_) {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.canvas = null;
 			this.ctx = null;
-			this.rotation = 0;
-			this.scaleX = 0;
-			this.scaleY = 0;
 			return;
 		}
 		this.canvas = canvas_;
 		this.ctx = ctx_;
-		this.rotation = rotation_;
-		this.scaleX = scaleX_;
-		this.scaleY = scaleY_;
 	});
 	ptrType = $ptrType(Display);
 	sliceType = $sliceType($emptyInterface);
@@ -17958,25 +17950,24 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 	funcType = $funcType([], [], false);
 	sliceType$1 = $sliceType($Int);
 	sliceType$2 = $sliceType($Float64);
+	ptrType$1 = $ptrType(surface);
 	arrayType = $arrayType($Float64, 2);
-	sliceType$3 = $sliceType(arrayType);
-	ptrType$1 = $ptrType(js.Object);
-	ptrType$2 = $ptrType(Color);
-	sliceType$4 = $sliceType(ColorStop);
+	ptrType$2 = $ptrType(js.Object);
+	sliceType$3 = $sliceType(ColorStop);
 	ptrType$3 = $ptrType(LinearGradient);
 	ptrType$4 = $ptrType(RadialGradient);
 	ptrType$5 = $ptrType(Pattern);
-	ptrType$6 = $ptrType(Font);
-	ptrType$7 = $ptrType(FontStyler);
+	ptrType$6 = $ptrType(TextStyle);
+	ptrType$7 = $ptrType(Font);
 	ptrType$8 = $ptrType(Rect);
-	sliceType$5 = $sliceType(ptrType$8);
+	sliceType$4 = $sliceType(ptrType$8);
 	ptrType$9 = $ptrType(FillStyle);
 	ptrType$10 = $ptrType(StrokeStyle);
-	ptrType$11 = $ptrType(surface);
+	sliceType$5 = $sliceType(arrayType);
 	Color.ptr.prototype.Color = function(param) {
 		var $ptr, _r, c, param, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; c = $f.c; param = $f.param; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		c = this;
+		c = $clone(this, Color);
 		_r = c.String(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		/* */ $s = 2; case 2:
 		return new $String(_r);
@@ -17986,7 +17977,7 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 	Color.ptr.prototype.String = function() {
 		var $ptr, _r, c, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; c = $f.c; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		c = this;
+		c = $clone(this, Color);
 		_r = fmt.Sprintf("rgba(%d, %d, %d, %f)", new sliceType([new $Int(clampToInt(255 * c.R, 0, 255)), new $Int(clampToInt(255 * c.G, 0, 255)), new $Int(clampToInt(255 * c.B, 0, 255)), new $Float64(clampToFloat(c.A, 0, 1))])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		/* */ $s = 2; case 2:
 		return _r;
@@ -18052,37 +18043,52 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 	Pattern.prototype.Color = function(ctx) { return this.$val.Color(ctx); };
 	newDisplay = function(canvas) {
 		var $ptr, canvas, d;
-		d = new Display.ptr(new surface.ptr(null, null, 0, 0, 0));
-		d.surface.canvas = canvas;
-		d.surface.ctx = canvas.getContext($externalize("2d", $String));
+		d = new Display.ptr(new surface.ptr(null, null), $ifaceNil);
+		d.frontSurface = NewSurfaceFromCanvas(canvas);
 		return d;
 	};
 	Display.ptr.prototype.SetMode = function(width, height) {
-		var $ptr, c, height, width;
-		c = this;
-		c.surface.canvas.width = width;
-		c.surface.canvas.height = height;
+		var $ptr, _r, _r$1, _r$2, _r$3, d, height, width, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; d = $f.d; height = $f.height; width = $f.width; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		d = this;
+		_r = jq(new sliceType([new $String("<canvas>")])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r$1 = _r.Get(new sliceType([new $Int(0)])); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		d.surface.canvas = _r$1;
+		d.surface.canvas.width = width;
+		d.surface.canvas.height = height;
+		d.surface.ctx = d.surface.canvas.getContext($externalize("2d", $String));
+		_r$2 = d.frontSurface.GetCanvas(); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		_r$2.width = width;
+		_r$3 = d.frontSurface.GetCanvas(); /* */ $s = 4; case 4: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		_r$3.height = height;
+		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: Display.ptr.prototype.SetMode }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f.d = d; $f.height = height; $f.width = width; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	Display.prototype.SetMode = function(width, height) { return this.$val.SetMode(width, height); };
-	FontStyler.ptr.prototype.Style = function(ctx) {
-		var $ptr, _r, _r$1, _r$2, ctx, f, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; ctx = $f.ctx; f = $f.f; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+	Display.ptr.prototype.Flip = function() {
+		var $ptr, d, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; d = $f.d; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		d = this;
+		$r = d.frontSurface.Blit(d, 0, 0); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: Display.ptr.prototype.Flip }; } $f.$ptr = $ptr; $f.d = d; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Display.prototype.Flip = function() { return this.$val.Flip(); };
+	TextStyle.ptr.prototype.Style = function(ctx) {
+		var $ptr, _r, _r$1, _r$2, color, ctx, f, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; color = $f.color; ctx = $f.ctx; f = $f.f; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		f = this;
-		_r = f.Font.String(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		ctx.font = $externalize(_r, $String);
 		if (f.LineWidth > 0) {
 			ctx.lineWidth = f.LineWidth;
 		}
-		/* */ if (f.Filled) { $s = 2; continue; }
+		_r = $pkg.DefaultColor.Color(ctx); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		color = _r;
+		/* */ if (!($interfaceIsEqual(f.Colorer, $ifaceNil))) { $s = 2; continue; }
 		/* */ $s = 3; continue;
-		/* if (f.Filled) { */ case 2:
-			_r$1 = f.Colorer.Color(ctx); /* */ $s = 5; case 5: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-			ctx.fillStyle = $externalize(_r$1, $emptyInterface);
-			$s = 4; continue;
-		/* } else { */ case 3:
-			_r$2 = f.Colorer.Color(ctx); /* */ $s = 6; case 6: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-			ctx.strokeStyle = $externalize(_r$2, $emptyInterface);
-		/* } */ case 4:
+		/* if (!($interfaceIsEqual(f.Colorer, $ifaceNil))) { */ case 2:
+			_r$1 = f.Colorer.Color(ctx); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			color = _r$1;
+		/* } */ case 3:
+		_r$2 = fmt.Sprintf("%sStyle", new sliceType([new DrawType(f.DrawType())])); /* */ $s = 5; case 5: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		ctx[$externalize(_r$2, $String)] = $externalize(color, $emptyInterface);
 		if (!(f.TextAlign === "")) {
 			ctx.textAlign = $externalize(f.TextAlign, TextAlign);
 		}
@@ -18092,35 +18098,32 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		if (!(f.Direction === "")) {
 			ctx.direction = $externalize(f.Direction, TextDirection);
 		}
-		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: FontStyler.ptr.prototype.Style }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.ctx = ctx; $f.f = f; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: TextStyle.ptr.prototype.Style }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.color = color; $f.ctx = ctx; $f.f = f; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	FontStyler.prototype.Style = function(ctx) { return this.$val.Style(ctx); };
-	FontStyler.ptr.prototype.DrawType = function() {
+	TextStyle.prototype.Style = function(ctx) { return this.$val.Style(ctx); };
+	TextStyle.ptr.prototype.DrawType = function() {
 		var $ptr, f;
 		f = this;
-		if (f.Filled) {
-			return "fill";
-		}
-		return "stroke";
+		return f.Type;
 	};
-	FontStyler.prototype.DrawType = function() { return this.$val.DrawType(); };
-	FontStyler.ptr.prototype.Width = function(text) {
-		var $ptr, ctx, f, t, text, width, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; ctx = $f.ctx; f = $f.f; t = $f.t; text = $f.text; width = $f.width; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+	TextStyle.prototype.DrawType = function() { return this.$val.DrawType(); };
+	Font.ptr.prototype.Width = function(text, style) {
+		var $ptr, ctx, f, style, t, text, width, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; ctx = $f.ctx; f = $f.f; style = $f.style; t = $f.t; text = $f.text; width = $f.width; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		f = this;
 		ctx = display.surface.ctx;
 		ctx.save();
-		$r = f.Style(ctx); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = style.Style(ctx); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		t = ctx.measureText($externalize(text, $String));
 		width = $parseInt(t.width) >> 0;
 		ctx.restore();
 		return width;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: FontStyler.ptr.prototype.Width }; } $f.$ptr = $ptr; $f.ctx = ctx; $f.f = f; $f.t = t; $f.text = text; $f.width = width; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Font.ptr.prototype.Width }; } $f.$ptr = $ptr; $f.ctx = ctx; $f.f = f; $f.style = style; $f.t = t; $f.text = text; $f.width = width; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	FontStyler.prototype.Width = function(text) { return this.$val.Width(text); };
+	Font.prototype.Width = function(text, style) { return this.$val.Width(text, style); };
 	Font.ptr.prototype.String = function() {
-		var $ptr, _r, _r$1, f, family, s, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; f = $f.f; family = $f.family; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var $ptr, _r, f, family, s, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; f = $f.f; family = $f.family; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		f = this;
 		s = "";
 		if (!(f.Style === "")) {
@@ -18143,15 +18146,6 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		}
 		_r = fmt.Sprintf("%dpx", new sliceType([new $Int(f.Size)])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		s = s + (_r);
-		/* */ if (!((f.LineHeight === 0))) { $s = 2; continue; }
-		/* */ $s = 3; continue;
-		/* if (!((f.LineHeight === 0))) { */ case 2:
-			if (!(s === "")) {
-				s = s + ("/");
-			}
-			_r$1 = fmt.Sprintf("%dpx", new sliceType([new $Int(f.Size)])); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-			s = s + (_r$1);
-		/* } */ case 3:
 		family = f.Family;
 		if (f.Family === "") {
 			family = "serif";
@@ -18161,7 +18155,7 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		}
 		s = s + (family);
 		return s;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Font.ptr.prototype.String }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f.f = f; $f.family = family; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Font.ptr.prototype.String }; } $f.$ptr = $ptr; $f._r = _r; $f.f = f; $f.family = family; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	Font.prototype.String = function() { return this.$val.String(); };
 	Ready = function() {
@@ -18694,12 +18688,19 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		return math.Max(math.Min(i, max), min);
 	};
 	FillStyle.ptr.prototype.Style = function(ctx) {
-		var $ptr, _r, ctx, f, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; ctx = $f.ctx; f = $f.f; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var $ptr, _r, _r$1, color, ctx, f, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; color = $f.color; ctx = $f.ctx; f = $f.f; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		f = this;
-		_r = f.Colorer.Color(ctx); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		ctx.fillStyle = $externalize(_r, $emptyInterface);
-		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: FillStyle.ptr.prototype.Style }; } $f.$ptr = $ptr; $f._r = _r; $f.ctx = ctx; $f.f = f; $f.$s = $s; $f.$r = $r; return $f;
+		_r = $pkg.DefaultColor.Color(ctx); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		color = _r;
+		/* */ if (!($interfaceIsEqual(f.Colorer, $ifaceNil))) { $s = 2; continue; }
+		/* */ $s = 3; continue;
+		/* if (!($interfaceIsEqual(f.Colorer, $ifaceNil))) { */ case 2:
+			_r$1 = f.Colorer.Color(ctx); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			color = _r$1;
+		/* } */ case 3:
+		ctx.fillStyle = $externalize(color, $emptyInterface);
+		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: FillStyle.ptr.prototype.Style }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f.color = color; $f.ctx = ctx; $f.f = f; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	FillStyle.prototype.Style = function(ctx) { return this.$val.Style(ctx); };
 	FillStyle.ptr.prototype.DrawType = function() {
@@ -18708,11 +18709,18 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 	};
 	FillStyle.prototype.DrawType = function() { return this.$val.DrawType(); };
 	StrokeStyle.ptr.prototype.Style = function(ctx) {
-		var $ptr, _r, ctx, s, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; ctx = $f.ctx; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var $ptr, _r, _r$1, color, ctx, s, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; color = $f.color; ctx = $f.ctx; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		s = this;
-		_r = s.Colorer.Color(ctx); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		ctx.strokeStyle = $externalize(_r, $emptyInterface);
+		_r = $pkg.DefaultColor.Color(ctx); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		color = _r;
+		/* */ if (!($interfaceIsEqual(s.Colorer, $ifaceNil))) { $s = 2; continue; }
+		/* */ $s = 3; continue;
+		/* if (!($interfaceIsEqual(s.Colorer, $ifaceNil))) { */ case 2:
+			_r$1 = s.Colorer.Color(ctx); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			color = _r$1;
+		/* } */ case 3:
+		ctx.strokeStyle = $externalize(color, $emptyInterface);
 		ctx.lineWidth = s.Width;
 		if (!(s.Cap === "")) {
 			ctx.lineCap = $externalize(s.Cap, LineCap);
@@ -18727,7 +18735,7 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 			ctx.setLineDash($externalize(s.Dash, sliceType$2));
 			ctx.lineDashOffset = s.DashOffset;
 		}
-		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: StrokeStyle.ptr.prototype.Style }; } $f.$ptr = $ptr; $f._r = _r; $f.ctx = ctx; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: StrokeStyle.ptr.prototype.Style }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f.color = color; $f.ctx = ctx; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	StrokeStyle.prototype.Style = function(ctx) { return this.$val.Style(ctx); };
 	StrokeStyle.ptr.prototype.DrawType = function() {
@@ -18743,10 +18751,15 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		canvas = _r$1;
 		canvas.width = width;
 		canvas.height = height;
-		return new surface.ptr(canvas, canvas.getContext($externalize("2d", $String)), 0, 1, 1);
+		return new surface.ptr(canvas, canvas.getContext($externalize("2d", $String)));
 		/* */ } return; } if ($f === undefined) { $f = { $blk: NewSurface }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f.canvas = canvas; $f.height = height; $f.width = width; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.NewSurface = NewSurface;
+	NewSurfaceFromCanvas = function(canvas) {
+		var $ptr, canvas;
+		return new surface.ptr(canvas, canvas.getContext($externalize("2d", $String)));
+	};
+	$pkg.NewSurfaceFromCanvas = NewSurfaceFromCanvas;
 	surface.ptr.prototype.GetCanvas = function() {
 		var $ptr, s;
 		s = this;
@@ -18794,90 +18807,85 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		return $parseInt(s.canvas.height) >> 0;
 	};
 	surface.prototype.Height = function() { return this.$val.Height(); };
-	surface.ptr.prototype.Scale = function() {
-		var $ptr, _tmp, _tmp$1, s, x, y;
-		x = 0;
-		y = 0;
+	surface.ptr.prototype.Scaled = function(x, y) {
+		var $ptr, _r, ctx, newS, s, x, y, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; ctx = $f.ctx; newS = $f.newS; s = $f.s; x = $f.x; y = $f.y; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		s = this;
-		_tmp = s.scaleX;
-		_tmp$1 = s.scaleY;
-		x = _tmp;
-		y = _tmp$1;
-		return [x, y];
+		_r = NewSurface((s.Width() * x >> 0), (s.Height() * y >> 0)); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		newS = _r;
+		ctx = $assertType(newS, ptrType$1).ctx;
+		ctx.save();
+		ctx.scale(x, y);
+		ctx.drawImage(s.canvas, 0, 0);
+		ctx.restore();
+		return newS;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: surface.ptr.prototype.Scaled }; } $f.$ptr = $ptr; $f._r = _r; $f.ctx = ctx; $f.newS = newS; $f.s = s; $f.x = x; $f.y = y; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	surface.prototype.Scale = function() { return this.$val.Scale(); };
-	surface.ptr.prototype.SetScale = function(x, y) {
-		var $ptr, s, x, y;
+	surface.prototype.Scaled = function(x, y) { return this.$val.Scaled(x, y); };
+	surface.ptr.prototype.Rotated = function(radians) {
+		var $ptr, _q, _q$1, _r, _tmp, _tmp$1, _tuple, ctx, cx, cy, newH, newS, newW, radians, s, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _q = $f._q; _q$1 = $f._q$1; _r = $f._r; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tuple = $f._tuple; ctx = $f.ctx; cx = $f.cx; cy = $f.cy; newH = $f.newH; newS = $f.newS; newW = $f.newW; radians = $f.radians; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		s = this;
-		s.scaleX = x;
-		s.scaleY = y;
-	};
-	surface.prototype.SetScale = function(x, y) { return this.$val.SetScale(x, y); };
-	surface.ptr.prototype.Rotation = function() {
-		var $ptr, s;
-		s = this;
-		return s.rotation;
-	};
-	surface.prototype.Rotation = function() { return this.$val.Rotation(); };
-	surface.ptr.prototype.SetRotation = function(radians) {
-		var $ptr, radians, s;
-		s = this;
-		s.rotation = radians;
-	};
-	surface.prototype.SetRotation = function(radians) { return this.$val.SetRotation(radians); };
-	surface.ptr.prototype.GetRect = function() {
-		var $ptr, _i, _i$1, _ref, _ref$1, _tmp, _tmp$1, _tmp$2, _tmp$3, _tmp$4, _tmp$5, _tmp$6, _tmp$7, corner, corner$1, corners, cos, cx, cy, h, maxX, maxY, minX, minY, nx, ny, s, sin, w;
-		s = this;
-		w = s.Width() * s.scaleX;
-		h = s.Height() * s.scaleY;
-		_tmp = w / 2;
-		_tmp$1 = h / 2;
+		_tuple = s.getRotatedSize(radians);
+		newW = _tuple[0];
+		newH = _tuple[1];
+		_r = NewSurface(newW, newH); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		newS = _r;
+		ctx = $assertType(newS, ptrType$1).ctx;
+		ctx.save();
+		_tmp = (_q = newW / 2, (_q === _q && _q !== 1/0 && _q !== -1/0) ? _q >> 0 : $throwRuntimeError("integer divide by zero"));
+		_tmp$1 = (_q$1 = newH / 2, (_q$1 === _q$1 && _q$1 !== 1/0 && _q$1 !== -1/0) ? _q$1 >> 0 : $throwRuntimeError("integer divide by zero"));
 		cx = _tmp;
 		cy = _tmp$1;
-		_tmp$2 = math.Cos(s.rotation);
-		_tmp$3 = math.Sin(s.rotation);
-		cos = _tmp$2;
-		sin = _tmp$3;
-		corners = new sliceType$3([$toNativeArray($kindFloat64, [0, 0]), $toNativeArray($kindFloat64, [w, 0]), $toNativeArray($kindFloat64, [0, h]), $toNativeArray($kindFloat64, [w, h])]);
-		_ref = corners;
-		_i = 0;
-		while (true) {
-			if (!(_i < _ref.$length)) { break; }
-			corner = $clone(((_i < 0 || _i >= _ref.$length) ? $throwRuntimeError("index out of range") : _ref.$array[_ref.$offset + _i]), arrayType);
-			nx = cx + (corner[0] - cx) * cos + (corner[1] - cy) * sin;
-			ny = cy - (corner[0] - cx) * sin + (corner[1] - cy) * cos;
-			corner[0] = nx;
-			corner[1] = ny;
-			_i++;
-		}
-		_tmp$4 = (0 >= corners.$length ? $throwRuntimeError("index out of range") : corners.$array[corners.$offset + 0])[0];
-		_tmp$5 = (0 >= corners.$length ? $throwRuntimeError("index out of range") : corners.$array[corners.$offset + 0])[0];
-		_tmp$6 = (0 >= corners.$length ? $throwRuntimeError("index out of range") : corners.$array[corners.$offset + 0])[1];
-		_tmp$7 = (0 >= corners.$length ? $throwRuntimeError("index out of range") : corners.$array[corners.$offset + 0])[1];
-		minX = _tmp$4;
-		maxX = _tmp$5;
-		minY = _tmp$6;
-		maxY = _tmp$7;
-		_ref$1 = $subslice(corners, 1);
-		_i$1 = 0;
-		while (true) {
-			if (!(_i$1 < _ref$1.$length)) { break; }
-			corner$1 = $clone(((_i$1 < 0 || _i$1 >= _ref$1.$length) ? $throwRuntimeError("index out of range") : _ref$1.$array[_ref$1.$offset + _i$1]), arrayType);
-			if (corner$1[0] < minX) {
-				minX = corner$1[0];
-			}
-			if (corner$1[0] > maxX) {
-				maxX = corner$1[0];
-			}
-			if (corner$1[1] < minY) {
-				minY = corner$1[1];
-			}
-			if (corner$1[1] > maxY) {
-				maxY = corner$1[1];
-			}
-			_i$1++;
-		}
-		return new Rect.ptr(0, 0, maxX - minX, maxY - minY);
+		ctx.translate(cx, cy);
+		ctx.rotate(-radians);
+		ctx.translate(-cx, -cy);
+		ctx.drawImage(s.canvas, 0, 0);
+		ctx.restore();
+		return newS;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: surface.ptr.prototype.Rotated }; } $f.$ptr = $ptr; $f._q = _q; $f._q$1 = _q$1; $f._r = _r; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tuple = _tuple; $f.ctx = ctx; $f.cx = cx; $f.cy = cy; $f.newH = newH; $f.newS = newS; $f.newW = newW; $f.radians = radians; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	surface.prototype.Rotated = function(radians) { return this.$val.Rotated(radians); };
+	surface.ptr.prototype.getRotatedSize = function(radians) {
+		var $ptr, _tmp, _tmp$1, _tmp$2, _tmp$3, _tmp$4, _tmp$5, _tmp$6, _tmp$7, cos, cx, cy, h, height, maxX, maxY, minX, minY, radians, s, sin, w, width, x1, x2, x3, x4, y1, y2, y3, y4;
+		w = 0;
+		h = 0;
+		s = this;
+		_tmp = s.Width();
+		_tmp$1 = s.Height();
+		width = _tmp;
+		height = _tmp$1;
+		_tmp$2 = width / 2;
+		_tmp$3 = height / 2;
+		cx = _tmp$2;
+		cy = _tmp$3;
+		_tmp$4 = math.Cos(radians);
+		_tmp$5 = math.Sin(radians);
+		cos = _tmp$4;
+		sin = _tmp$5;
+		x1 = cx + (0 - cx) * cos + (0 - cy) * sin;
+		y1 = cy - (0 - cx) * sin + (0 - cy) * cos;
+		x2 = cx + (width - cx) * cos + (0 - cy) * sin;
+		y2 = cy - (width - cx) * sin + (0 - cy) * cos;
+		x3 = cx + (0 - cx) * cos + (height - cy) * sin;
+		y3 = cy - (0 - cx) * sin + (height - cy) * cos;
+		x4 = cx + (width - cx) * cos + (height - cy) * sin;
+		y4 = cy - (width - cx) * sin + (height - cy) * cos;
+		maxX = math.Max(x1, math.Max(x2, math.Max(x3, x4)));
+		minX = math.Min(x1, math.Min(x2, math.Min(x3, x4)));
+		maxY = math.Max(y1, math.Max(y2, math.Max(y3, y4)));
+		minY = math.Min(y1, math.Min(y2, math.Min(y3, y4)));
+		_tmp$6 = (maxX - minX >> 0);
+		_tmp$7 = (maxY - minY >> 0);
+		w = _tmp$6;
+		h = _tmp$7;
+		return [w, h];
+	};
+	surface.prototype.getRotatedSize = function(radians) { return this.$val.getRotatedSize(radians); };
+	surface.ptr.prototype.GetRect = function() {
+		var $ptr, s;
+		s = this;
+		return new Rect.ptr(0, 0, s.Width(), s.Height());
 	};
 	surface.prototype.GetRect = function() { return this.$val.GetRect(); };
 	surface.ptr.prototype.DrawRect = function(r, style) {
@@ -18978,45 +18986,47 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: surface.ptr.prototype.DrawLines }; } $f.$ptr = $ptr; $f._i = _i; $f._r = _r; $f._ref = _ref; $f.p = p; $f.pointList = pointList; $f.s = s; $f.style = style; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	surface.prototype.DrawLines = function(pointList, style) { return this.$val.DrawLines(pointList, style); };
-	surface.ptr.prototype.DrawText = function(text, x, y, style) {
-		var $ptr, _r, s, style, text, x, y, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; s = $f.s; style = $f.style; text = $f.text; x = $f.x; y = $f.y; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+	surface.ptr.prototype.DrawText = function(text, x, y, font, style) {
+		var $ptr, _r, _r$1, font, s, style, text, x, y, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; font = $f.font; s = $f.s; style = $f.style; text = $f.text; x = $f.x; y = $f.y; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		s = this;
 		s.ctx.save();
-		$r = style.Style(s.ctx); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		_r = font.String(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		s.ctx.font = $externalize(_r, $String);
+		$r = style.Style(s.ctx); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		s.ctx.translate(math.Floor(x), math.Floor(y));
-		_r = fmt.Sprintf("%sText", new sliceType([new DrawType(style.DrawType())])); /* */ $s = 2; case 2: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		s.ctx[$externalize(_r, $String)]($externalize(text, $String), 0, 0);
+		_r$1 = fmt.Sprintf("%sText", new sliceType([new DrawType(style.DrawType())])); /* */ $s = 3; case 3: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		s.ctx[$externalize(_r$1, $String)]($externalize(text, $String), 0, 0);
 		s.ctx.restore();
-		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: surface.ptr.prototype.DrawText }; } $f.$ptr = $ptr; $f._r = _r; $f.s = s; $f.style = style; $f.text = text; $f.x = x; $f.y = y; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: surface.ptr.prototype.DrawText }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f.font = font; $f.s = s; $f.style = style; $f.text = text; $f.x = x; $f.y = y; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	surface.prototype.DrawText = function(text, x, y, style) { return this.$val.DrawText(text, x, y, style); };
-	ptrType$2.methods = [{prop: "Color", name: "Color", pkg: "", typ: $funcType([ptrType$1], [$emptyInterface], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$3.methods = [{prop: "Color", name: "Color", pkg: "", typ: $funcType([ptrType$1], [$emptyInterface], false)}];
-	ptrType$4.methods = [{prop: "Color", name: "Color", pkg: "", typ: $funcType([ptrType$1], [$emptyInterface], false)}];
-	ptrType$5.methods = [{prop: "Color", name: "Color", pkg: "", typ: $funcType([ptrType$1], [$emptyInterface], false)}];
-	ptrType.methods = [{prop: "SetMode", name: "SetMode", pkg: "", typ: $funcType([$Int, $Int], [], false)}];
-	ptrType$7.methods = [{prop: "Style", name: "Style", pkg: "", typ: $funcType([ptrType$1], [], false)}, {prop: "DrawType", name: "DrawType", pkg: "", typ: $funcType([], [DrawType], false)}, {prop: "Width", name: "Width", pkg: "", typ: $funcType([$String], [$Int], false)}];
-	ptrType$6.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$8.methods = [{prop: "Top", name: "Top", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetTop", name: "SetTop", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Bottom", name: "Bottom", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetBottom", name: "SetBottom", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Left", name: "Left", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetLeft", name: "SetLeft", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Right", name: "Right", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetRight", name: "SetRight", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Width", name: "Width", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetWidth", name: "SetWidth", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Height", name: "Height", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetHeight", name: "SetHeight", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Size", name: "Size", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetSize", name: "SetSize", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "TopLeft", name: "TopLeft", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetTopLeft", name: "SetTopLeft", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "BottomLeft", name: "BottomLeft", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetBottomLeft", name: "SetBottomLeft", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "TopRight", name: "TopRight", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetTopRight", name: "SetTopRight", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "BottomRight", name: "BottomRight", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetBottomRight", name: "SetBottomRight", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "MidTop", name: "MidTop", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetMidTop", name: "SetMidTop", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "MidBottom", name: "MidBottom", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetMidBottom", name: "SetMidBottom", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "MidLeft", name: "MidLeft", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetMidLeft", name: "SetMidLeft", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "MidRight", name: "MidRight", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetMidRight", name: "SetMidRight", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "Center", name: "Center", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetCenter", name: "SetCenter", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "CenterX", name: "CenterX", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetCenterX", name: "SetCenterX", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "CenterY", name: "CenterY", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetCenterY", name: "SetCenterY", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Copy", name: "Copy", pkg: "", typ: $funcType([], [Rect], false)}, {prop: "Move", name: "Move", pkg: "", typ: $funcType([$Float64, $Float64], [Rect], false)}, {prop: "MoveIP", name: "MoveIP", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "Inflate", name: "Inflate", pkg: "", typ: $funcType([$Float64, $Float64], [Rect], false)}, {prop: "InflateIP", name: "InflateIP", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "Clamp", name: "Clamp", pkg: "", typ: $funcType([ptrType$8], [Rect], false)}, {prop: "ClampIP", name: "ClampIP", pkg: "", typ: $funcType([ptrType$8], [], false)}, {prop: "Intersect", name: "Intersect", pkg: "", typ: $funcType([ptrType$8], [Rect], false)}, {prop: "Union", name: "Union", pkg: "", typ: $funcType([ptrType$8], [Rect], false)}, {prop: "UnionIP", name: "UnionIP", pkg: "", typ: $funcType([ptrType$8], [], false)}, {prop: "UnionAll", name: "UnionAll", pkg: "", typ: $funcType([sliceType$5], [Rect], false)}, {prop: "Fit", name: "Fit", pkg: "", typ: $funcType([ptrType$8], [Rect], false)}, {prop: "Normalize", name: "Normalize", pkg: "", typ: $funcType([], [], false)}, {prop: "Contains", name: "Contains", pkg: "", typ: $funcType([ptrType$8], [$Bool], false)}, {prop: "CollidePoint", name: "CollidePoint", pkg: "", typ: $funcType([$Float64, $Float64], [$Bool], false)}, {prop: "CollideRect", name: "CollideRect", pkg: "", typ: $funcType([ptrType$8], [$Bool], false)}, {prop: "CollideList", name: "CollideList", pkg: "", typ: $funcType([sliceType$5], [$Int], false)}, {prop: "CollideListAll", name: "CollideListAll", pkg: "", typ: $funcType([sliceType$5], [sliceType$1], false)}];
-	ptrType$9.methods = [{prop: "Style", name: "Style", pkg: "", typ: $funcType([ptrType$1], [], false)}, {prop: "DrawType", name: "DrawType", pkg: "", typ: $funcType([], [DrawType], false)}];
-	ptrType$10.methods = [{prop: "Style", name: "Style", pkg: "", typ: $funcType([ptrType$1], [], false)}, {prop: "DrawType", name: "DrawType", pkg: "", typ: $funcType([], [DrawType], false)}];
-	ptrType$11.methods = [{prop: "GetCanvas", name: "GetCanvas", pkg: "", typ: $funcType([], [ptrType$1], false)}, {prop: "Blit", name: "Blit", pkg: "", typ: $funcType([Surface, $Float64, $Float64], [], false)}, {prop: "BlitArea", name: "BlitArea", pkg: "", typ: $funcType([Surface, ptrType$8, $Float64, $Float64], [], false)}, {prop: "Fill", name: "Fill", pkg: "", typ: $funcType([ptrType$9], [], false)}, {prop: "Width", name: "Width", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Height", name: "Height", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Scale", name: "Scale", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetScale", name: "SetScale", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "Rotation", name: "Rotation", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetRotation", name: "SetRotation", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "GetRect", name: "GetRect", pkg: "", typ: $funcType([], [Rect], false)}, {prop: "DrawRect", name: "DrawRect", pkg: "", typ: $funcType([ptrType$8, Styler], [], false)}, {prop: "DrawCircle", name: "DrawCircle", pkg: "", typ: $funcType([$Float64, $Float64, $Float64, Styler], [], false)}, {prop: "DrawEllipse", name: "DrawEllipse", pkg: "", typ: $funcType([ptrType$8, Styler], [], false)}, {prop: "DrawArc", name: "DrawArc", pkg: "", typ: $funcType([ptrType$8, $Float64, $Float64, Styler], [], false)}, {prop: "DrawLine", name: "DrawLine", pkg: "", typ: $funcType([$Float64, $Float64, $Float64, $Float64, Styler], [], false)}, {prop: "DrawLines", name: "DrawLines", pkg: "", typ: $funcType([sliceType$3, Styler], [], false)}, {prop: "DrawText", name: "DrawText", pkg: "", typ: $funcType([$String, $Float64, $Float64, ptrType$7], [], false)}];
-	Colorer.init([{prop: "Color", name: "Color", pkg: "", typ: $funcType([ptrType$1], [$emptyInterface], false)}]);
+	surface.prototype.DrawText = function(text, x, y, font, style) { return this.$val.DrawText(text, x, y, font, style); };
+	Color.methods = [{prop: "Color", name: "Color", pkg: "", typ: $funcType([ptrType$2], [$emptyInterface], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$3.methods = [{prop: "Color", name: "Color", pkg: "", typ: $funcType([ptrType$2], [$emptyInterface], false)}];
+	ptrType$4.methods = [{prop: "Color", name: "Color", pkg: "", typ: $funcType([ptrType$2], [$emptyInterface], false)}];
+	ptrType$5.methods = [{prop: "Color", name: "Color", pkg: "", typ: $funcType([ptrType$2], [$emptyInterface], false)}];
+	ptrType.methods = [{prop: "SetMode", name: "SetMode", pkg: "", typ: $funcType([$Int, $Int], [], false)}, {prop: "Flip", name: "Flip", pkg: "", typ: $funcType([], [], false)}];
+	ptrType$6.methods = [{prop: "Style", name: "Style", pkg: "", typ: $funcType([ptrType$2], [], false)}, {prop: "DrawType", name: "DrawType", pkg: "", typ: $funcType([], [DrawType], false)}];
+	ptrType$7.methods = [{prop: "Width", name: "Width", pkg: "", typ: $funcType([$String, ptrType$6], [$Int], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$8.methods = [{prop: "Top", name: "Top", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetTop", name: "SetTop", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Bottom", name: "Bottom", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetBottom", name: "SetBottom", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Left", name: "Left", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetLeft", name: "SetLeft", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Right", name: "Right", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetRight", name: "SetRight", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Width", name: "Width", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetWidth", name: "SetWidth", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Height", name: "Height", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetHeight", name: "SetHeight", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Size", name: "Size", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetSize", name: "SetSize", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "TopLeft", name: "TopLeft", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetTopLeft", name: "SetTopLeft", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "BottomLeft", name: "BottomLeft", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetBottomLeft", name: "SetBottomLeft", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "TopRight", name: "TopRight", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetTopRight", name: "SetTopRight", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "BottomRight", name: "BottomRight", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetBottomRight", name: "SetBottomRight", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "MidTop", name: "MidTop", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetMidTop", name: "SetMidTop", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "MidBottom", name: "MidBottom", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetMidBottom", name: "SetMidBottom", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "MidLeft", name: "MidLeft", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetMidLeft", name: "SetMidLeft", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "MidRight", name: "MidRight", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetMidRight", name: "SetMidRight", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "Center", name: "Center", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetCenter", name: "SetCenter", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "CenterX", name: "CenterX", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetCenterX", name: "SetCenterX", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "CenterY", name: "CenterY", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "SetCenterY", name: "SetCenterY", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Copy", name: "Copy", pkg: "", typ: $funcType([], [Rect], false)}, {prop: "Move", name: "Move", pkg: "", typ: $funcType([$Float64, $Float64], [Rect], false)}, {prop: "MoveIP", name: "MoveIP", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "Inflate", name: "Inflate", pkg: "", typ: $funcType([$Float64, $Float64], [Rect], false)}, {prop: "InflateIP", name: "InflateIP", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "Clamp", name: "Clamp", pkg: "", typ: $funcType([ptrType$8], [Rect], false)}, {prop: "ClampIP", name: "ClampIP", pkg: "", typ: $funcType([ptrType$8], [], false)}, {prop: "Intersect", name: "Intersect", pkg: "", typ: $funcType([ptrType$8], [Rect], false)}, {prop: "Union", name: "Union", pkg: "", typ: $funcType([ptrType$8], [Rect], false)}, {prop: "UnionIP", name: "UnionIP", pkg: "", typ: $funcType([ptrType$8], [], false)}, {prop: "UnionAll", name: "UnionAll", pkg: "", typ: $funcType([sliceType$4], [Rect], false)}, {prop: "Fit", name: "Fit", pkg: "", typ: $funcType([ptrType$8], [Rect], false)}, {prop: "Normalize", name: "Normalize", pkg: "", typ: $funcType([], [], false)}, {prop: "Contains", name: "Contains", pkg: "", typ: $funcType([ptrType$8], [$Bool], false)}, {prop: "CollidePoint", name: "CollidePoint", pkg: "", typ: $funcType([$Float64, $Float64], [$Bool], false)}, {prop: "CollideRect", name: "CollideRect", pkg: "", typ: $funcType([ptrType$8], [$Bool], false)}, {prop: "CollideList", name: "CollideList", pkg: "", typ: $funcType([sliceType$4], [$Int], false)}, {prop: "CollideListAll", name: "CollideListAll", pkg: "", typ: $funcType([sliceType$4], [sliceType$1], false)}];
+	ptrType$9.methods = [{prop: "Style", name: "Style", pkg: "", typ: $funcType([ptrType$2], [], false)}, {prop: "DrawType", name: "DrawType", pkg: "", typ: $funcType([], [DrawType], false)}];
+	ptrType$10.methods = [{prop: "Style", name: "Style", pkg: "", typ: $funcType([ptrType$2], [], false)}, {prop: "DrawType", name: "DrawType", pkg: "", typ: $funcType([], [DrawType], false)}];
+	ptrType$1.methods = [{prop: "GetCanvas", name: "GetCanvas", pkg: "", typ: $funcType([], [ptrType$2], false)}, {prop: "Blit", name: "Blit", pkg: "", typ: $funcType([Surface, $Float64, $Float64], [], false)}, {prop: "BlitArea", name: "BlitArea", pkg: "", typ: $funcType([Surface, ptrType$8, $Float64, $Float64], [], false)}, {prop: "Fill", name: "Fill", pkg: "", typ: $funcType([ptrType$9], [], false)}, {prop: "Width", name: "Width", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Height", name: "Height", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Scaled", name: "Scaled", pkg: "", typ: $funcType([$Float64, $Float64], [Surface], false)}, {prop: "Rotated", name: "Rotated", pkg: "", typ: $funcType([$Float64], [Surface], false)}, {prop: "getRotatedSize", name: "getRotatedSize", pkg: "github.com/Bredgren/gogame", typ: $funcType([$Float64], [$Int, $Int], false)}, {prop: "GetRect", name: "GetRect", pkg: "", typ: $funcType([], [Rect], false)}, {prop: "DrawRect", name: "DrawRect", pkg: "", typ: $funcType([ptrType$8, Styler], [], false)}, {prop: "DrawCircle", name: "DrawCircle", pkg: "", typ: $funcType([$Float64, $Float64, $Float64, Styler], [], false)}, {prop: "DrawEllipse", name: "DrawEllipse", pkg: "", typ: $funcType([ptrType$8, Styler], [], false)}, {prop: "DrawArc", name: "DrawArc", pkg: "", typ: $funcType([ptrType$8, $Float64, $Float64, Styler], [], false)}, {prop: "DrawLine", name: "DrawLine", pkg: "", typ: $funcType([$Float64, $Float64, $Float64, $Float64, Styler], [], false)}, {prop: "DrawLines", name: "DrawLines", pkg: "", typ: $funcType([sliceType$5, Styler], [], false)}, {prop: "DrawText", name: "DrawText", pkg: "", typ: $funcType([$String, $Float64, $Float64, ptrType$7, ptrType$6], [], false)}];
+	Colorer.init([{prop: "Color", name: "Color", pkg: "", typ: $funcType([ptrType$2], [$emptyInterface], false)}]);
 	Color.init([{prop: "R", name: "R", pkg: "", typ: $Float64, tag: ""}, {prop: "G", name: "G", pkg: "", typ: $Float64, tag: ""}, {prop: "B", name: "B", pkg: "", typ: $Float64, tag: ""}, {prop: "A", name: "A", pkg: "", typ: $Float64, tag: ""}]);
-	ColorStop.init([{prop: "Position", name: "Position", pkg: "", typ: $Float64, tag: ""}, {prop: "Color", name: "", pkg: "", typ: ptrType$2, tag: ""}]);
-	LinearGradient.init([{prop: "X1", name: "X1", pkg: "", typ: $Float64, tag: ""}, {prop: "Y1", name: "Y1", pkg: "", typ: $Float64, tag: ""}, {prop: "X2", name: "X2", pkg: "", typ: $Float64, tag: ""}, {prop: "Y2", name: "Y2", pkg: "", typ: $Float64, tag: ""}, {prop: "ColorStops", name: "ColorStops", pkg: "", typ: sliceType$4, tag: ""}]);
-	RadialGradient.init([{prop: "X1", name: "X1", pkg: "", typ: $Float64, tag: ""}, {prop: "Y1", name: "Y1", pkg: "", typ: $Float64, tag: ""}, {prop: "R1", name: "R1", pkg: "", typ: $Float64, tag: ""}, {prop: "X2", name: "X2", pkg: "", typ: $Float64, tag: ""}, {prop: "Y2", name: "Y2", pkg: "", typ: $Float64, tag: ""}, {prop: "R2", name: "R2", pkg: "", typ: $Float64, tag: ""}, {prop: "ColorStops", name: "ColorStops", pkg: "", typ: sliceType$4, tag: ""}]);
+	ColorStop.init([{prop: "Position", name: "Position", pkg: "", typ: $Float64, tag: ""}, {prop: "Color", name: "", pkg: "", typ: Color, tag: ""}]);
+	LinearGradient.init([{prop: "X1", name: "X1", pkg: "", typ: $Float64, tag: ""}, {prop: "Y1", name: "Y1", pkg: "", typ: $Float64, tag: ""}, {prop: "X2", name: "X2", pkg: "", typ: $Float64, tag: ""}, {prop: "Y2", name: "Y2", pkg: "", typ: $Float64, tag: ""}, {prop: "ColorStops", name: "ColorStops", pkg: "", typ: sliceType$3, tag: ""}]);
+	RadialGradient.init([{prop: "X1", name: "X1", pkg: "", typ: $Float64, tag: ""}, {prop: "Y1", name: "Y1", pkg: "", typ: $Float64, tag: ""}, {prop: "R1", name: "R1", pkg: "", typ: $Float64, tag: ""}, {prop: "X2", name: "X2", pkg: "", typ: $Float64, tag: ""}, {prop: "Y2", name: "Y2", pkg: "", typ: $Float64, tag: ""}, {prop: "R2", name: "R2", pkg: "", typ: $Float64, tag: ""}, {prop: "ColorStops", name: "ColorStops", pkg: "", typ: sliceType$3, tag: ""}]);
 	Pattern.init([{prop: "Source", name: "Source", pkg: "", typ: Surface, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: RepeatType, tag: ""}]);
-	Display.init([{prop: "surface", name: "", pkg: "github.com/Bredgren/gogame", typ: surface, tag: ""}]);
-	FontStyler.init([{prop: "Font", name: "Font", pkg: "", typ: ptrType$6, tag: ""}, {prop: "Colorer", name: "", pkg: "", typ: Colorer, tag: ""}, {prop: "LineWidth", name: "LineWidth", pkg: "", typ: $Float64, tag: ""}, {prop: "Filled", name: "Filled", pkg: "", typ: $Bool, tag: ""}, {prop: "TextAlign", name: "TextAlign", pkg: "", typ: TextAlign, tag: ""}, {prop: "TextBaseline", name: "TextBaseline", pkg: "", typ: TextBaseline, tag: ""}, {prop: "Direction", name: "Direction", pkg: "", typ: TextDirection, tag: ""}]);
-	Font.init([{prop: "Size", name: "Size", pkg: "", typ: $Int, tag: ""}, {prop: "LineHeight", name: "LineHeight", pkg: "", typ: $Int, tag: ""}, {prop: "Family", name: "Family", pkg: "", typ: FontFamily, tag: ""}, {prop: "Style", name: "Style", pkg: "", typ: FontStyle, tag: ""}, {prop: "Variant", name: "Variant", pkg: "", typ: FontVariant, tag: ""}, {prop: "Weight", name: "Weight", pkg: "", typ: FontWeight, tag: ""}]);
+	Display.init([{prop: "surface", name: "", pkg: "github.com/Bredgren/gogame", typ: surface, tag: ""}, {prop: "frontSurface", name: "frontSurface", pkg: "github.com/Bredgren/gogame", typ: Surface, tag: ""}]);
+	TextStyle.init([{prop: "Colorer", name: "", pkg: "", typ: Colorer, tag: ""}, {prop: "LineWidth", name: "LineWidth", pkg: "", typ: $Float64, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: DrawType, tag: ""}, {prop: "TextAlign", name: "TextAlign", pkg: "", typ: TextAlign, tag: ""}, {prop: "TextBaseline", name: "TextBaseline", pkg: "", typ: TextBaseline, tag: ""}, {prop: "Direction", name: "Direction", pkg: "", typ: TextDirection, tag: ""}]);
+	Font.init([{prop: "Size", name: "Size", pkg: "", typ: $Int, tag: ""}, {prop: "Family", name: "Family", pkg: "", typ: FontFamily, tag: ""}, {prop: "Style", name: "Style", pkg: "", typ: FontStyle, tag: ""}, {prop: "Variant", name: "Variant", pkg: "", typ: FontVariant, tag: ""}, {prop: "Weight", name: "Weight", pkg: "", typ: FontWeight, tag: ""}]);
 	Rect.init([{prop: "X", name: "X", pkg: "", typ: $Float64, tag: ""}, {prop: "Y", name: "Y", pkg: "", typ: $Float64, tag: ""}, {prop: "W", name: "W", pkg: "", typ: $Float64, tag: ""}, {prop: "H", name: "H", pkg: "", typ: $Float64, tag: ""}]);
-	Styler.init([{prop: "DrawType", name: "DrawType", pkg: "", typ: $funcType([], [DrawType], false)}, {prop: "Style", name: "Style", pkg: "", typ: $funcType([ptrType$1], [], false)}]);
+	Styler.init([{prop: "DrawType", name: "DrawType", pkg: "", typ: $funcType([], [DrawType], false)}, {prop: "Style", name: "Style", pkg: "", typ: $funcType([ptrType$2], [], false)}]);
 	FillStyle.init([{prop: "Colorer", name: "", pkg: "", typ: Colorer, tag: ""}]);
 	StrokeStyle.init([{prop: "Colorer", name: "", pkg: "", typ: Colorer, tag: ""}, {prop: "Width", name: "Width", pkg: "", typ: $Float64, tag: ""}, {prop: "Cap", name: "Cap", pkg: "", typ: LineCap, tag: ""}, {prop: "Join", name: "Join", pkg: "", typ: LineJoin, tag: ""}, {prop: "MiterLimit", name: "MiterLimit", pkg: "", typ: $Float64, tag: ""}, {prop: "Dash", name: "Dash", pkg: "", typ: sliceType$2, tag: ""}, {prop: "DashOffset", name: "DashOffset", pkg: "", typ: $Float64, tag: ""}]);
-	Surface.init([{prop: "Blit", name: "Blit", pkg: "", typ: $funcType([Surface, $Float64, $Float64], [], false)}, {prop: "BlitArea", name: "BlitArea", pkg: "", typ: $funcType([Surface, ptrType$8, $Float64, $Float64], [], false)}, {prop: "DrawArc", name: "DrawArc", pkg: "", typ: $funcType([ptrType$8, $Float64, $Float64, Styler], [], false)}, {prop: "DrawCircle", name: "DrawCircle", pkg: "", typ: $funcType([$Float64, $Float64, $Float64, Styler], [], false)}, {prop: "DrawEllipse", name: "DrawEllipse", pkg: "", typ: $funcType([ptrType$8, Styler], [], false)}, {prop: "DrawLine", name: "DrawLine", pkg: "", typ: $funcType([$Float64, $Float64, $Float64, $Float64, Styler], [], false)}, {prop: "DrawLines", name: "DrawLines", pkg: "", typ: $funcType([sliceType$3, Styler], [], false)}, {prop: "DrawRect", name: "DrawRect", pkg: "", typ: $funcType([ptrType$8, Styler], [], false)}, {prop: "DrawText", name: "DrawText", pkg: "", typ: $funcType([$String, $Float64, $Float64, ptrType$7], [], false)}, {prop: "Fill", name: "Fill", pkg: "", typ: $funcType([ptrType$9], [], false)}, {prop: "GetCanvas", name: "GetCanvas", pkg: "", typ: $funcType([], [ptrType$1], false)}, {prop: "GetRect", name: "GetRect", pkg: "", typ: $funcType([], [Rect], false)}, {prop: "Height", name: "Height", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Rotation", name: "Rotation", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "Scale", name: "Scale", pkg: "", typ: $funcType([], [$Float64, $Float64], false)}, {prop: "SetRotation", name: "SetRotation", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "SetScale", name: "SetScale", pkg: "", typ: $funcType([$Float64, $Float64], [], false)}, {prop: "Width", name: "Width", pkg: "", typ: $funcType([], [$Int], false)}]);
-	surface.init([{prop: "canvas", name: "canvas", pkg: "github.com/Bredgren/gogame", typ: ptrType$1, tag: ""}, {prop: "ctx", name: "ctx", pkg: "github.com/Bredgren/gogame", typ: ptrType$1, tag: ""}, {prop: "rotation", name: "rotation", pkg: "github.com/Bredgren/gogame", typ: $Float64, tag: ""}, {prop: "scaleX", name: "scaleX", pkg: "github.com/Bredgren/gogame", typ: $Float64, tag: ""}, {prop: "scaleY", name: "scaleY", pkg: "github.com/Bredgren/gogame", typ: $Float64, tag: ""}]);
+	Surface.init([{prop: "Blit", name: "Blit", pkg: "", typ: $funcType([Surface, $Float64, $Float64], [], false)}, {prop: "BlitArea", name: "BlitArea", pkg: "", typ: $funcType([Surface, ptrType$8, $Float64, $Float64], [], false)}, {prop: "DrawArc", name: "DrawArc", pkg: "", typ: $funcType([ptrType$8, $Float64, $Float64, Styler], [], false)}, {prop: "DrawCircle", name: "DrawCircle", pkg: "", typ: $funcType([$Float64, $Float64, $Float64, Styler], [], false)}, {prop: "DrawEllipse", name: "DrawEllipse", pkg: "", typ: $funcType([ptrType$8, Styler], [], false)}, {prop: "DrawLine", name: "DrawLine", pkg: "", typ: $funcType([$Float64, $Float64, $Float64, $Float64, Styler], [], false)}, {prop: "DrawLines", name: "DrawLines", pkg: "", typ: $funcType([sliceType$5, Styler], [], false)}, {prop: "DrawRect", name: "DrawRect", pkg: "", typ: $funcType([ptrType$8, Styler], [], false)}, {prop: "DrawText", name: "DrawText", pkg: "", typ: $funcType([$String, $Float64, $Float64, ptrType$7, ptrType$6], [], false)}, {prop: "Fill", name: "Fill", pkg: "", typ: $funcType([ptrType$9], [], false)}, {prop: "GetCanvas", name: "GetCanvas", pkg: "", typ: $funcType([], [ptrType$2], false)}, {prop: "GetRect", name: "GetRect", pkg: "", typ: $funcType([], [Rect], false)}, {prop: "Height", name: "Height", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Rotated", name: "Rotated", pkg: "", typ: $funcType([$Float64], [Surface], false)}, {prop: "Scaled", name: "Scaled", pkg: "", typ: $funcType([$Float64, $Float64], [Surface], false)}, {prop: "Width", name: "Width", pkg: "", typ: $funcType([], [$Int], false)}]);
+	surface.init([{prop: "canvas", name: "canvas", pkg: "github.com/Bredgren/gogame", typ: ptrType$2, tag: ""}, {prop: "ctx", name: "ctx", pkg: "github.com/Bredgren/gogame", typ: ptrType$2, tag: ""}]);
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -19026,6 +19036,8 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		$r = log.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = math.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		display = ptrType.nil;
+		$pkg.Transparent = new Color.ptr(0, 0, 0, 0);
+		$pkg.DefaultColor = new $pkg.Transparent.constructor.elem($pkg.Transparent);
 		$pkg.Black = new Color.ptr(0, 0, 0, 1);
 		$pkg.White = new Color.ptr(1, 1, 1, 1);
 		$pkg.Red = new Color.ptr(1, 0, 0, 1);
@@ -19039,7 +19051,7 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/Bredgren/gogame/test"] = (function() {
-	var $pkg = {}, $init, fmt, gogame, jquery, math, result, sliceType, sliceType$1, sliceType$2, ptrType, arrayType, sliceType$3, ptrType$1, ptrType$2, sliceType$4, sliceType$5, ptrType$3, sliceType$6, structType, sliceType$7, structType$1, sliceType$8, jq, resultList, main, appendResultSection, testCanvas, testRect, testRectInflate, testRectInflateIP, testRectClamp, testRectClampIP, testRectIntersect, testRectUnion, testRectUnionIP, testRectUnionAll, testRectFit, testRectNormalize, testRectContains, testRectCollidePoint;
+	var $pkg = {}, $init, fmt, gogame, jquery, math, result, sliceType, sliceType$1, sliceType$2, arrayType, sliceType$3, ptrType, sliceType$4, sliceType$5, ptrType$1, sliceType$6, structType, sliceType$7, structType$1, sliceType$8, structType$2, sliceType$9, jq, resultList, main, appendResultSection, testCanvas, testRect, testRectInflate, testRectInflateIP, testRectClamp, testRectClampIP, testRectIntersect, testRectUnion, testRectUnionIP, testRectUnionAll, testRectFit, testRectNormalize, testRectContains, testRectCollidePoint, testRectCollideRect;
 	fmt = $packages["fmt"];
 	gogame = $packages["github.com/Bredgren/gogame"];
 	jquery = $packages["github.com/gopherjs/jquery"];
@@ -19057,19 +19069,19 @@ $packages["github.com/Bredgren/gogame/test"] = (function() {
 	sliceType = $sliceType($emptyInterface);
 	sliceType$1 = $sliceType($Float64);
 	sliceType$2 = $sliceType(gogame.ColorStop);
-	ptrType = $ptrType(gogame.Color);
 	arrayType = $arrayType($Float64, 2);
 	sliceType$3 = $sliceType(arrayType);
-	ptrType$1 = $ptrType(gogame.Font);
-	ptrType$2 = $ptrType(result);
-	sliceType$4 = $sliceType(ptrType$2);
+	ptrType = $ptrType(result);
+	sliceType$4 = $sliceType(ptrType);
 	sliceType$5 = $sliceType($String);
-	ptrType$3 = $ptrType(gogame.Rect);
-	sliceType$6 = $sliceType(ptrType$3);
-	structType = $structType([{prop: "r1", name: "r1", pkg: "github.com/Bredgren/gogame/test", typ: ptrType$3, tag: ""}, {prop: "r2", name: "r2", pkg: "github.com/Bredgren/gogame/test", typ: ptrType$3, tag: ""}, {prop: "want", name: "want", pkg: "github.com/Bredgren/gogame/test", typ: ptrType$3, tag: ""}]);
+	ptrType$1 = $ptrType(gogame.Rect);
+	sliceType$6 = $sliceType(ptrType$1);
+	structType = $structType([{prop: "r1", name: "r1", pkg: "github.com/Bredgren/gogame/test", typ: ptrType$1, tag: ""}, {prop: "r2", name: "r2", pkg: "github.com/Bredgren/gogame/test", typ: ptrType$1, tag: ""}, {prop: "want", name: "want", pkg: "github.com/Bredgren/gogame/test", typ: ptrType$1, tag: ""}]);
 	sliceType$7 = $sliceType(structType);
 	structType$1 = $structType([{prop: "x", name: "x", pkg: "github.com/Bredgren/gogame/test", typ: $Float64, tag: ""}, {prop: "y", name: "y", pkg: "github.com/Bredgren/gogame/test", typ: $Float64, tag: ""}, {prop: "want", name: "want", pkg: "github.com/Bredgren/gogame/test", typ: $Bool, tag: ""}]);
 	sliceType$8 = $sliceType(structType$1);
+	structType$2 = $structType([{prop: "r", name: "r", pkg: "github.com/Bredgren/gogame/test", typ: gogame.Rect, tag: ""}, {prop: "want", name: "want", pkg: "github.com/Bredgren/gogame/test", typ: $Bool, tag: ""}]);
+	sliceType$9 = $sliceType(structType$2);
 	main = function() {
 		var $ptr, _r, _r$1, ready, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; ready = $f.ready; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -19146,8 +19158,8 @@ $packages["github.com/Bredgren/gogame/test"] = (function() {
 		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: appendResultSection }; } $f.$ptr = $ptr; $f._i = _i; $f._i$1 = _i$1; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$17 = _r$17; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._ref = _ref; $f._ref$1 = _ref$1; $f.e = e; $f.errors = errors; $f.res = res; $f.result$1 = result$1; $f.results = results; $f.section = section; $f.sectionName = sectionName; $f.sectionRes = sectionRes; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	testCanvas = function() {
-		var $ptr, _r, _r$1, _tmp, _tmp$1, display, font, height, pattern, s, w, width, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; display = $f.display; font = $f.font; height = $f.height; pattern = $f.pattern; s = $f.s; w = $f.w; width = $f.width; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var $ptr, _r, _r$1, _tmp, _tmp$1, display, font, height, pattern, s, w, width, x, x$1, x$10, x$11, x$12, x$13, x$2, x$3, x$4, x$5, x$6, x$7, x$8, x$9, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; display = $f.display; font = $f.font; height = $f.height; pattern = $f.pattern; s = $f.s; w = $f.w; width = $f.width; x = $f.x; x$1 = $f.x$1; x$10 = $f.x$10; x$11 = $f.x$11; x$12 = $f.x$12; x$13 = $f.x$13; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; x$5 = $f.x$5; x$6 = $f.x$6; x$7 = $f.x$7; x$8 = $f.x$8; x$9 = $f.x$9; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		font = [font];
 		pattern = [pattern];
 		_tmp = 900;
@@ -19155,40 +19167,40 @@ $packages["github.com/Bredgren/gogame/test"] = (function() {
 		width = _tmp;
 		height = _tmp$1;
 		display = gogame.GetDisplay();
-		display.SetMode(width, height);
-		$r = display.surface.Fill(new gogame.FillStyle.ptr(gogame.Black)); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawRect(new gogame.Rect.ptr(11, 11, 48, 48), new gogame.StrokeStyle.ptr(gogame.White, 4, "", "", 0, sliceType$1.nil, 0)); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawRect(new gogame.Rect.ptr(70, 10, 50, 50), new gogame.FillStyle.ptr(new gogame.LinearGradient.ptr(0, 0, 50, 50, new sliceType$2([new gogame.ColorStop.ptr(0, gogame.Red), new gogame.ColorStop.ptr(1, gogame.Blue)])))); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawRect(new gogame.Rect.ptr(130, 10, 50, 50), new gogame.FillStyle.ptr(new gogame.RadialGradient.ptr(25, 25, 40, 12, 12, 1, new sliceType$2([new gogame.ColorStop.ptr(0, gogame.Blue), new gogame.ColorStop.ptr(1, gogame.Green)])))); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		_r = gogame.NewSurface(10, 10); /* */ $s = 5; case 5: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		$r = display.SetMode(width, height); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.Fill(new gogame.FillStyle.ptr((x = gogame.Black, new x.constructor.elem(x)))); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawRect(new gogame.Rect.ptr(11, 11, 48, 48), new gogame.StrokeStyle.ptr((x$1 = gogame.White, new x$1.constructor.elem(x$1)), 4, "", "", 0, sliceType$1.nil, 0)); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawRect(new gogame.Rect.ptr(70, 10, 50, 50), new gogame.FillStyle.ptr(new gogame.LinearGradient.ptr(0, 0, 50, 50, new sliceType$2([new gogame.ColorStop.ptr(0, $clone(gogame.Red, gogame.Color)), new gogame.ColorStop.ptr(1, $clone(gogame.Blue, gogame.Color))])))); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawRect(new gogame.Rect.ptr(130, 10, 50, 50), new gogame.FillStyle.ptr(new gogame.RadialGradient.ptr(25, 25, 40, 12, 12, 1, new sliceType$2([new gogame.ColorStop.ptr(0, $clone(gogame.Blue, gogame.Color)), new gogame.ColorStop.ptr(1, $clone(gogame.Green, gogame.Color))])))); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		_r = gogame.NewSurface(10, 10); /* */ $s = 6; case 6: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		s = _r;
-		$r = s.DrawRect(new gogame.Rect.ptr(0, 0, 10, 10), new gogame.FillStyle.ptr(new gogame.LinearGradient.ptr(0, 10, 10, 0, new sliceType$2([new gogame.ColorStop.ptr(0, gogame.Red), new gogame.ColorStop.ptr(1, gogame.Green)])))); /* */ $s = 6; case 6: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = s.DrawRect(new gogame.Rect.ptr(0, 0, 10, 10), new gogame.FillStyle.ptr(new gogame.LinearGradient.ptr(0, 10, 10, 0, new sliceType$2([new gogame.ColorStop.ptr(0, $clone(gogame.Red, gogame.Color)), new gogame.ColorStop.ptr(1, $clone(gogame.Green, gogame.Color))])))); /* */ $s = 7; case 7: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		pattern[0] = new gogame.Pattern.ptr(s, "repeat");
-		$r = display.surface.DrawRect(new gogame.Rect.ptr(190, 10, 50, 50), new gogame.FillStyle.ptr(pattern[0])); /* */ $s = 7; case 7: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.Blit(s, 30, 30); /* */ $s = 8; case 8: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawCircle(35, 95, 20, new gogame.StrokeStyle.ptr(pattern[0], 10, "", "", 0, sliceType$1.nil, 0)); /* */ $s = 9; case 9: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawEllipse(new gogame.Rect.ptr(70, 70, 110, 50), new gogame.StrokeStyle.ptr(gogame.White, 2, "", "", 0, sliceType$1.nil, 0)); /* */ $s = 10; case 10: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawArc(new gogame.Rect.ptr(190, 70, 110, 50), 0, 2.356194490192345, new gogame.StrokeStyle.ptr(new gogame.Color.ptr(1, 1, 0, 1), 2, "", "", 0, sliceType$1.nil, 0)); /* */ $s = 11; case 11: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawLine(10, 130, 60, 180, new gogame.StrokeStyle.ptr(gogame.White, 2, "", "", 0, sliceType$1.nil, 0)); /* */ $s = 12; case 12: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawLine(70, 130, 70, 180, new gogame.StrokeStyle.ptr(gogame.White, 1, "round", "", 0, sliceType$1.nil, 0)); /* */ $s = 13; case 13: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawLine(75.5, 130, 75.5, 180, new gogame.StrokeStyle.ptr(gogame.White, 1, "square", "", 0, sliceType$1.nil, 0)); /* */ $s = 14; case 14: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawLine(80, 130, 80, 180, new gogame.StrokeStyle.ptr(gogame.White, 2, "round", "", 0, sliceType$1.nil, 0)); /* */ $s = 15; case 15: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawLine(85.5, 130, 85.5, 180, new gogame.StrokeStyle.ptr(gogame.White, 2, "square", "", 0, sliceType$1.nil, 0)); /* */ $s = 16; case 16: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawLine(100, 130, 200, 130, new gogame.StrokeStyle.ptr(gogame.White, 2, "", "", 0, new sliceType$1([5, 1, 4, 2, 3, 3, 2, 4, 1, 5]), 0)); /* */ $s = 17; case 17: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawLines(new sliceType$3([$toNativeArray($kindFloat64, [210, 130]), $toNativeArray($kindFloat64, [260, 130]), $toNativeArray($kindFloat64, [210, 180])]), new gogame.StrokeStyle.ptr(gogame.White, 6, "round", "round", 0, sliceType$1.nil, 0)); /* */ $s = 18; case 18: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawLines(new sliceType$3([$toNativeArray($kindFloat64, [270, 130]), $toNativeArray($kindFloat64, [320, 130]), $toNativeArray($kindFloat64, [270, 180])]), new gogame.StrokeStyle.ptr(gogame.White, 6, "square", "miter", 0, sliceType$1.nil, 0)); /* */ $s = 19; case 19: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawLines(new sliceType$3([$toNativeArray($kindFloat64, [330, 130]), $toNativeArray($kindFloat64, [380, 130]), $toNativeArray($kindFloat64, [330, 180])]), new gogame.StrokeStyle.ptr(gogame.White, 6, "butt", "bevel", 0, sliceType$1.nil, 0)); /* */ $s = 20; case 20: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = display.surface.DrawLines(new sliceType$3([$toNativeArray($kindFloat64, [390, 130]), $toNativeArray($kindFloat64, [440, 130]), $toNativeArray($kindFloat64, [390, 180])]), new gogame.FillStyle.ptr(gogame.White)); /* */ $s = 21; case 21: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		font[0] = new gogame.Font.ptr(50, 0, "", "", "", "");
-		$r = display.surface.DrawText("Hello", 10, 190, new gogame.FontStyler.ptr(font[0], gogame.White, 2, false, "", "hanging", "")); /* */ $s = 22; case 22: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		_r$1 = (new gogame.FontStyler.ptr(font[0], gogame.White, 0, false, "", "", "")).Width("Hello"); /* */ $s = 23; case 23: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		$r = display.surface.DrawRect(new gogame.Rect.ptr(190, 10, 50, 50), new gogame.FillStyle.ptr(pattern[0])); /* */ $s = 8; case 8: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.Blit(s, 30, 30); /* */ $s = 9; case 9: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawCircle(35, 95, 20, new gogame.StrokeStyle.ptr(pattern[0], 10, "", "", 0, sliceType$1.nil, 0)); /* */ $s = 10; case 10: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawEllipse(new gogame.Rect.ptr(70, 70, 110, 50), new gogame.StrokeStyle.ptr((x$2 = gogame.White, new x$2.constructor.elem(x$2)), 2, "", "", 0, sliceType$1.nil, 0)); /* */ $s = 11; case 11: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawArc(new gogame.Rect.ptr(190, 70, 110, 50), 0, 2.356194490192345, new gogame.StrokeStyle.ptr(new gogame.Color.ptr(1, 1, 0, 1), 2, "", "", 0, sliceType$1.nil, 0)); /* */ $s = 12; case 12: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawLine(10, 130, 60, 180, new gogame.StrokeStyle.ptr((x$3 = gogame.White, new x$3.constructor.elem(x$3)), 2, "", "", 0, sliceType$1.nil, 0)); /* */ $s = 13; case 13: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawLine(70, 130, 70, 180, new gogame.StrokeStyle.ptr((x$4 = gogame.White, new x$4.constructor.elem(x$4)), 1, "round", "", 0, sliceType$1.nil, 0)); /* */ $s = 14; case 14: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawLine(75.5, 130, 75.5, 180, new gogame.StrokeStyle.ptr((x$5 = gogame.White, new x$5.constructor.elem(x$5)), 1, "square", "", 0, sliceType$1.nil, 0)); /* */ $s = 15; case 15: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawLine(80, 130, 80, 180, new gogame.StrokeStyle.ptr((x$6 = gogame.White, new x$6.constructor.elem(x$6)), 2, "round", "", 0, sliceType$1.nil, 0)); /* */ $s = 16; case 16: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawLine(85.5, 130, 85.5, 180, new gogame.StrokeStyle.ptr((x$7 = gogame.White, new x$7.constructor.elem(x$7)), 2, "square", "", 0, sliceType$1.nil, 0)); /* */ $s = 17; case 17: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawLine(100, 130, 200, 130, new gogame.StrokeStyle.ptr((x$8 = gogame.White, new x$8.constructor.elem(x$8)), 2, "", "", 0, new sliceType$1([5, 1, 4, 2, 3, 3, 2, 4, 1, 5]), 0)); /* */ $s = 18; case 18: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawLines(new sliceType$3([$toNativeArray($kindFloat64, [210, 130]), $toNativeArray($kindFloat64, [260, 130]), $toNativeArray($kindFloat64, [210, 180])]), new gogame.StrokeStyle.ptr((x$9 = gogame.White, new x$9.constructor.elem(x$9)), 6, "round", "round", 0, sliceType$1.nil, 0)); /* */ $s = 19; case 19: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawLines(new sliceType$3([$toNativeArray($kindFloat64, [270, 130]), $toNativeArray($kindFloat64, [320, 130]), $toNativeArray($kindFloat64, [270, 180])]), new gogame.StrokeStyle.ptr((x$10 = gogame.White, new x$10.constructor.elem(x$10)), 6, "square", "miter", 0, sliceType$1.nil, 0)); /* */ $s = 20; case 20: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawLines(new sliceType$3([$toNativeArray($kindFloat64, [330, 130]), $toNativeArray($kindFloat64, [380, 130]), $toNativeArray($kindFloat64, [330, 180])]), new gogame.StrokeStyle.ptr((x$11 = gogame.White, new x$11.constructor.elem(x$11)), 6, "butt", "bevel", 0, sliceType$1.nil, 0)); /* */ $s = 21; case 21: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.surface.DrawLines(new sliceType$3([$toNativeArray($kindFloat64, [390, 130]), $toNativeArray($kindFloat64, [440, 130]), $toNativeArray($kindFloat64, [390, 180])]), new gogame.FillStyle.ptr((x$12 = gogame.White, new x$12.constructor.elem(x$12)))); /* */ $s = 22; case 22: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		font[0] = new gogame.Font.ptr(50, "", "", "", "");
+		$r = display.surface.DrawText("Hello", 10, 190, font[0], new gogame.TextStyle.ptr((x$13 = gogame.White, new x$13.constructor.elem(x$13)), 2, "stroke", "", "hanging", "")); /* */ $s = 23; case 23: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		_r$1 = font[0].Width("Hello", new gogame.TextStyle.ptr($ifaceNil, 0, "", "", "", "")); /* */ $s = 24; case 24: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		w = _r$1;
-		$r = display.surface.DrawText("World!", (10 + w >> 0), 200, new gogame.FontStyler.ptr(font[0], new gogame.LinearGradient.ptr(0, 0, w, 0, new sliceType$2([new gogame.ColorStop.ptr(0, gogame.Blue), new gogame.ColorStop.ptr(1, gogame.Green)])), 0, true, "", "middle", "")); /* */ $s = 24; case 24: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: testCanvas }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f.display = display; $f.font = font; $f.height = height; $f.pattern = pattern; $f.s = s; $f.w = w; $f.width = width; $f.$s = $s; $f.$r = $r; return $f;
+		$r = display.surface.DrawText("World!", (10 + w >> 0), 200, font[0], new gogame.TextStyle.ptr(new gogame.LinearGradient.ptr(0, 0, w, 0, new sliceType$2([new gogame.ColorStop.ptr(0, $clone(gogame.Blue, gogame.Color)), new gogame.ColorStop.ptr(1, $clone(gogame.Green, gogame.Color))])), 0, "fill", "", "middle", "")); /* */ $s = 25; case 25: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: testCanvas }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f.display = display; $f.font = font; $f.height = height; $f.pattern = pattern; $f.s = s; $f.w = w; $f.width = width; $f.x = x; $f.x$1 = x$1; $f.x$10 = x$10; $f.x$11 = x$11; $f.x$12 = x$12; $f.x$13 = x$13; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.x$8 = x$8; $f.x$9 = x$9; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	testRect = function() {
-		var $ptr, _r, _r$1, _r$10, _r$11, _r$2, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, results, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; results = $f.results; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var $ptr, _r, _r$1, _r$10, _r$11, _r$12, _r$2, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, results, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; results = $f.results; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		results = sliceType$4.nil;
 		_r = testRectInflate(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		results = $append(results, _r);
@@ -19214,8 +19226,10 @@ $packages["github.com/Bredgren/gogame/test"] = (function() {
 		results = $append(results, _r$10);
 		_r$11 = testRectCollidePoint(); /* */ $s = 12; case 12: if($c) { $c = false; _r$11 = _r$11.$blk(); } if (_r$11 && _r$11.$blk !== undefined) { break s; }
 		results = $append(results, _r$11);
-		$r = appendResultSection("Rect", results); /* */ $s = 13; case 13: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: testRect }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f.results = results; $f.$s = $s; $f.$r = $r; return $f;
+		_r$12 = testRectCollideRect(); /* */ $s = 13; case 13: if($c) { $c = false; _r$12 = _r$12.$blk(); } if (_r$12 && _r$12.$blk !== undefined) { break s; }
+		results = $append(results, _r$12);
+		$r = appendResultSection("Rect", results); /* */ $s = 14; case 14: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: testRect }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f.results = results; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	testRectInflate = function() {
 		var $ptr, _r, rect, rect2, res, want, $s, $r;
@@ -19579,6 +19593,31 @@ $packages["github.com/Bredgren/gogame/test"] = (function() {
 		/* } */ $s = 1; continue; case 2:
 		return res[0];
 		/* */ } return; } if ($f === undefined) { $f = { $blk: testRectCollidePoint }; } $f.$ptr = $ptr; $f._i = _i; $f._r = _r; $f._ref = _ref; $f.c = c; $f.cases = cases; $f.got = got; $f.i = i; $f.rect = rect; $f.res = res; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	testRectCollideRect = function() {
+		var $ptr, _i, _r, _ref, c, cases, got, i, rect, res, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _i = $f._i; _r = $f._r; _ref = $f._ref; c = $f.c; cases = $f.cases; got = $f.got; i = $f.i; rect = $f.rect; res = $f.res; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		res = [res];
+		res[0] = new result.ptr("CollideRect", new sliceType$5([]));
+		rect = new gogame.Rect.ptr(1, 1, 5, 5);
+		cases = new sliceType$9([new structType$2.ptr(new gogame.Rect.ptr(0, 0, 7, 1), false), new structType$2.ptr(new gogame.Rect.ptr(0, 0, 1, 7), false), new structType$2.ptr(new gogame.Rect.ptr(6, 0, 2, 7), false), new structType$2.ptr(new gogame.Rect.ptr(0, 6, 7, 2), false), new structType$2.ptr(new gogame.Rect.ptr(0, 0, 2, 2), true), new structType$2.ptr(new gogame.Rect.ptr(5, 5, 2, 2), true)]);
+		_ref = cases;
+		_i = 0;
+		/* while (true) { */ case 1:
+			/* if (!(_i < _ref.$length)) { break; } */ if(!(_i < _ref.$length)) { $s = 2; continue; }
+			i = _i;
+			c = $clone(((_i < 0 || _i >= _ref.$length) ? $throwRuntimeError("index out of range") : _ref.$array[_ref.$offset + _i]), structType$2);
+			got = rect.CollideRect(c.r);
+			/* */ if (!(got === c.want)) { $s = 3; continue; }
+			/* */ $s = 4; continue;
+			/* if (!(got === c.want)) { */ case 3:
+				_r = fmt.Sprintf("%d: got: %#v, want: %#v", new sliceType([new $Int(i), new $Bool(got), new $Bool(c.want)])); /* */ $s = 5; case 5: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+				res[0].Errors = $append(res[0].Errors, _r);
+			/* } */ case 4:
+			_i++;
+		/* } */ $s = 1; continue; case 2:
+		return res[0];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: testRectCollideRect }; } $f.$ptr = $ptr; $f._i = _i; $f._r = _r; $f._ref = _ref; $f.c = c; $f.cases = cases; $f.got = got; $f.i = i; $f.rect = rect; $f.res = res; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	result.init([{prop: "TestName", name: "TestName", pkg: "", typ: $String, tag: ""}, {prop: "Errors", name: "Errors", pkg: "", typ: sliceType$5, tag: ""}]);
 	$init = function() {

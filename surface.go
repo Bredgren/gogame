@@ -36,7 +36,7 @@ type Surface interface {
 	//DrawQuadraticCurves(points [][2]float64, cPoints [][2]float64, s Styler)
 	//DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, s Styler)
 	//DrawBezierCurves(points [][2]float64, cPoints [][2]float64, s Styler)
-	DrawText(text string, x, y float64, s *FontStyler)
+	DrawText(text string, x, y float64, font *Font, style *TextStyle)
 }
 
 var _ Surface = &surface{}
@@ -229,8 +229,9 @@ func (s *surface) DrawLines(pointList [][2]float64, style Styler) {
 }
 
 // DrawText draws the given text to the surface.
-func (s *surface) DrawText(text string, x, y float64, style *FontStyler) {
+func (s *surface) DrawText(text string, x, y float64, font *Font, style *TextStyle) {
 	s.ctx.Call("save")
+	s.ctx.Set("font", font.String())
 	style.Style(s.ctx)
 	s.ctx.Call("translate", math.Floor(x), math.Floor(y))
 	s.ctx.Call(fmt.Sprintf("%sText", style.DrawType()), text, 0, 0)

@@ -27,7 +27,11 @@ type FillStyle struct {
 
 // Style implements the Styler interface.
 func (f *FillStyle) Style(ctx *js.Object) {
-	ctx.Set("fillStyle", f.Color(ctx))
+	color := DefaultColor.Color(ctx)
+	if f.Colorer != nil {
+		color = f.Color(ctx)
+	}
+	ctx.Set("fillStyle", color)
 }
 
 // DrawType implements the Styler interface.
@@ -75,7 +79,11 @@ type StrokeStyle struct {
 
 // Style implements the Styler interface.
 func (s *StrokeStyle) Style(ctx *js.Object) {
-	ctx.Set("strokeStyle", s.Color(ctx))
+	color := DefaultColor.Color(ctx)
+	if s.Colorer != nil {
+		color = s.Color(ctx)
+	}
+	ctx.Set("strokeStyle", color)
 	ctx.Set("lineWidth", s.Width)
 	if s.Cap != "" {
 		ctx.Set("lineCap", s.Cap)
