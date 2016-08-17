@@ -192,4 +192,6 @@ func testCanvas() {
 		Type:         gogame.Fill,
 		TextBaseline: gogame.TextBaselineMiddle,
 	})
+
+	display.Flip()
 }

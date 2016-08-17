@@ -18051,15 +18051,19 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 		var $ptr, _r, _r$1, _r$2, _r$3, d, height, width, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; d = $f.d; height = $f.height; width = $f.width; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		d = this;
-		_r = jq(new sliceType([new $String("<canvas>")])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_r$1 = _r.Get(new sliceType([new $Int(0)])); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-		d.surface.canvas = _r$1;
+		/* */ if (d.surface.canvas === null) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (d.surface.canvas === null) { */ case 1:
+			_r = jq(new sliceType([new $String("<canvas>")])); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			_r$1 = _r.Get(new sliceType([new $Int(0)])); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			d.surface.canvas = _r$1;
+		/* } */ case 2:
 		d.surface.canvas.width = width;
 		d.surface.canvas.height = height;
 		d.surface.ctx = d.surface.canvas.getContext($externalize("2d", $String));
-		_r$2 = d.frontSurface.GetCanvas(); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		_r$2 = d.frontSurface.GetCanvas(); /* */ $s = 5; case 5: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 		_r$2.width = width;
-		_r$3 = d.frontSurface.GetCanvas(); /* */ $s = 4; case 4: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		_r$3 = d.frontSurface.GetCanvas(); /* */ $s = 6; case 6: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
 		_r$3.height = height;
 		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: Display.ptr.prototype.SetMode }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f.d = d; $f.height = height; $f.width = width; $f.$s = $s; $f.$r = $r; return $f;
 	};
@@ -18108,17 +18112,19 @@ $packages["github.com/Bredgren/gogame"] = (function() {
 	};
 	TextStyle.prototype.DrawType = function() { return this.$val.DrawType(); };
 	Font.ptr.prototype.Width = function(text, style) {
-		var $ptr, ctx, f, style, t, text, width, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; ctx = $f.ctx; f = $f.f; style = $f.style; t = $f.t; text = $f.text; width = $f.width; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var $ptr, _r, ctx, f, style, t, text, width, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; ctx = $f.ctx; f = $f.f; style = $f.style; t = $f.t; text = $f.text; width = $f.width; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		f = this;
 		ctx = display.surface.ctx;
 		ctx.save();
-		$r = style.Style(ctx); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		_r = f.String(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		ctx.font = $externalize(_r, $String);
+		$r = style.Style(ctx); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		t = ctx.measureText($externalize(text, $String));
 		width = $parseInt(t.width) >> 0;
 		ctx.restore();
 		return width;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Font.ptr.prototype.Width }; } $f.$ptr = $ptr; $f.ctx = ctx; $f.f = f; $f.style = style; $f.t = t; $f.text = text; $f.width = width; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Font.ptr.prototype.Width }; } $f.$ptr = $ptr; $f._r = _r; $f.ctx = ctx; $f.f = f; $f.style = style; $f.t = t; $f.text = text; $f.width = width; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	Font.prototype.Width = function(text, style) { return this.$val.Width(text, style); };
 	Font.ptr.prototype.String = function() {
@@ -19196,6 +19202,7 @@ $packages["github.com/Bredgren/gogame/test"] = (function() {
 		_r$1 = font[0].Width("Hello", new gogame.TextStyle.ptr($ifaceNil, 0, "", "", "", "")); /* */ $s = 24; case 24: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		w = _r$1;
 		$r = display.surface.DrawText("World!", (10 + w >> 0), 200, font[0], new gogame.TextStyle.ptr(new gogame.LinearGradient.ptr(0, 0, w, 0, new sliceType$2([new gogame.ColorStop.ptr(0, $clone(gogame.Blue, gogame.Color)), new gogame.ColorStop.ptr(1, $clone(gogame.Green, gogame.Color))])), 0, "fill", "", "middle", "")); /* */ $s = 25; case 25: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = display.Flip(); /* */ $s = 26; case 26: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: testCanvas }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f.display = display; $f.font = font; $f.height = height; $f.pattern = pattern; $f.s = s; $f.w = w; $f.width = width; $f.x = x; $f.x$1 = x$1; $f.x$10 = x$10; $f.x$11 = x$11; $f.x$12 = x$12; $f.x$13 = x$13; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.x$8 = x$8; $f.x$9 = x$9; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	testRect = function() {

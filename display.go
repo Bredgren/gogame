@@ -21,7 +21,9 @@ func newDisplay(canvas *js.Object) *Display {
 
 // SetMode initalizes the Display.
 func (d *Display) SetMode(width, height int) {
-	d.canvas = jq("<canvas>").Get(0)
+	if d.canvas == nil {
+		d.canvas = jq("<canvas>").Get(0)
+	}
 	d.canvas.Set("width", width)
 	d.canvas.Set("height", height)
 	d.ctx = d.canvas.Call("getContext", "2d")

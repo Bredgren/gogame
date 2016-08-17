@@ -103,6 +103,7 @@ type Font struct {
 func (f *Font) Width(text string, style *TextStyle) int {
 	ctx := display.ctx
 	ctx.Call("save")
+	ctx.Set("font", f.String())
 	style.Style(ctx)
 	t := ctx.Call("measureText", text)
 	width := t.Get("width").Int()
