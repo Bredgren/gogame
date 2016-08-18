@@ -175,10 +175,10 @@ func testCanvas() {
 		Size: 50,
 	}
 	display.DrawText("Hello", 10, 190, &font, &gogame.TextStyle{
-		Colorer:      gogame.White,
-		Type:         gogame.Stroke,
-		TextBaseline: gogame.TextBaselineHanging,
-		LineWidth:    2,
+		Colorer:   gogame.White,
+		Type:      gogame.Stroke,
+		Baseline:  gogame.TextBaselineHanging,
+		LineWidth: 2,
 	})
 	w := font.Width("Hello", &gogame.TextStyle{})
 	display.DrawText("World!", float64(10+w), 200, &font, &gogame.TextStyle{
@@ -189,8 +189,8 @@ func testCanvas() {
 				{1.0, gogame.Green},
 			},
 		},
-		Type:         gogame.Fill,
-		TextBaseline: gogame.TextBaselineMiddle,
+		Type:     gogame.Fill,
+		Baseline: gogame.TextBaselineMiddle,
 	})
 
 	grid := gogame.NewSurface(50, 50)
@@ -207,6 +207,24 @@ func testCanvas() {
 
 	rotatedScaledGrid := scaledGrid.Rotated(0.25 * math.Pi)
 	display.Blit(rotatedScaledGrid, 250, 250)
+
+	font = gogame.Font{
+		Size:   25,
+		Family: gogame.FontFamilySansSerif,
+	}
+	textStyle := gogame.TextStyle{
+		Colorer:  gogame.Black,
+		Type:     gogame.Fill,
+		Align:    gogame.TextAlignRight,
+		Baseline: gogame.TextBaselineHanging,
+	}
+	text := font.Render("Text surface", &textStyle, &gogame.FillStyle{
+		Colorer: gogame.Color{R: 0.8, G: 0.8, B: 1.0, A: 0.7},
+	})
+	display.Blit(text, 10, 360)
+
+	rotatedText := text.Rotated(0.75 * math.Pi)
+	display.Blit(rotatedText, 160, 330)
 
 	display.Flip()
 }

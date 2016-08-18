@@ -11,11 +11,10 @@ var _ Styler = &TextStyle{}
 // TextStyle styles a font for drawing.
 type TextStyle struct {
 	Colorer
-	LineWidth    float64
-	Type         DrawType
-	TextAlign    TextAlign
-	TextBaseline TextBaseline
-	Direction    TextDirection
+	LineWidth float64
+	Type      DrawType
+	Align     TextAlign
+	Baseline  TextBaseline
 }
 
 // Style implements the Styler interface.
@@ -28,14 +27,11 @@ func (f *TextStyle) Style(ctx *js.Object) {
 		color = f.Color(ctx)
 	}
 	ctx.Set(fmt.Sprintf("%sStyle", f.DrawType()), color)
-	if f.TextAlign != "" {
-		ctx.Set("textAlign", f.TextAlign)
+	if f.Align != "" {
+		ctx.Set("textAlign", f.Align)
 	}
-	if f.TextBaseline != "" {
-		ctx.Set("textBaseline", f.TextBaseline)
-	}
-	if f.Direction != "" {
-		ctx.Set("direction", f.Direction)
+	if f.Baseline != "" {
+		ctx.Set("textBaseline", f.Baseline)
 	}
 }
 
@@ -78,16 +74,6 @@ const (
 	TextBaselineIdeographic TextBaseline = "ideographic"
 )
 
-// TextDirection is the horizontal direction of the text.
-type TextDirection string
-
-const (
-	// TextDirectionLtoR is left to right (the default).
-	TextDirectionLtoR TextDirection = "ltr"
-	// TextDirectionRtoL is right to left.
-	TextDirectionRtoL TextDirection = "rtl"
-)
-
 // Font describes the style of text.
 type Font struct {
 	// Size is the Font's height in pixels
@@ -98,9 +84,28 @@ type Font struct {
 	Weight  FontWeight
 }
 
+// Render creates a new Surface with the given text on it. Alignment options in TextStyle
+// are ignored, the Surface is made to fit the text.
+func (f *Font) Render(text string, foreground *TextStyle, background Styler) Surface {
+	fore := TextStyle{
+		Colorer:   foreground.Colorer,
+		LineWidth: foreground.LineWidth,
+		Type:      foreground.Type,
+		Baseline:  TextBaselineTop,
+	}
+	s := NewSurface(f.Width(text, &fore), f.Size)
+	r := s.GetRect()
+	s.DrawRect(&r, background)
+	s.DrawText(text, 0, 0, f, &fore)
+	return s
+}
+
 // Width returns the width needed to draw the given text. This function requires that
 // gogame is ready with a valid display.
 func (f *Font) Width(text string, style *TextStyle) int {
+	if style == nil {
+		style = &TextStyle{}
+	}
 	ctx := display.ctx
 	ctx.Call("save")
 	ctx.Set("font", f.String())

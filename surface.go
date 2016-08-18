@@ -103,6 +103,9 @@ func (s *surface) BlitArea(source Surface, area *Rect, x, y float64) {
 
 // Fill fills the whole surface with the given style.
 func (s *surface) Fill(style *FillStyle) {
+	if style == nil {
+		style = &FillStyle{}
+	}
 	s.ctx.Call("save")
 	style.Style(s.ctx)
 	s.ctx.Call("fillRect", 0, 0, s.canvas.Get("width"), s.canvas.Get("height"))
@@ -177,6 +180,9 @@ func (s *surface) GetRect() Rect {
 
 // DrawRect draws a rectangle on the surface.
 func (s *surface) DrawRect(r *Rect, style Styler) {
+	if style == nil {
+		style = &FillStyle{}
+	}
 	s.ctx.Call("save")
 	style.Style(s.ctx)
 	s.ctx.Call("translate", math.Floor(r.X), math.Floor(r.Y))
@@ -186,6 +192,9 @@ func (s *surface) DrawRect(r *Rect, style Styler) {
 
 // DrawCircle draws a circle on the surface.
 func (s *surface) DrawCircle(posX, posY, radius float64, style Styler) {
+	if style == nil {
+		style = &FillStyle{}
+	}
 	s.ctx.Call("save")
 	style.Style(s.ctx)
 	s.ctx.Call("translate", math.Floor(posX), math.Floor(posY))
@@ -197,6 +206,9 @@ func (s *surface) DrawCircle(posX, posY, radius float64, style Styler) {
 
 // DrawEllipse draws an ellipse on the canvas within the given Rect.
 func (s *surface) DrawEllipse(r *Rect, style Styler) {
+	if style == nil {
+		style = &FillStyle{}
+	}
 	s.ctx.Call("save")
 	style.Style(s.ctx)
 	s.ctx.Call("translate", math.Floor(r.X), math.Floor(r.Y))
@@ -210,6 +222,9 @@ func (s *surface) DrawEllipse(r *Rect, style Styler) {
 // DrawArc draws an arc on the canvas within the given Rect between the given angles.
 // Angles are counter-clockwise.
 func (s *surface) DrawArc(r *Rect, startRadians, stopRadians float64, style Styler) {
+	if style == nil {
+		style = &StrokeStyle{}
+	}
 	s.ctx.Call("save")
 	style.Style(s.ctx)
 	s.ctx.Call("translate", math.Floor(r.X), math.Floor(r.Y))
@@ -222,6 +237,9 @@ func (s *surface) DrawArc(r *Rect, startRadians, stopRadians float64, style Styl
 
 // DrawLine draws a line on the canvas.
 func (s *surface) DrawLine(startX, startY, endX, endY float64, style Styler) {
+	if style == nil {
+		style = &StrokeStyle{}
+	}
 	s.ctx.Call("save")
 	style.Style(s.ctx)
 	s.ctx.Call("translate", startX, startY)
@@ -234,6 +252,9 @@ func (s *surface) DrawLine(startX, startY, endX, endY float64, style Styler) {
 
 // DrawLines draws multiple connectd lines to the surface.
 func (s *surface) DrawLines(pointList [][2]float64, style Styler) {
+	if style == nil {
+		style = &StrokeStyle{}
+	}
 	s.ctx.Call("save")
 	style.Style(s.ctx)
 	s.ctx.Call("beginPath")
@@ -247,6 +268,9 @@ func (s *surface) DrawLines(pointList [][2]float64, style Styler) {
 
 // DrawText draws the given text to the surface.
 func (s *surface) DrawText(text string, x, y float64, font *Font, style *TextStyle) {
+	if style == nil {
+		style = &TextStyle{}
+	}
 	s.ctx.Call("save")
 	s.ctx.Set("font", font.String())
 	style.Style(s.ctx)
