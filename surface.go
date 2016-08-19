@@ -17,8 +17,8 @@ type Surface interface {
 	Height() int
 	//Copy() Surface
 	//Scroll(dx, dy int)
-	//GetAt(x, y int) Color
-	//SetAt(x, y int, Color)
+	GetAt(x, y int) Color
+	SetAt(x, y int, c Color)
 	//SetClip(Rect)
 	//GetClip() Rect
 	//GetSubsurface(Rect) Surface
@@ -122,6 +122,21 @@ func (s *surface) Width() int {
 // after scaling and rotating use GetRect.
 func (s *surface) Height() int {
 	return s.canvas.Get("height").Int()
+}
+
+func (s *surface) GetAt(x, y int) Color {
+	data := s.ctx.Call("getImageData", x, y, 1, 1).Get("data")
+	return Color{R: data.Index(0).Float(), G: data.Index(1).Float(), B: data.Index(2).Float(),
+		A: data.Index(3).Float()}
+}
+
+func (s *surface) SetAt(x, y int, c Color) {
+	data := s.ctx.Call("getImageData", x, y, 1, 1).Get("data")
+	data.SetIndex(0, clampToInt(255*c.R, 0, 255))
+	data.SetIndex(1, clampToInt(255*c.G, 0, 255))
+	data.SetIndex(2, clampToInt(255*c.B, 0, 255))
+	data.SetIndex(3, clampToFloat(c.A, 0, 1.0))
+	s.ctx.Call("putImageData", data, x, y)
 }
 
 // Scaled returns a new Surface that is equivalent to this one scaled by the given amount.
