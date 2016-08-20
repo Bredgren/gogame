@@ -239,5 +239,11 @@ func testCanvas() {
 	text = nilFont.Render("nil2", nil, nil)
 	display.Blit(text, 280, 40)
 
+	for x := 10; x < 110; x++ {
+		p := float64(x-10) / 100
+		c := gogame.Color{R: 1.0 - p, B: p, A: 1.0}
+		display.SetAt(x, 400, c)
+	}
+
 	display.Flip()
 }

@@ -129,12 +129,13 @@ func (s *surface) GetAt(x, y int) Color {
 }
 
 func (s *surface) SetAt(x, y int, c Color) {
-	data := s.ctx.Call("getImageData", x, y, 1, 1).Get("data")
+	imgData := s.ctx.Call("getImageData", x, y, 1, 1)
+	data := imgData.Get("data")
 	data.SetIndex(0, clampToInt(255*c.R, 0, 255))
 	data.SetIndex(1, clampToInt(255*c.G, 0, 255))
 	data.SetIndex(2, clampToInt(255*c.B, 0, 255))
-	data.SetIndex(3, clampToFloat(c.A, 0, 1.0))
-	s.ctx.Call("putImageData", data, x, y)
+	data.SetIndex(3, clampToInt(255*c.A, 0, 255))
+	s.ctx.Call("putImageData", imgData, x, y)
 }
 
 // Scaled returns a new Surface that is equivalent to this one scaled by the given amount.
