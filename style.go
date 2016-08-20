@@ -20,7 +20,8 @@ const (
 
 var _ Styler = &FillStyle{}
 
-// FillStyle specifies a style used for filling shapes.
+// FillStyle specifies a style used for filling shapes. Using a nil FillStyle will use
+// the default Color.
 type FillStyle struct {
 	Colorer
 }
@@ -28,7 +29,7 @@ type FillStyle struct {
 // Style implements the Styler interface.
 func (f *FillStyle) Style(ctx *js.Object) {
 	color := DefaultColor.Color(ctx)
-	if f.Colorer != nil {
+	if f != nil && f.Colorer != nil {
 		color = f.Color(ctx)
 	}
 	ctx.Set("fillStyle", color)
@@ -66,7 +67,7 @@ const (
 
 var _ Styler = &StrokeStyle{}
 
-// StrokeStyle specifies a style used for lines.
+// StrokeStyle specifies a style used for lines. A nil StrokeStyle will use default values.
 type StrokeStyle struct {
 	Colorer
 	Width      float64
@@ -79,24 +80,28 @@ type StrokeStyle struct {
 
 // Style implements the Styler interface.
 func (s *StrokeStyle) Style(ctx *js.Object) {
+	style := s
+	if style == nil {
+		style = &StrokeStyle{}
+	}
 	color := DefaultColor.Color(ctx)
-	if s.Colorer != nil {
+	if style.Colorer != nil {
 		color = s.Color(ctx)
 	}
 	ctx.Set("strokeStyle", color)
-	ctx.Set("lineWidth", s.Width)
-	if s.Cap != "" {
-		ctx.Set("lineCap", s.Cap)
+	ctx.Set("lineWidth", style.Width)
+	if style.Cap != "" {
+		ctx.Set("lineCap", style.Cap)
 	}
-	if s.Join != "" {
-		ctx.Set("lineJoin", s.Join)
+	if style.Join != "" {
+		ctx.Set("lineJoin", style.Join)
 	}
-	if s.MiterLimit >= 1.0 {
-		ctx.Set("miterLimit", s.MiterLimit)
+	if style.MiterLimit >= 1.0 {
+		ctx.Set("miterLimit", style.MiterLimit)
 	}
-	if len(s.Dash) > 0 {
-		ctx.Call("setLineDash", s.Dash)
-		ctx.Set("lineDashOffset", s.DashOffset)
+	if len(style.Dash) > 0 {
+		ctx.Call("setLineDash", style.Dash)
+		ctx.Set("lineDashOffset", style.DashOffset)
 	}
 }
 

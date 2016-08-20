@@ -19,24 +19,31 @@ type TextStyle struct {
 
 // Style implements the Styler interface.
 func (f *TextStyle) Style(ctx *js.Object) {
-	if f.LineWidth > 0 {
-		ctx.Set("lineWidth", f.LineWidth)
+	style := f
+	if style == nil {
+		style = &TextStyle{}
 	}
 	color := DefaultColor.Color(ctx)
-	if f.Colorer != nil {
-		color = f.Color(ctx)
+	if style.Colorer != nil {
+		color = style.Color(ctx)
 	}
-	ctx.Set(fmt.Sprintf("%sStyle", f.DrawType()), color)
-	if f.Align != "" {
-		ctx.Set("textAlign", f.Align)
+	ctx.Set(fmt.Sprintf("%sStyle", style.DrawType()), color)
+	if style.LineWidth > 0 {
+		ctx.Set("lineWidth", style.LineWidth)
 	}
-	if f.Baseline != "" {
-		ctx.Set("textBaseline", f.Baseline)
+	if style.Align != "" {
+		ctx.Set("textAlign", style.Align)
+	}
+	if style.Baseline != "" {
+		ctx.Set("textBaseline", style.Baseline)
 	}
 }
 
 // DrawType implements the Styler interface.
 func (f *TextStyle) DrawType() DrawType {
+	if f == nil || f.Type == "" {
+		return Fill
+	}
 	return f.Type
 }
 
@@ -74,7 +81,7 @@ const (
 	TextBaselineIdeographic TextBaseline = "ideographic"
 )
 
-// Font describes the style of text.
+// Font describes the style of text. Note that the default Font (nil) will not be visible.
 type Font struct {
 	// Size is the Font's height in pixels
 	Size    int
@@ -85,15 +92,23 @@ type Font struct {
 }
 
 // Render creates a new Surface with the given text on it. Alignment options in TextStyle
-// are ignored, the Surface is made to fit the text.
+// are ignored, the Surface is made to fit the text. Any nil arguments will be treated as
+// default values.
 func (f *Font) Render(text string, foreground *TextStyle, background Styler) Surface {
+	if foreground == nil {
+		foreground = &TextStyle{}
+	}
 	fore := TextStyle{
 		Colorer:   foreground.Colorer,
 		LineWidth: foreground.LineWidth,
 		Type:      foreground.Type,
 		Baseline:  TextBaselineTop,
 	}
-	s := NewSurface(f.Width(text, &fore), f.Size)
+	size := 0
+	if f != nil {
+		size = f.Size
+	}
+	s := NewSurface(f.Width(text, &fore), size)
 	r := s.GetRect()
 	s.DrawRect(&r, background)
 	s.DrawText(text, 0, 0, f, &fore)
@@ -103,12 +118,13 @@ func (f *Font) Render(text string, foreground *TextStyle, background Styler) Sur
 // Width returns the width needed to draw the given text. This function requires that
 // gogame is ready with a valid display.
 func (f *Font) Width(text string, style *TextStyle) int {
-	if style == nil {
-		style = &TextStyle{}
+	font := f
+	if font == nil {
+		font = &Font{}
 	}
 	ctx := display.ctx
 	ctx.Call("save")
-	ctx.Set("font", f.String())
+	ctx.Set("font", font.String())
 	style.Style(ctx)
 	t := ctx.Call("measureText", text)
 	width := t.Get("width").Int()
@@ -120,9 +136,14 @@ func (f *Font) Width(text string, style *TextStyle) int {
 // as one would use to set the font attribute in CSS.
 func (f *Font) String() string {
 	s := ""
+	if f == nil {
+		return s
+	}
+
 	if f.Style != "" {
 		s = string(f.Style)
 	}
+
 	const sep = " "
 	if f.Variant != "" {
 		if s != "" {

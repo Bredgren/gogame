@@ -84,6 +84,7 @@ func NewSurfaceFromCanvasID(canvasID string) (Surface, error) {
 
 // GetCanvas returns the surface as an HTML canvas.
 func (s *surface) GetCanvas() *js.Object {
+	// TODO handle nil surface
 	return s.canvas
 }
 
@@ -103,9 +104,6 @@ func (s *surface) BlitArea(source Surface, area *Rect, x, y float64) {
 
 // Fill fills the whole surface with the given style.
 func (s *surface) Fill(style *FillStyle) {
-	if style == nil {
-		style = &FillStyle{}
-	}
 	s.ctx.Call("save")
 	style.Style(s.ctx)
 	s.ctx.Call("fillRect", 0, 0, s.canvas.Get("width"), s.canvas.Get("height"))
@@ -283,9 +281,6 @@ func (s *surface) DrawLines(pointList [][2]float64, style Styler) {
 
 // DrawText draws the given text to the surface.
 func (s *surface) DrawText(text string, x, y float64, font *Font, style *TextStyle) {
-	if style == nil {
-		style = &TextStyle{}
-	}
 	s.ctx.Call("save")
 	s.ctx.Set("font", font.String())
 	style.Style(s.ctx)

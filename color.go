@@ -80,9 +80,13 @@ type LinearGradient struct {
 
 // Color implements the Colorer interface.
 func (l *LinearGradient) Color(ctx *js.Object) interface{} {
-	grad := ctx.Call("createLinearGradient", math.Floor(l.X1), math.Floor(l.Y1), math.Floor(l.X2),
-		math.Floor(l.Y2))
-	for _, stop := range l.ColorStops {
+	lg := l
+	if lg == nil {
+		lg = &LinearGradient{}
+	}
+	grad := ctx.Call("createLinearGradient", math.Floor(lg.X1), math.Floor(lg.Y1), math.Floor(lg.X2),
+		math.Floor(lg.Y2))
+	for _, stop := range lg.ColorStops {
 		grad.Call("addColorStop", stop.Position, stop.Color.Color(ctx))
 	}
 	return grad
@@ -98,9 +102,13 @@ type RadialGradient struct {
 
 // Color implements the Colorer interface.
 func (r *RadialGradient) Color(ctx *js.Object) interface{} {
-	grad := ctx.Call("createRadialGradient", math.Floor(r.X1), math.Floor(r.Y1), math.Floor(r.R1),
-		math.Floor(r.X2), math.Floor(r.Y2), math.Floor(r.R2))
-	for _, stop := range r.ColorStops {
+	rg := r
+	if rg == nil {
+		rg = &RadialGradient{}
+	}
+	grad := ctx.Call("createRadialGradient", math.Floor(rg.X1), math.Floor(rg.Y1), math.Floor(rg.R1),
+		math.Floor(rg.X2), math.Floor(rg.Y2), math.Floor(rg.R2))
+	for _, stop := range rg.ColorStops {
 		grad.Call("addColorStop", stop.Position, stop.Color.Color(ctx))
 	}
 	return grad
@@ -122,7 +130,7 @@ const (
 	NoRepeat RepeatType = "no-repeat"
 )
 
-// Pattern is an umage (actually a Surface) that optionally repeats.
+// Pattern is an image that optionally repeats.
 type Pattern struct {
 	Source Surface
 	Type   RepeatType
@@ -130,6 +138,9 @@ type Pattern struct {
 
 // Color implements the Colorer interface.
 func (p *Pattern) Color(ctx *js.Object) interface{} {
+	if p == nil {
+		return DefaultColor.Color(ctx)
+	}
 	if p.Type == "" {
 		p.Type = Repeat
 	}

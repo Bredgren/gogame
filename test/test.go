@@ -226,5 +226,18 @@ func testCanvas() {
 	rotatedText := text.Rotated(0.75 * math.Pi)
 	display.Blit(rotatedText, 160, 330)
 
+	// Test nil styles
+	gogame.DefaultColor = gogame.Red
+	var style *gogame.FillStyle
+	display.DrawRect(&gogame.Rect{X: 250, Y: 10, W: 10, H: 10}, style)
+	display.DrawCircle(270, 15, 5, nil)
+	display.DrawLine(250, 25, 260, 35, nil)
+	display.DrawText("nil", 265, 30, nil, nil)
+	text = font.Render("nil", nil, nil)
+	display.Blit(text, 250, 40)
+	var nilFont *gogame.Font
+	text = nilFont.Render("nil2", nil, nil)
+	display.Blit(text, 280, 40)
+
 	display.Flip()
 }

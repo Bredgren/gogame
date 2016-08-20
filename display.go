@@ -45,5 +45,8 @@ func (d *Display) SetMode(width, height int) {
 
 // Flip draws the back Surface onto the Display.
 func (d *Display) Flip() {
+	if d == nil {
+		return
+	}
 	d.frontSurface.Blit(d, 0, 0)
 }
