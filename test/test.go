@@ -58,6 +58,7 @@ func testCanvas() {
 	display.SetMode(width, height)
 	display.Fill(&gogame.FillStyle{Colorer: gogame.Black})
 
+	// Test shapes and styles
 	display.DrawRect(gogame.Rect{X: 11, Y: 11, W: 48, H: 48}, &gogame.StrokeStyle{Colorer: gogame.White, Width: 4})
 	display.DrawRect(gogame.Rect{X: 70, Y: 10, W: 50, H: 50},
 		&gogame.FillStyle{Colorer: &gogame.LinearGradient{
@@ -171,6 +172,7 @@ func testCanvas() {
 		Colorer: gogame.White,
 	})
 
+	// Test text
 	font := gogame.Font{
 		Size: 50,
 	}
@@ -239,6 +241,7 @@ func testCanvas() {
 	text = nilFont.Render("nil2", nil, nil)
 	display.Blit(text, 280, 40)
 
+	// Test SetAt
 	for x := 10; x < 110; x++ {
 		p := float64(x-10) / 100
 		c := gogame.Color{R: 1.0 - p, B: p, A: 1.0}
@@ -251,6 +254,12 @@ func testCanvas() {
 	display.DrawCircle(500, 110, 20, &gogame.FillStyle{})
 	display.ClearClip()
 	display.DrawCircle(500, 60, 20, &gogame.FillStyle{})
+
+	// Test copy
+	copy := display.Copy()
+	copy = display.Scaled(0.2, 0.2)
+	copy.DrawRect(copy.GetRect(), &gogame.StrokeStyle{Colorer: gogame.White, Width: 2})
+	display.Blit(copy, float64(display.Width()-copy.Width()), float64(display.Height()-copy.Height()))
 
 	display.Flip()
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
-// Surface represents an image or drawable sureface.
+// Surface represents an image or drawable surface.
 type Surface interface {
 	GetCanvas() *js.Object
 	Blit(source Surface, x, y float64)
@@ -15,7 +15,7 @@ type Surface interface {
 	Fill(*FillStyle)
 	Width() int
 	Height() int
-	//Copy() Surface
+	Copy() Surface
 	//Scroll(dx, dy int)
 	GetAt(x, y int) Color
 	SetAt(x, y int, c Color)
@@ -121,6 +121,13 @@ func (s *surface) Width() int {
 // after scaling and rotating use GetRect.
 func (s *surface) Height() int {
 	return s.canvas.Get("height").Int()
+}
+
+// Copy returns a new Surface that is identical to this one.
+func (s *surface) Copy() Surface {
+	copy := NewSurface(s.Width(), s.Height())
+	copy.Blit(s, 0, 0)
+	return copy
 }
 
 func (s *surface) GetAt(x, y int) Color {
