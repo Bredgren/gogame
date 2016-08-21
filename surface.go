@@ -11,7 +11,7 @@ import (
 type Surface interface {
 	GetCanvas() *js.Object
 	Blit(source Surface, x, y float64)
-	BlitArea(source Surface, area *Rect, x, y float64)
+	BlitArea(source Surface, area Rect, x, y float64)
 	Fill(*FillStyle)
 	Width() int
 	Height() int
@@ -20,16 +20,16 @@ type Surface interface {
 	GetAt(x, y int) Color
 	SetAt(x, y int, c Color)
 	//SetClip(Rect)
-	//GetClip() Rect
+	//SetClipPath(pointList [][2]float64)
 	//GetSubsurface(Rect) Surface
 	//GetParent() Surface
 	Scaled(x, y float64) Surface
 	Rotated(radians float64) Surface
 	GetRect() Rect
-	DrawRect(*Rect, Styler)
+	DrawRect(Rect, Styler)
 	DrawCircle(posX, posY, radius float64, s Styler)
-	DrawEllipse(*Rect, Styler)
-	DrawArc(r *Rect, startRadians, stopRadians float64, s Styler)
+	DrawEllipse(Rect, Styler)
+	DrawArc(r Rect, startRadians, stopRadians float64, s Styler)
 	DrawLine(startX, startY, endX, endY float64, s Styler)
 	DrawLines(pointList [][2]float64, s Styler)
 	//DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY, float64, s Styler)
@@ -96,7 +96,7 @@ func (s *surface) Blit(source Surface, x, y float64) {
 
 // BlitArea draws the given portion of the source surface defined by the Rect to this
 // one with its top-left corner (according to GetRect) at the given position.
-func (s *surface) BlitArea(source Surface, area *Rect, x, y float64) {
+func (s *surface) BlitArea(source Surface, area Rect, x, y float64) {
 	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(area.X), math.Floor(area.Y),
 		math.Floor(area.W), math.Floor(area.H), math.Floor(x), math.Floor(y), math.Floor(area.W),
 		math.Floor(area.H))
@@ -193,7 +193,7 @@ func (s *surface) GetRect() Rect {
 }
 
 // DrawRect draws a rectangle on the surface.
-func (s *surface) DrawRect(r *Rect, style Styler) {
+func (s *surface) DrawRect(r Rect, style Styler) {
 	if style == nil {
 		style = &FillStyle{}
 	}
@@ -219,7 +219,7 @@ func (s *surface) DrawCircle(posX, posY, radius float64, style Styler) {
 }
 
 // DrawEllipse draws an ellipse on the canvas within the given Rect.
-func (s *surface) DrawEllipse(r *Rect, style Styler) {
+func (s *surface) DrawEllipse(r Rect, style Styler) {
 	if style == nil {
 		style = &FillStyle{}
 	}
@@ -235,7 +235,7 @@ func (s *surface) DrawEllipse(r *Rect, style Styler) {
 
 // DrawArc draws an arc on the canvas within the given Rect between the given angles.
 // Angles are counter-clockwise.
-func (s *surface) DrawArc(r *Rect, startRadians, stopRadians float64, style Styler) {
+func (s *surface) DrawArc(r Rect, startRadians, stopRadians float64, style Styler) {
 	if style == nil {
 		style = &StrokeStyle{}
 	}
