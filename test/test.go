@@ -245,5 +245,12 @@ func testCanvas() {
 		display.SetAt(x, 400, c)
 	}
 
+	// Test clipping
+	display.SetClip(gogame.Rect{X: 400, Y: 10, W: 100, H: 100})
+	display.Fill(&gogame.FillStyle{Colorer: gogame.White})
+	display.DrawCircle(500, 110, 20, &gogame.FillStyle{})
+	display.ClearClip()
+	display.DrawCircle(500, 60, 20, &gogame.FillStyle{})
+
 	display.Flip()
 }

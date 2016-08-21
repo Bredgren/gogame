@@ -19,8 +19,9 @@ type Surface interface {
 	//Scroll(dx, dy int)
 	GetAt(x, y int) Color
 	SetAt(x, y int, c Color)
-	//SetClip(Rect)
-	//SetClipPath(pointList [][2]float64)
+	SetClip(Rect)
+	SetClipPath(pointList [][2]float64)
+	ClearClip()
 	//GetSubsurface(Rect) Surface
 	//GetParent() Surface
 	Scaled(x, y float64) Surface
@@ -136,6 +137,31 @@ func (s *surface) SetAt(x, y int, c Color) {
 	data.SetIndex(2, clampToInt(255*c.B, 0, 255))
 	data.SetIndex(3, clampToInt(255*c.A, 0, 255))
 	s.ctx.Call("putImageData", imgData, x, y)
+}
+
+// SetClip defines a rectangular region of the surface where only the enclosed pixels can
+// be affected by draw operations.
+func (s *surface) SetClip(r Rect) {
+	s.SetClipPath([][2]float64{
+		{r.X, r.Y}, {r.X + r.W, r.Y}, {r.X + r.W, r.Y + r.H}, {r.X, r.Y + r.H},
+	})
+}
+
+// SetClipPath defines an arbitrary polygon where only the enclosed pixels can be affected
+// by draw operations. The pointList is a list of xy-coordinates.
+func (s *surface) SetClipPath(pointList [][2]float64) {
+	s.ctx.Call("save")
+	s.ctx.Call("beginPath")
+	s.ctx.Call("moveTo", pointList[0][0], pointList[0][1])
+	for _, p := range pointList[1:] {
+		s.ctx.Call("lineTo", p[0], p[1])
+	}
+	s.ctx.Call("clip")
+}
+
+// ClearClip resets the clipping region to the whole canvas.
+func (s *surface) ClearClip() {
+	s.ctx.Call("restore")
 }
 
 // Scaled returns a new Surface that is equivalent to this one scaled by the given amount.
