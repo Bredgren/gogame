@@ -1,3 +1,5 @@
+// Package event manages a single queue for all events, including input, window, and
+// user-defined events.
 package event
 
 import (
