@@ -3,6 +3,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 	"time"
 
@@ -266,33 +267,55 @@ func testCanvas() {
 
 	display.Flip()
 
+	eventSurf := gogame.NewSurface(300, 100)
+	eventSurf.Fill(&gogame.FillStyle{Colorer: gogame.Black})
+	eventFont := gogame.Font{
+		Size:   eventSurf.Height() / 7,
+		Family: gogame.FontFamilySansSerif,
+	}
+	eventStyle := gogame.TextStyle{
+		Colorer: gogame.White,
+		Type:    gogame.Fill,
+	}
+	eventBgd := gogame.FillStyle{Colorer: gogame.Black}
+
 	gogame.Log("start main loop")
 	gogame.SetMainLoop(func(t time.Duration) {
 		for evt := event.Poll(); evt.Type != event.NoEvent; evt = event.Poll() {
+			msg := ""
 			switch evt.Type {
 			case event.Quit:
-				gogame.Log("quit")
+				msg = "quit"
 				gogame.UnsetMainLoop()
 			case event.KeyDown:
 				k := evt.Data.(event.KeyData).Key
-				gogame.Log("keydown", k.String())
+				msg = fmt.Sprintf("keydown: %s", k)
 			case event.KeyUp:
 				k := evt.Data.(event.KeyData).Key
-				gogame.Log("keyup", k.String())
+				msg = fmt.Sprintf("keyup: %s", k)
 				if k == key.Escape {
-					gogame.Log("quit")
+					msg = "quit (by escape)"
 					gogame.UnsetMainLoop()
 				}
 			case event.MouseButtonDown:
 				data := evt.Data.(event.MouseData)
-				gogame.Log("mousedown", data.Pos.X, data.Pos.Y, data.Button)
+				msg = fmt.Sprintf("mousedown: (%.0f, %.0f) %d", data.Pos.X, data.Pos.Y, data.Button)
 			case event.MouseButtonUp:
 				data := evt.Data.(event.MouseData)
-				gogame.Log("mouseup", data.Pos.X, data.Pos.Y, data.Button)
+				msg = fmt.Sprintf("mouseup: (%.0f, %.0f) %d", data.Pos.X, data.Pos.Y, data.Button)
 			case event.MouseMotion:
 				data := evt.Data.(event.MouseMotionData)
-				gogame.Log("mousemove", data.Pos.X, data.Pos.Y, data.Rel.Dx, data.Rel.Dy, data.Buttons)
+				msg = fmt.Sprintf("mousemove: (%.0f, %.0f) (%.0f, %.0f) %v", data.Pos.X, data.Pos.Y, data.Rel.Dx, data.Rel.Dy, data.Buttons)
 			}
+			text := eventFont.Render(msg, &eventStyle, &eventBgd)
+			cpy := eventSurf.Copy()
+			eventSurf.Fill(&gogame.FillStyle{Colorer: gogame.Black})
+			eventSurf.Blit(cpy, 0, float64(text.Height()))
+			eventSurf.Blit(text, 0, 0)
 		}
+
+		display.Blit(eventSurf, 0, float64(display.Height()-eventSurf.Height()))
+
+		display.Flip()
 	})
 }

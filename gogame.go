@@ -181,6 +181,8 @@ func setupDisplay() {
 			Log("Warning: event skipped because queue is full", e)
 		}
 	})
+
+	// TODO: resize and quit events
 }
 
 var keyState = map[key.Key]bool{}
