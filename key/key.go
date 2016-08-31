@@ -2,6 +2,7 @@ package key
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/gopherjs/gopherjs/js"
@@ -111,23 +112,23 @@ var (
 	Enter     = Key{Code: 13}
 	Escape    = Key{Code: 27}
 
-	// Np0 - NpEnter are the number pad keys.
-	Np0        = Key{Code: 48}
-	Np1        = Key{Code: 49}
-	Np2        = Key{Code: 50}
-	Np3        = Key{Code: 51}
-	Np4        = Key{Code: 52}
-	Np5        = Key{Code: 53}
-	Np6        = Key{Code: 54}
-	Np7        = Key{Code: 55}
-	Np8        = Key{Code: 56}
-	Np9        = Key{Code: 57}
+	// Np0 - NpEnter are the number pad keys. We need to use "Right" for some.
+	Np0        = Key{Code: 48, Right: true}
+	Np1        = Key{Code: 49, Right: true}
+	Np2        = Key{Code: 50, Right: true}
+	Np3        = Key{Code: 51, Right: true}
+	Np4        = Key{Code: 52, Right: true}
+	Np5        = Key{Code: 53, Right: true}
+	Np6        = Key{Code: 54, Right: true}
+	Np7        = Key{Code: 55, Right: true}
+	Np8        = Key{Code: 56, Right: true}
+	Np9        = Key{Code: 57, Right: true}
 	NpPeriod   = Key{Code: 110}
 	NpDivide   = Key{Code: 111}
 	NpMultiply = Key{Code: 106}
 	NpMinus    = Key{Code: 109}
 	NpPlus     = Key{Code: 107}
-	NpEnter    = Key{Code: 13, Right: true} // Special case: we use right for numpad enter
+	NpEnter    = Key{Code: 13, Right: true}
 
 	// Up - PageDown are the navigation keys.
 	Up       = Key{Code: 38}
@@ -194,7 +195,7 @@ var keyName = map[Key]string{
 	O:            "o",
 	P:            "p",
 	Q:            "q",
-	R:            "p",
+	R:            "r",
 	S:            "s",
 	T:            "t",
 	U:            "u",
@@ -304,6 +305,12 @@ var keyName = map[Key]string{
 	// RSuper:       "right windows key",
 }
 
+// IsMod returns true if the key is a modifier key.
+func (k Key) IsMod() bool {
+	return k == LShift || k == RShift || k == LCtrl || k == RCtrl || k == LAlt || k == RAlt ||
+		k == LMeta || k == RMeta
+}
+
 var keyRune = map[Key]rune{
 	A:            'a',
 	B:            'b',
@@ -322,7 +329,7 @@ var keyRune = map[Key]rune{
 	O:            'o',
 	P:            'p',
 	Q:            'q',
-	R:            'p',
+	R:            'r',
 	S:            's',
 	T:            't',
 	U:            'u',
@@ -443,6 +450,8 @@ var upperMap = map[rune]rune{
 	'/':  '?',
 }
 
+var numpadRe = regexp.MustCompile(`Numpad((Enter)|\d+)`)
+
 // FromJsEvent returns the Key for the corresponding js event. It is not necessarily one of
 // the predefined Keys.
 func FromJsEvent(event *js.Object) Key {
@@ -450,7 +459,8 @@ func FromJsEvent(event *js.Object) Key {
 	k := Key{
 		Code: event.Get("keyCode").Int(),
 		Right: (strings.Contains(name, "Right") && (strings.Contains(name, "Shift") || strings.Contains(name, "Ctrl") ||
-			strings.Contains(name, "Alt") || strings.Contains(name, "Meta"))) || name == "NumpadEnter",
+			strings.Contains(name, "Alt") || strings.Contains(name, "Meta"))) ||
+			numpadRe.MatchString(name),
 	}
 	k.Upper = event.Get("key").String() == string(upperMap[k.Rune()])
 	return k

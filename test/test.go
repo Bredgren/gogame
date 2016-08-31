@@ -4,8 +4,11 @@ package main
 
 import (
 	"math"
+	"time"
 
 	"github.com/Bredgren/gogame"
+	"github.com/Bredgren/gogame/event"
+	"github.com/Bredgren/gogame/key"
 	"github.com/gopherjs/jquery"
 )
 
@@ -262,4 +265,25 @@ func testCanvas() {
 	display.Blit(copy, float64(display.Width()-copy.Width()), float64(display.Height()-copy.Height()))
 
 	display.Flip()
+
+	gogame.Log("start main loop")
+	gogame.SetMainLoop(func(t time.Duration) {
+		for evt := event.Poll(); evt.Type != event.NoEvent; evt = event.Poll() {
+			switch evt.Type {
+			case event.Quit:
+				gogame.Log("quit")
+				gogame.UnsetMainLoop()
+			case event.KeyDown:
+				k := evt.Data.(event.KeyData).Key
+				gogame.Log("keydown", k.String())
+			case event.KeyUp:
+				k := evt.Data.(event.KeyData).Key
+				gogame.Log("keyup", k.String())
+				if k == key.Escape {
+					gogame.Log("quit")
+					gogame.UnsetMainLoop()
+				}
+			}
+		}
+	})
 }
