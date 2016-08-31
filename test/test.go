@@ -61,7 +61,7 @@ func testCanvas() {
 	width, height := 900, 600
 	display := gogame.GetDisplay()
 	display.SetMode(width, height)
-	display.Fill(&gogame.FillStyle{Colorer: gogame.Black})
+	display.Fill(gogame.FillBlack)
 
 	// Test shapes and styles
 	display.DrawRect(gogame.Rect{X: 11, Y: 11, W: 48, H: 48}, &gogame.StrokeStyle{Colorer: gogame.White, Width: 4})
@@ -173,9 +173,7 @@ func testCanvas() {
 		Width:   6,
 	})
 
-	display.DrawLines([][2]float64{{390, 130}, {440, 130}, {390, 180}}, &gogame.FillStyle{
-		Colorer: gogame.White,
-	})
+	display.DrawLines([][2]float64{{390, 130}, {440, 130}, {390, 180}}, gogame.FillWhite)
 
 	// Test text
 	font := gogame.Font{
@@ -255,7 +253,7 @@ func testCanvas() {
 
 	// Test clipping
 	display.SetClip(gogame.Rect{X: 400, Y: 10, W: 100, H: 100})
-	display.Fill(&gogame.FillStyle{Colorer: gogame.White})
+	display.Fill(gogame.FillWhite)
 	display.DrawCircle(500, 110, 20, &gogame.FillStyle{})
 	display.ClearClip()
 	display.DrawCircle(500, 60, 20, &gogame.FillStyle{})
@@ -269,7 +267,7 @@ func testCanvas() {
 	display.Flip()
 
 	eventSurf := gogame.NewSurface(300, 100)
-	eventSurf.Fill(&gogame.FillStyle{Colorer: gogame.Black})
+	eventSurf.Fill(gogame.FillBlack)
 	eventFont := gogame.Font{
 		Size:   eventSurf.Height() / 7,
 		Family: gogame.FontFamilySansSerif,
@@ -278,12 +276,12 @@ func testCanvas() {
 		Colorer: gogame.White,
 		Type:    gogame.Fill,
 	}
-	eventBgd := gogame.FillStyle{Colorer: gogame.Black}
 
 	fpsStyle := gogame.TextStyle{
 		Colorer: gogame.White,
 		Type:    gogame.Fill,
 	}
+	maxFpsWidth := 0
 
 	gogame.Log("start main loop")
 	gogame.SetMainLoop(func(t time.Duration) {
@@ -323,17 +321,24 @@ func testCanvas() {
 				data := evt.Data.(event.MouseMotionData)
 				msg = fmt.Sprintf("mousemove: (%.0f, %.0f) (%.0f, %.0f) %v", data.Pos.X, data.Pos.Y, data.Rel.Dx, data.Rel.Dy, data.Buttons)
 			}
-			text := eventFont.Render(msg, &eventStyle, &eventBgd)
+			text := eventFont.Render(msg, &eventStyle, gogame.FillBlack)
 			cpy := eventSurf.Copy()
-			eventSurf.Fill(&gogame.FillStyle{Colorer: gogame.Black})
+			eventSurf.Fill(gogame.FillBlack)
 			eventSurf.Blit(cpy, 0, float64(text.Height()))
 			eventSurf.Blit(text, 0, 0)
 		}
 
 		display.Blit(eventSurf, 0, float64(display.Height()-eventSurf.Height()))
 
-		text := eventFont.Render(gogame.Stats.LoopDuration.String(), &fpsStyle, &eventBgd)
-		display.Blit(text, 0, float64(display.Height()-eventSurf.Height()-text.Height()))
+		text := eventFont.Render(gogame.Stats.LoopDuration.String(), &fpsStyle, gogame.FillBlack)
+		if text.Width() > maxFpsWidth {
+			maxFpsWidth = text.Width()
+		}
+		r := text.GetRect()
+		r.W = float64(maxFpsWidth)
+		r.Y = float64(display.Height() - eventSurf.Height() - text.Height())
+		display.DrawRect(r, gogame.FillBlack)
+		display.Blit(text, 0, r.Y)
 
 		display.Flip()
 	})
