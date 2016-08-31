@@ -172,7 +172,7 @@ var (
 	LAlt   = Key{Code: 18}
 	RAlt   = Key{Code: 18, Right: true}
 	LMeta  = Key{Code: 91}
-	RMeta  = Key{Code: 91, Right: true}
+	RMeta  = Key{Code: 93, Right: true}
 	// LSuper =
 	// RSuper =
 )
@@ -458,7 +458,7 @@ func FromJsEvent(event *js.Object) Key {
 	name := event.Get("code").String()
 	k := Key{
 		Code: event.Get("keyCode").Int(),
-		Right: (strings.Contains(name, "Right") && (strings.Contains(name, "Shift") || strings.Contains(name, "Ctrl") ||
+		Right: (strings.Contains(name, "Right") && (strings.Contains(name, "Shift") || strings.Contains(name, "Control") ||
 			strings.Contains(name, "Alt") || strings.Contains(name, "Meta"))) ||
 			numpadRe.MatchString(name),
 	}
