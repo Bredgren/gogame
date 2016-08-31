@@ -5,6 +5,7 @@ package gogame
 import (
 	"log"
 
+	"github.com/Bredgren/gogame/key"
 	"github.com/gopherjs/gopherjs/js"
 	"github.com/gopherjs/jquery"
 )
@@ -34,9 +35,12 @@ func Ready() chan struct{} {
 }
 
 // SetMainDisplay changes the main canvas being used. If unset then gogame will default
-// to the first canvas in the DOM.
+// to the first canvas in the DOM. This is also the only display that will receive input
+// events.
 func SetMainDisplay(d *Display) {
+	unsetupDisplay()
 	display = d
+	setupDisplay()
 }
 
 // GetDisplay returns the main Display being used.
@@ -54,4 +58,40 @@ func SetFullscreen(fullscreen bool) {
 // Log prints to the console.
 func Log(args ...interface{}) {
 	console.Call("log", args)
+}
+
+func unsetupDisplay() {
+	// Clean up display before we stop using it by removing event listeners.
+	if display == nil {
+		return
+	}
+	canvas := display.frontSurface.GetCanvas()
+	canvas.Call("removeEventListener")
+	js.Global.Call("removeEventListener")
+}
+
+func setupDisplay() {
+	// Setup envent listeners for the display.
+	canvas := display.frontSurface.GetCanvas()
+	js.Global.Call("addEventListener", jquery.KEYDOWN, func(event *js.Object) {
+		k := key.FromJsEvent(event)
+		Log("keydown", event, event.Get("keyCode"), event.Get("key"), event.Get("code"),
+			k.String(), k.Rune(), string(k.Rune()))
+	})
+	canvas.Call("addEventListener", jquery.MOUSEMOVE, func(event *js.Object) {
+		Log("mousemove", event)
+	})
+}
+
+var keyState map[key.Key]bool
+
+// GetPressedKeys returns the current state of every key. If a Key maps to true then it is pressed.
+func GetPressedKeys() map[key.Key]bool {
+	m := make(map[key.Key]bool)
+	for k, press := range keyState {
+		if press {
+			m[k] = true
+		}
+	}
+	return m
 }
