@@ -100,17 +100,17 @@ func unsetupDisplay() {
 func setupDisplay() {
 	// Setup envent listeners for the display.
 	canvas := display.frontSurface.GetCanvas()
+
 	js.Global.Call("addEventListener", jquery.KEYDOWN, func(e *js.Object) {
 		k := key.FromJsEvent(e)
 		keyState[k] = true
-		err := event.Post(event.Event{
+		if err := event.Post(event.Event{
 			Type: event.KeyDown,
 			Data: event.KeyData{
 				Key: k,
 				Mod: GetModKeys(),
 			},
-		})
-		if err != nil {
+		}); err != nil {
 			Log("Warning: event skipped because queue is full", e)
 		}
 	})
@@ -118,24 +118,79 @@ func setupDisplay() {
 	js.Global.Call("addEventListener", jquery.KEYUP, func(e *js.Object) {
 		k := key.FromJsEvent(e)
 		keyState[k] = false
-		err := event.Post(event.Event{
+		if err := event.Post(event.Event{
 			Type: event.KeyUp,
 			Data: event.KeyData{
 				Key: k,
 				Mod: GetModKeys(),
 			},
-		})
-		if err != nil {
+		}); err != nil {
 			Log("Warning: event skipped because queue is full", e)
 		}
 	})
 
 	canvas.Call("addEventListener", jquery.MOUSEMOVE, func(e *js.Object) {
-		Log("mousemove", e)
+		x, y := e.Get("offsetX").Float(), e.Get("offsetY").Float()
+		dx, dy := e.Get("movementX").Float(), e.Get("movementY").Float()
+		mouseState.PosX = x
+		mouseState.PosY = y
+		mouseState.RelX = dx
+		mouseState.RelY = dy
+		if err := event.Post(event.Event{
+			Type: event.MouseMotion,
+			Data: event.MouseMotionData{
+				Pos:     struct{ X, Y float64 }{X: x, Y: y},
+				Rel:     struct{ Dx, Dy float64 }{Dx: dx, Dy: dy},
+				Buttons: GetMousePressed(),
+			},
+		}); err != nil {
+			Log("Warning: event skipped because queue is full", e)
+		}
+	})
+
+	canvas.Call("addEventListener", jquery.MOUSEDOWN, func(e *js.Object) {
+		button := e.Get("button").Int()
+		mouseState.Buttons[button] = true
+		if err := event.Post(event.Event{
+			Type: event.MouseButtonDown,
+			Data: event.MouseData{
+				Pos: struct{ X, Y float64 }{
+					X: e.Get("offsetX").Float(),
+					Y: e.Get("offsetY").Float(),
+				},
+				Button: button,
+			},
+		}); err != nil {
+			Log("Warning: event skipped because queue is full", e)
+		}
+	})
+
+	canvas.Call("addEventListener", jquery.MOUSEUP, func(e *js.Object) {
+		button := e.Get("button").Int()
+		mouseState.Buttons[button] = false
+		if err := event.Post(event.Event{
+			Type: event.MouseButtonUp,
+			Data: event.MouseData{
+				Pos: struct{ X, Y float64 }{
+					X: e.Get("offsetX").Float(),
+					Y: e.Get("offsetY").Float(),
+				},
+				Button: button,
+			},
+		}); err != nil {
+			Log("Warning: event skipped because queue is full", e)
+		}
 	})
 }
 
 var keyState = map[key.Key]bool{}
+var mouseState = struct {
+	Buttons    map[int]bool
+	PosX, PosY float64
+	RelX, RelY float64
+}{
+	Buttons: make(map[int]bool),
+}
 
 // GetPressedKeys returns the current state of every key. If a Key maps to true then it is pressed.
 func GetPressedKeys() map[key.Key]bool {
@@ -157,4 +212,25 @@ func GetModKeys() map[key.Key]bool {
 		}
 	}
 	return m
+}
+
+// GetMousePressed returns a map which indicates which mouse buttons are pressed.
+func GetMousePressed() map[int]bool {
+	m := make(map[int]bool)
+	for b, press := range mouseState.Buttons {
+		if press {
+			m[b] = true
+		}
+	}
+	return m
+}
+
+// GetMousePos returns the mouses current x and y positions.
+func GetMousePos() (x, y float64) {
+	return mouseState.PosX, mouseState.PosY
+}
+
+// GetMouseRel returns the last relative change in mouse position.
+func GetMouseRel() (dx, dy float64) {
+	return mouseState.RelX, mouseState.RelY
 }

@@ -283,6 +283,15 @@ func testCanvas() {
 					gogame.Log("quit")
 					gogame.UnsetMainLoop()
 				}
+			case event.MouseButtonDown:
+				data := evt.Data.(event.MouseData)
+				gogame.Log("mousedown", data.Pos.X, data.Pos.Y, data.Button)
+			case event.MouseButtonUp:
+				data := evt.Data.(event.MouseData)
+				gogame.Log("mouseup", data.Pos.X, data.Pos.Y, data.Button)
+			case event.MouseMotion:
+				data := evt.Data.(event.MouseMotionData)
+				gogame.Log("mousemove", data.Pos.X, data.Pos.Y, data.Rel.Dx, data.Rel.Dy, data.Buttons)
 			}
 		}
 	})

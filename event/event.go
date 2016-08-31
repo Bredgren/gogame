@@ -139,15 +139,15 @@ type KeyData struct {
 // the display, the position relative to it's previous position, and which buttons where
 // held down.
 type MouseMotionData struct {
-	Pos     [2]float64
-	Rel     [2]float64
+	Pos     struct{ X, Y float64 }
+	Rel     struct{ Dx, Dy float64 }
 	Buttons map[int]bool
 }
 
 // MouseData holds the position of the mouse relative to the uppert left corner of the
 // display and the button of interest to the event.
 type MouseData struct {
-	Pos    [2]float64
+	Pos    struct{ X, Y float64 }
 	Button int
 }
 
