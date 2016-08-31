@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 	"time"
+	"unicode"
 
 	"github.com/Bredgren/gogame"
 	"github.com/Bredgren/gogame/event"
@@ -288,11 +289,21 @@ func testCanvas() {
 				msg = "quit"
 				gogame.UnsetMainLoop()
 			case event.KeyDown:
-				k := evt.Data.(event.KeyData).Key
-				msg = fmt.Sprintf("keydown: %s", k)
+				data := evt.Data.(event.KeyData)
+				k := data.Key
+				char := k.Rune()
+				if data.Mod[key.LShift] || data.Mod[key.RShift] {
+					char = unicode.ToUpper(char)
+				}
+				msg = fmt.Sprintf("keydown: %s %s", k, string(char))
 			case event.KeyUp:
-				k := evt.Data.(event.KeyData).Key
-				msg = fmt.Sprintf("keyup: %s", k)
+				data := evt.Data.(event.KeyData)
+				k := data.Key
+				char := k.Rune()
+				if data.Mod[key.LShift] || data.Mod[key.RShift] {
+					char = unicode.ToUpper(char)
+				}
+				msg = fmt.Sprintf("keyup: %s %s", k, string(char))
 				if k == key.Escape {
 					msg = "quit (by escape)"
 					gogame.UnsetMainLoop()
