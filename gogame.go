@@ -92,7 +92,7 @@ func SetFullscreen(fullscreen bool) {
 
 // Log prints to the console.
 func Log(args ...interface{}) {
-	console.Call("log", args)
+	console.Call("log", args...)
 }
 
 func unsetupDisplay() {
@@ -106,11 +106,26 @@ func unsetupDisplay() {
 }
 
 func setupDisplay() {
-	// Setup envent listeners for the display.
-	canvas := display.frontSurface.GetCanvas()
+	// Setup event listeners for the display.
+	js.Global.Call("addEventListener", jquery.RESIZE, func(e *js.Object) {
+		if err := event.Post(event.Event{
+			Type: event.VideoResize,
+			Data: event.ResizeData{
+				W: js.Global.Get("innerWidth").Int(),
+				H: js.Global.Get("innerHeight").Int(),
+			},
+		}); err != nil {
+			Log("Warning: event skipped because queue is full", e)
+		}
+	})
+	// TODO: quit event
 
 	js.Global.Call("addEventListener", jquery.KEYDOWN, func(e *js.Object) {
 		k := key.FromJsEvent(e)
+		// Ignore key repeats
+		if keyState[k] {
+			return
+		}
 		keyState[k] = true
 		if err := event.Post(event.Event{
 			Type: event.KeyDown,
@@ -136,6 +151,8 @@ func setupDisplay() {
 			Log("Warning: event skipped because queue is full", e)
 		}
 	})
+
+	canvas := display.frontSurface.GetCanvas()
 
 	canvas.Call("addEventListener", jquery.MOUSEMOVE, func(e *js.Object) {
 		x, y := e.Get("offsetX").Float(), e.Get("offsetY").Float()
@@ -189,8 +206,6 @@ func setupDisplay() {
 			Log("Warning: event skipped because queue is full", e)
 		}
 	})
-
-	// TODO: resize and quit events
 }
 
 var keyState = map[key.Key]bool{}
