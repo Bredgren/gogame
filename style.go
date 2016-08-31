@@ -40,6 +40,13 @@ func (*FillStyle) DrawType() DrawType {
 	return Fill
 }
 
+var (
+	// FillBlack is a fill style that is solid black.
+	FillBlack = &FillStyle{Colorer: Black}
+	// FillWhite is a fill style that is solid white.
+	FillWhite = &FillStyle{Colorer: White}
+)
+
 // LineCap is a style of line cap.
 type LineCap string
 
