@@ -50,6 +50,12 @@ func GetDisplay() *Display {
 	return display
 }
 
+// Stats holds various bits of information that one may find useful.
+var Stats = struct {
+	// LoopDuration is the amount of time that the last execution of the main loop took.
+	LoopDuration time.Duration
+}{}
+
 // MainLoop is a callback function that returns a time value that can be compared to
 // previous calls to determine the elapsed time.
 type MainLoop func(time.Duration)
@@ -62,7 +68,9 @@ func SetMainLoop(loop MainLoop) {
 	var f func(timestamp *js.Object)
 	f = func(timestamp *js.Object) {
 		mainLoop = js.Global.Call("requestAnimationFrame", f)
+		start := time.Now()
 		loop(time.Duration(timestamp.Float()) * time.Millisecond)
+		Stats.LoopDuration = time.Now().Sub(start)
 	}
 	f(&js.Object{})
 }

@@ -280,6 +280,11 @@ func testCanvas() {
 	}
 	eventBgd := gogame.FillStyle{Colorer: gogame.Black}
 
+	fpsStyle := gogame.TextStyle{
+		Colorer: gogame.White,
+		Type:    gogame.Fill,
+	}
+
 	gogame.Log("start main loop")
 	gogame.SetMainLoop(func(t time.Duration) {
 		for evt := event.Poll(); evt.Type != event.NoEvent; evt = event.Poll() {
@@ -326,6 +331,9 @@ func testCanvas() {
 		}
 
 		display.Blit(eventSurf, 0, float64(display.Height()-eventSurf.Height()))
+
+		text := eventFont.Render(gogame.Stats.LoopDuration.String(), &fpsStyle, &eventBgd)
+		display.Blit(text, 0, float64(display.Height()-eventSurf.Height()-text.Height()))
 
 		display.Flip()
 	})
