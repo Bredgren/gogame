@@ -164,7 +164,7 @@ const (
 	// NoEvent is used when an Event is expected to be returned but there is no Event available
 	// to return. It has no data assiciated with it.
 	NoEvent Type = iota
-	// Quit signals the user closing the window/tab. It has no data assiciated with it.
+	// Quit signals the user closing/reloading the page. It has no data assiciated with it.
 	Quit
 	// KeyDown is when a key on the keyboard is pressed down. Its data will be of type KeyData.
 	KeyDown

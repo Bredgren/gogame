@@ -291,6 +291,7 @@ func testCanvas() {
 			case event.Quit:
 				msg = "quit"
 				gogame.UnsetMainLoop()
+				gogame.Log("quit")
 			case event.VideoResize:
 				data := evt.Data.(event.ResizeData)
 				msg = fmt.Sprintf("resize: (%d, %d)", data.W, data.H)

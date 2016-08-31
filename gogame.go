@@ -118,7 +118,12 @@ func setupDisplay() {
 			Log("Warning: event skipped because queue is full", e)
 		}
 	})
-	// TODO: quit event
+
+	js.Global.Set("onbeforeunload", func(e *js.Object) {
+		if err := event.Post(event.Event{Type: event.Quit}); err != nil {
+			Log("Warning: event skipped because queue is full", e)
+		}
+	})
 
 	js.Global.Call("addEventListener", jquery.KEYDOWN, func(e *js.Object) {
 		k := key.FromJsEvent(e)
