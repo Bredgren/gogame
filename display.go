@@ -1,6 +1,9 @@
 package gogame
 
-import "github.com/gopherjs/gopherjs/js"
+import (
+	"github.com/Bredgren/gogame/geo"
+	"github.com/gopherjs/gopherjs/js"
+)
 
 var _ Surface = &Display{}
 
@@ -43,10 +46,22 @@ func (d *Display) SetMode(width, height int) {
 	d.frontSurface.GetCanvas().Set("height", height)
 }
 
-// Flip draws the back Surface onto the Display.
+// Flip draws the back Surface onto the Display, making the draw operations since the last
+// call to Flip visible.
 func (d *Display) Flip() {
 	if d == nil {
 		return
 	}
 	d.frontSurface.Blit(d, 0, 0)
+}
+
+// Update is like Flip but only updates the portions of the front surface defined by the
+// list of Rects.
+func (d *Display) Update(rects []geo.Rect) {
+	if d == nil {
+		return
+	}
+	for _, r := range rects {
+		d.frontSurface.BlitArea(d, r, r.X, r.Y)
+	}
 }

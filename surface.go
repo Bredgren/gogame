@@ -17,7 +17,6 @@ type Surface interface {
 	Width() int
 	Height() int
 	Copy() Surface
-	//Scroll(dx, dy int)
 	GetAt(x, y int) Color
 	SetAt(x, y int, c Color)
 	SetClip(geo.Rect)
@@ -27,7 +26,7 @@ type Surface interface {
 	//GetParent() Surface
 	Scaled(x, y float64) Surface
 	Rotated(radians float64) Surface
-	GetRect() geo.Rect
+	Rect() geo.Rect
 	DrawRect(geo.Rect, Styler)
 	DrawCircle(posX, posY, radius float64, s Styler)
 	DrawEllipse(geo.Rect, Styler)
@@ -91,13 +90,13 @@ func (s *surface) GetCanvas() *js.Object {
 }
 
 // Blit draws the given surface to this one at the given position. Source's top-left corner
-// (according to GetRect fill be drawn at (x, y).
+// (according to Surface.Rect() fill be drawn at (x, y).
 func (s *surface) Blit(source Surface, x, y float64) {
 	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(x), math.Floor(y))
 }
 
 // BlitArea draws the given portion of the source surface defined by the Rect to this
-// one with its top-left corner (according to GetRect) at the given position.
+// one with its top-left corner (according to Surface.Rect()) at the given position.
 func (s *surface) BlitArea(source Surface, area geo.Rect, x, y float64) {
 	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(area.X), math.Floor(area.Y),
 		math.Floor(area.W), math.Floor(area.H), math.Floor(x), math.Floor(y), math.Floor(area.W),
@@ -113,13 +112,13 @@ func (s *surface) Fill(style *FillStyle) {
 }
 
 // Width returns the unrotated, unscaled width of the surface in pixels. To get the width
-// after scaling and rotating use GetRect.
+// after scaling and rotating use Surface.Rect.
 func (s *surface) Width() int {
 	return s.canvas.Get("width").Int()
 }
 
 // Height returns the unrotated, unscaled height of the surface in pixels. To get the height
-// after scaling and rotating use GetRect.
+// after scaling and rotating use Surface.Rect.
 func (s *surface) Height() int {
 	return s.canvas.Get("height").Int()
 }
@@ -221,8 +220,8 @@ func (s *surface) getRotatedSize(radians float64) (w, h int) {
 	return int(maxX - minX), int(maxY - minY)
 }
 
-// GetRect returns the bouding rectangle for the surface, taking into acount rotation and scale.
-func (s *surface) GetRect() geo.Rect {
+// Rect returns the bouding rectangle for the surface, taking into acount rotation and scale.
+func (s *surface) Rect() geo.Rect {
 	return geo.Rect{X: 0, Y: 0, W: float64(s.Width()), H: float64(s.Height())}
 }
 

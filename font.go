@@ -109,7 +109,7 @@ func (f *Font) Render(text string, foreground *TextStyle, background Styler) Sur
 		size = f.Size
 	}
 	s := NewSurface(f.Width(text, &fore), size)
-	s.DrawRect(s.GetRect(), background)
+	s.DrawRect(s.Rect(), background)
 	s.DrawText(text, 0, 0, f, &fore)
 	return s
 }

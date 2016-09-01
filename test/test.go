@@ -262,7 +262,7 @@ func testCanvas() {
 	// Test copy
 	copy := display.Copy()
 	copy = display.Scaled(0.2, 0.2)
-	copy.DrawRect(copy.GetRect(), &gogame.StrokeStyle{Colorer: gogame.White, Width: 2})
+	copy.DrawRect(copy.Rect(), &gogame.StrokeStyle{Colorer: gogame.White, Width: 2})
 	display.Blit(copy, float64(display.Width()-copy.Width()), float64(display.Height()-copy.Height()))
 
 	display.Flip()
@@ -284,6 +284,16 @@ func testCanvas() {
 	}
 	maxFpsWidth := 0
 
+	done := make(chan struct{}, 1)
+	go func() {
+		<-done
+		display.Fill(gogame.FillWhite)
+		display.Update([]geo.Rect{
+			{X: 500, Y: 500, W: 10, H: 10},
+			{X: 520, Y: 505, W: 15, H: 10},
+		})
+	}()
+
 	gogame.Log("start main loop")
 	gogame.SetMainLoop(func(t time.Duration) {
 		for evt := event.Poll(); evt.Type != event.NoEvent; evt = event.Poll() {
@@ -293,6 +303,7 @@ func testCanvas() {
 				msg = "quit"
 				gogame.UnsetMainLoop()
 				gogame.Log("quit")
+				done <- struct{}{}
 			case event.VideoResize:
 				data := evt.Data.(event.ResizeData)
 				msg = fmt.Sprintf("resize: (%d, %d)", data.W, data.H)
@@ -316,6 +327,7 @@ func testCanvas() {
 				case key.Escape:
 					msg = "quit (by escape)"
 					gogame.UnsetMainLoop()
+					done <- struct{}{}
 					// case key.F:
 					// 	gogame.SetFullscreen(!gogame.GetFullscreen())
 				}
@@ -341,7 +353,7 @@ func testCanvas() {
 		if text.Width() > maxFpsWidth {
 			maxFpsWidth = text.Width()
 		}
-		r := text.GetRect()
+		r := text.Rect()
 		r.W = float64(maxFpsWidth)
 		r.Y = float64(display.Height() - eventSurf.Height() - text.Height())
 		display.DrawRect(r, gogame.FillBlack)
