@@ -45,8 +45,8 @@ func SetMainDisplay(d *Display) {
 	setupDisplay()
 }
 
-// GetDisplay returns the main Display being used.
-func GetDisplay() *Display {
+// MainDisplay returns the main Display being used.
+func MainDisplay() *Display {
 	return display
 }
 
@@ -88,13 +88,13 @@ func UnsetMainLoop() {
 // SetFullscreen sets or unsetd fullscreen mode.
 // func SetFullscreen(fullscreen bool) {
 // 	// display.canvas.Call("requestFullScreen")
-// 	display.frontSurface.GetCanvas().Call("webkitRequestFullScreen")
+// 	display.frontSurface.Canvas().Call("webkitRequestFullScreen")
 // 	// display.canvas.Call("mozRequestFullScreen")
 // 	isFullscreen = fullscreen
 // }
 
-// GetFullscreen returns true if fullscreen is currently active.
-// func GetFullscreen() bool {
+// Fullscreen returns true if fullscreen is currently active.
+// func Fullscreen() bool {
 // 	return isFullscreen
 // }
 
@@ -108,7 +108,7 @@ func unsetupDisplay() {
 	if display == nil {
 		return
 	}
-	canvas := display.frontSurface.GetCanvas()
+	canvas := display.frontSurface.Canvas()
 	canvas.Call("removeEventListener")
 	js.Global.Call("removeEventListener")
 }
@@ -142,10 +142,7 @@ func setupDisplay() {
 		keyState[k] = true
 		if err := event.Post(event.Event{
 			Type: event.KeyDown,
-			Data: event.KeyData{
-				Key: k,
-				Mod: GetModKeys(),
-			},
+			Data: event.KeyData{Key: k, Mod: ModKeys()},
 		}); err != nil {
 			Log("Warning: event skipped because queue is full", e)
 		}
@@ -156,16 +153,13 @@ func setupDisplay() {
 		keyState[k] = false
 		if err := event.Post(event.Event{
 			Type: event.KeyUp,
-			Data: event.KeyData{
-				Key: k,
-				Mod: GetModKeys(),
-			},
+			Data: event.KeyData{Key: k, Mod: ModKeys()},
 		}); err != nil {
 			Log("Warning: event skipped because queue is full", e)
 		}
 	})
 
-	canvas := display.frontSurface.GetCanvas()
+	canvas := display.frontSurface.Canvas()
 
 	canvas.Call("addEventListener", jquery.MOUSEMOVE, func(e *js.Object) {
 		x, y := e.Get("offsetX").Float(), e.Get("offsetY").Float()
@@ -179,7 +173,7 @@ func setupDisplay() {
 			Data: event.MouseMotionData{
 				Pos:     struct{ X, Y float64 }{X: x, Y: y},
 				Rel:     struct{ Dx, Dy float64 }{Dx: dx, Dy: dy},
-				Buttons: GetMousePressed(),
+				Buttons: MousePressed(),
 			},
 		}); err != nil {
 			Log("Warning: event skipped because queue is full", e)
@@ -230,8 +224,8 @@ var mouseState = struct {
 	Buttons: make(map[int]bool),
 }
 
-// GetPressedKeys returns the current state of every key. If a Key maps to true then it is pressed.
-func GetPressedKeys() map[key.Key]bool {
+// PressedKeys returns a map that contoins all pressed keys mapping to true.
+func PressedKeys() map[key.Key]bool {
 	m := make(map[key.Key]bool)
 	for k, press := range keyState {
 		if press {
@@ -241,8 +235,8 @@ func GetPressedKeys() map[key.Key]bool {
 	return m
 }
 
-// GetModKeys returns just the stat for the modifier keys.
-func GetModKeys() map[key.Key]bool {
+// ModKeys returns just the state for the modifier keys.
+func ModKeys() map[key.Key]bool {
 	m := make(map[key.Key]bool)
 	for k, press := range keyState {
 		if press && k.IsMod() {
@@ -252,8 +246,8 @@ func GetModKeys() map[key.Key]bool {
 	return m
 }
 
-// GetMousePressed returns a map which indicates which mouse buttons are pressed.
-func GetMousePressed() map[int]bool {
+// MousePressed returns a map that contains all pressed mouse buttons mapping to true.
+func MousePressed() map[int]bool {
 	m := make(map[int]bool)
 	for b, press := range mouseState.Buttons {
 		if press {
@@ -263,12 +257,12 @@ func GetMousePressed() map[int]bool {
 	return m
 }
 
-// GetMousePos returns the mouses current x and y positions.
-func GetMousePos() (x, y float64) {
+// MousePos returns the mouses current x and y positions.
+func MousePos() (x, y float64) {
 	return mouseState.PosX, mouseState.PosY
 }
 
-// GetMouseRel returns the last relative change in mouse position.
-func GetMouseRel() (dx, dy float64) {
+// MouseRel returns the last relative change in mouse position.
+func MouseRel() (dx, dy float64) {
 	return mouseState.RelX, mouseState.RelY
 }

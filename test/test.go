@@ -60,7 +60,7 @@ func appendResultSection(sectionName string, results []*result) {
 
 func testCanvas() {
 	width, height := 900, 600
-	display := gogame.GetDisplay()
+	display := gogame.MainDisplay()
 	display.SetMode(width, height)
 	display.Fill(gogame.FillBlack)
 
@@ -359,6 +359,7 @@ func testCanvas() {
 		display.DrawRect(r, gogame.FillBlack)
 		display.Blit(text, 0, r.Y)
 
-		display.Flip()
+		// display.Flip()
+		display.Update([]geo.Rect{{X: r.X, Y: r.Y, W: math.Max(r.W, eventSurf.Rect().W), H: r.H + eventSurf.Rect().H}})
 	})
 }

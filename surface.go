@@ -10,7 +10,7 @@ import (
 
 // Surface represents an image or drawable surface.
 type Surface interface {
-	GetCanvas() *js.Object
+	Canvas() *js.Object
 	Blit(source Surface, x, y float64)
 	BlitArea(source Surface, area geo.Rect, x, y float64)
 	Fill(*FillStyle)
@@ -83,8 +83,8 @@ func NewSurfaceFromCanvasID(canvasID string) (Surface, error) {
 	}, nil
 }
 
-// GetCanvas returns the surface as an HTML canvas.
-func (s *surface) GetCanvas() *js.Object {
+// Canvas returns the surface as an HTML canvas.
+func (s *surface) Canvas() *js.Object {
 	// TODO handle nil surface
 	return s.canvas
 }
@@ -92,13 +92,13 @@ func (s *surface) GetCanvas() *js.Object {
 // Blit draws the given surface to this one at the given position. Source's top-left corner
 // (according to Surface.Rect() fill be drawn at (x, y).
 func (s *surface) Blit(source Surface, x, y float64) {
-	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(x), math.Floor(y))
+	s.ctx.Call("drawImage", source.Canvas(), math.Floor(x), math.Floor(y))
 }
 
 // BlitArea draws the given portion of the source surface defined by the Rect to this
 // one with its top-left corner (according to Surface.Rect()) at the given position.
 func (s *surface) BlitArea(source Surface, area geo.Rect, x, y float64) {
-	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(area.X), math.Floor(area.Y),
+	s.ctx.Call("drawImage", source.Canvas(), math.Floor(area.X), math.Floor(area.Y),
 		math.Floor(area.W), math.Floor(area.H), math.Floor(x), math.Floor(y), math.Floor(area.W),
 		math.Floor(area.H))
 }

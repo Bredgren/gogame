@@ -42,8 +42,8 @@ func (d *Display) SetMode(width, height int) {
 	d.canvas.Set("width", width)
 	d.canvas.Set("height", height)
 	d.ctx = d.canvas.Call("getContext", "2d")
-	d.frontSurface.GetCanvas().Set("width", width)
-	d.frontSurface.GetCanvas().Set("height", height)
+	d.frontSurface.Canvas().Set("width", width)
+	d.frontSurface.Canvas().Set("height", height)
 }
 
 // Flip draws the back Surface onto the Display, making the draw operations since the last

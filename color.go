@@ -144,5 +144,5 @@ func (p *Pattern) Color(ctx *js.Object) interface{} {
 	if p.Type == "" {
 		p.Type = Repeat
 	}
-	return ctx.Call("createPattern", p.Source.GetCanvas(), p.Type)
+	return ctx.Call("createPattern", p.Source.Canvas(), p.Type)
 }
