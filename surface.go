@@ -289,6 +289,7 @@ func (s *surface) DrawLine(startX, startY, endX, endY float64, style Styler) {
 	}
 	s.ctx.Call("save")
 	style.Style(s.ctx)
+	// Not math.Flooring lines to preserve control with odd width lines.
 	s.ctx.Call("translate", startX, startY)
 	s.ctx.Call("beginPath")
 	s.ctx.Call("moveTo", 0, 0)
@@ -305,6 +306,7 @@ func (s *surface) DrawLines(pointList [][2]float64, style Styler) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
 	s.ctx.Call("beginPath")
+	// Not math.Flooring lines to preserve control with odd width lines.
 	s.ctx.Call("moveTo", pointList[0][0], pointList[0][1])
 	for _, p := range pointList[1:] {
 		s.ctx.Call("lineTo", p[0], p[1])
