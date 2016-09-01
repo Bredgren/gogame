@@ -311,9 +311,12 @@ func testCanvas() {
 					char = unicode.ToUpper(char)
 				}
 				msg = fmt.Sprintf("keyup: %s %s", k, string(char))
-				if k == key.Escape {
+				switch k {
+				case key.Escape:
 					msg = "quit (by escape)"
 					gogame.UnsetMainLoop()
+					// case key.F:
+					// 	gogame.SetFullscreen(!gogame.GetFullscreen())
 				}
 			case event.MouseButtonDown:
 				data := evt.Data.(event.MouseData)
@@ -326,9 +329,8 @@ func testCanvas() {
 				msg = fmt.Sprintf("mousemove: (%.0f, %.0f) (%.0f, %.0f) %v", data.Pos.X, data.Pos.Y, data.Rel.Dx, data.Rel.Dy, data.Buttons)
 			}
 			text := eventFont.Render(msg, &eventStyle, gogame.FillBlack)
-			cpy := eventSurf.Copy()
-			eventSurf.Fill(gogame.FillBlack)
-			eventSurf.Blit(cpy, 0, float64(text.Height()))
+			eventSurf.Blit(eventSurf, 0, float64(text.Height()))
+			eventSurf.DrawRect(gogame.Rect{X: 0, Y: 0, W: float64(eventSurf.Width()), H: float64(text.Height())}, gogame.FillBlack)
 			eventSurf.Blit(text, 0, 0)
 		}
 

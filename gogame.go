@@ -83,12 +83,20 @@ func UnsetMainLoop() {
 	}
 }
 
+// var isFullscreen bool
+
 // SetFullscreen sets or unsetd fullscreen mode.
-func SetFullscreen(fullscreen bool) {
-	//canvas.canvas.Call("requestFullScreen")
-	display.canvas.Call("webkitRequestFullScreen")
-	//canvas.canvas.Call("mozRequestFullScreen")
-}
+// func SetFullscreen(fullscreen bool) {
+// 	// display.canvas.Call("requestFullScreen")
+// 	display.frontSurface.GetCanvas().Call("webkitRequestFullScreen")
+// 	// display.canvas.Call("mozRequestFullScreen")
+// 	isFullscreen = fullscreen
+// }
+
+// GetFullscreen returns true if fullscreen is currently active.
+// func GetFullscreen() bool {
+// 	return isFullscreen
+// }
 
 // Log prints to the console.
 func Log(args ...interface{}) {
