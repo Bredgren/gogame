@@ -10,6 +10,7 @@ import (
 
 	"github.com/Bredgren/gogame"
 	"github.com/Bredgren/gogame/event"
+	"github.com/Bredgren/gogame/geo"
 	"github.com/Bredgren/gogame/key"
 	"github.com/gopherjs/jquery"
 )
@@ -64,8 +65,8 @@ func testCanvas() {
 	display.Fill(gogame.FillBlack)
 
 	// Test shapes and styles
-	display.DrawRect(gogame.Rect{X: 11, Y: 11, W: 48, H: 48}, &gogame.StrokeStyle{Colorer: gogame.White, Width: 4})
-	display.DrawRect(gogame.Rect{X: 70, Y: 10, W: 50, H: 50},
+	display.DrawRect(geo.Rect{X: 11, Y: 11, W: 48, H: 48}, &gogame.StrokeStyle{Colorer: gogame.White, Width: 4})
+	display.DrawRect(geo.Rect{X: 70, Y: 10, W: 50, H: 50},
 		&gogame.FillStyle{Colorer: &gogame.LinearGradient{
 			X1: 0, Y1: 0, X2: 50, Y2: 50,
 			ColorStops: []gogame.ColorStop{
@@ -73,7 +74,7 @@ func testCanvas() {
 				{1.0, gogame.Blue},
 			},
 		}})
-	display.DrawRect(gogame.Rect{X: 130, Y: 10, W: 50, H: 50},
+	display.DrawRect(geo.Rect{X: 130, Y: 10, W: 50, H: 50},
 		&gogame.FillStyle{Colorer: &gogame.RadialGradient{
 			X1: 50 / 2, Y1: 50 / 2, R1: 40, X2: 50 / 4, Y2: 50 / 4, R2: 1,
 			ColorStops: []gogame.ColorStop{
@@ -83,7 +84,7 @@ func testCanvas() {
 		}})
 
 	s := gogame.NewSurface(10, 10)
-	s.DrawRect(gogame.Rect{X: 0, Y: 0, W: 10, H: 10},
+	s.DrawRect(geo.Rect{X: 0, Y: 0, W: 10, H: 10},
 		&gogame.FillStyle{Colorer: &gogame.LinearGradient{
 			X1: 0, Y1: 10, X2: 10, Y2: 0,
 			ColorStops: []gogame.ColorStop{
@@ -97,7 +98,7 @@ func testCanvas() {
 		Type:   gogame.Repeat,
 	}
 
-	display.DrawRect(gogame.Rect{X: 190, Y: 10, W: 50, H: 50},
+	display.DrawRect(geo.Rect{X: 190, Y: 10, W: 50, H: 50},
 		&gogame.FillStyle{Colorer: &pattern})
 
 	display.Blit(s, 30, 30)
@@ -107,12 +108,12 @@ func testCanvas() {
 		Width:   10,
 	})
 
-	display.DrawEllipse(gogame.Rect{X: 70, Y: 70, W: 110, H: 50}, &gogame.StrokeStyle{
+	display.DrawEllipse(geo.Rect{X: 70, Y: 70, W: 110, H: 50}, &gogame.StrokeStyle{
 		Colorer: gogame.White,
 		Width:   2,
 	})
 
-	display.DrawArc(gogame.Rect{X: 190, Y: 70, W: 110, H: 50}, 0, 0.75*math.Pi, &gogame.StrokeStyle{
+	display.DrawArc(geo.Rect{X: 190, Y: 70, W: 110, H: 50}, 0, 0.75*math.Pi, &gogame.StrokeStyle{
 		Colorer: &gogame.Color{R: 1.0, G: 1.0, A: 1.0},
 		Width:   2,
 	})
@@ -199,7 +200,7 @@ func testCanvas() {
 	})
 
 	grid := gogame.NewSurface(50, 50)
-	grid.DrawRect(gogame.Rect{X: 0, Y: 0, W: 50, H: 50},
+	grid.DrawRect(geo.Rect{X: 0, Y: 0, W: 50, H: 50},
 		&gogame.FillStyle{Colorer: &pattern})
 
 	display.Blit(grid, 10, 250)
@@ -234,7 +235,7 @@ func testCanvas() {
 	// Test nil styles
 	gogame.DefaultColor = gogame.Red
 	var style *gogame.FillStyle
-	display.DrawRect(gogame.Rect{X: 250, Y: 10, W: 10, H: 10}, style)
+	display.DrawRect(geo.Rect{X: 250, Y: 10, W: 10, H: 10}, style)
 	display.DrawCircle(270, 15, 5, nil)
 	display.DrawLine(250, 25, 260, 35, nil)
 	display.DrawText("nil", 265, 30, nil, nil)
@@ -252,7 +253,7 @@ func testCanvas() {
 	}
 
 	// Test clipping
-	display.SetClip(gogame.Rect{X: 400, Y: 10, W: 100, H: 100})
+	display.SetClip(geo.Rect{X: 400, Y: 10, W: 100, H: 100})
 	display.Fill(gogame.FillWhite)
 	display.DrawCircle(500, 110, 20, &gogame.FillStyle{})
 	display.ClearClip()
@@ -330,7 +331,7 @@ func testCanvas() {
 			}
 			text := eventFont.Render(msg, &eventStyle, gogame.FillBlack)
 			eventSurf.Blit(eventSurf, 0, float64(text.Height()))
-			eventSurf.DrawRect(gogame.Rect{X: 0, Y: 0, W: float64(eventSurf.Width()), H: float64(text.Height())}, gogame.FillBlack)
+			eventSurf.DrawRect(geo.Rect{X: 0, Y: 0, W: float64(eventSurf.Width()), H: float64(text.Height())}, gogame.FillBlack)
 			eventSurf.Blit(text, 0, 0)
 		}
 

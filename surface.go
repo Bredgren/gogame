@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/Bredgren/gogame/geo"
 	"github.com/gopherjs/gopherjs/js"
 )
 
@@ -11,7 +12,7 @@ import (
 type Surface interface {
 	GetCanvas() *js.Object
 	Blit(source Surface, x, y float64)
-	BlitArea(source Surface, area Rect, x, y float64)
+	BlitArea(source Surface, area geo.Rect, x, y float64)
 	Fill(*FillStyle)
 	Width() int
 	Height() int
@@ -19,18 +20,18 @@ type Surface interface {
 	//Scroll(dx, dy int)
 	GetAt(x, y int) Color
 	SetAt(x, y int, c Color)
-	SetClip(Rect)
+	SetClip(geo.Rect)
 	SetClipPath(pointList [][2]float64)
 	ClearClip()
-	//GetSubsurface(Rect) Surface
+	//GetSubsurface(geo.Rect) Surface
 	//GetParent() Surface
 	Scaled(x, y float64) Surface
 	Rotated(radians float64) Surface
-	GetRect() Rect
-	DrawRect(Rect, Styler)
+	GetRect() geo.Rect
+	DrawRect(geo.Rect, Styler)
 	DrawCircle(posX, posY, radius float64, s Styler)
-	DrawEllipse(Rect, Styler)
-	DrawArc(r Rect, startRadians, stopRadians float64, s Styler)
+	DrawEllipse(geo.Rect, Styler)
+	DrawArc(r geo.Rect, startRadians, stopRadians float64, s Styler)
 	DrawLine(startX, startY, endX, endY float64, s Styler)
 	DrawLines(pointList [][2]float64, s Styler)
 	//DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY, float64, s Styler)
@@ -90,14 +91,14 @@ func (s *surface) GetCanvas() *js.Object {
 }
 
 // Blit draws the given surface to this one at the given position. Source's top-left corner
-// (according to GetRect) fill be drawn at (x, y).
+// (according to GetRect fill be drawn at (x, y).
 func (s *surface) Blit(source Surface, x, y float64) {
 	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(x), math.Floor(y))
 }
 
 // BlitArea draws the given portion of the source surface defined by the Rect to this
 // one with its top-left corner (according to GetRect) at the given position.
-func (s *surface) BlitArea(source Surface, area Rect, x, y float64) {
+func (s *surface) BlitArea(source Surface, area geo.Rect, x, y float64) {
 	s.ctx.Call("drawImage", source.GetCanvas(), math.Floor(area.X), math.Floor(area.Y),
 		math.Floor(area.W), math.Floor(area.H), math.Floor(x), math.Floor(y), math.Floor(area.W),
 		math.Floor(area.H))
@@ -148,7 +149,7 @@ func (s *surface) SetAt(x, y int, c Color) {
 
 // SetClip defines a rectangular region of the surface where only the enclosed pixels can
 // be affected by draw operations.
-func (s *surface) SetClip(r Rect) {
+func (s *surface) SetClip(r geo.Rect) {
 	s.SetClipPath([][2]float64{
 		{r.X, r.Y}, {r.X + r.W, r.Y}, {r.X + r.W, r.Y + r.H}, {r.X, r.Y + r.H},
 	})
@@ -221,12 +222,12 @@ func (s *surface) getRotatedSize(radians float64) (w, h int) {
 }
 
 // GetRect returns the bouding rectangle for the surface, taking into acount rotation and scale.
-func (s *surface) GetRect() Rect {
-	return Rect{X: 0, Y: 0, W: float64(s.Width()), H: float64(s.Height())}
+func (s *surface) GetRect() geo.Rect {
+	return geo.Rect{X: 0, Y: 0, W: float64(s.Width()), H: float64(s.Height())}
 }
 
 // DrawRect draws a rectangle on the surface.
-func (s *surface) DrawRect(r Rect, style Styler) {
+func (s *surface) DrawRect(r geo.Rect, style Styler) {
 	if style == nil {
 		style = &FillStyle{}
 	}
@@ -252,7 +253,7 @@ func (s *surface) DrawCircle(posX, posY, radius float64, style Styler) {
 }
 
 // DrawEllipse draws an ellipse on the canvas within the given Rect.
-func (s *surface) DrawEllipse(r Rect, style Styler) {
+func (s *surface) DrawEllipse(r geo.Rect, style Styler) {
 	if style == nil {
 		style = &FillStyle{}
 	}
@@ -268,7 +269,7 @@ func (s *surface) DrawEllipse(r Rect, style Styler) {
 
 // DrawArc draws an arc on the canvas within the given Rect between the given angles.
 // Angles are counter-clockwise.
-func (s *surface) DrawArc(r Rect, startRadians, stopRadians float64, style Styler) {
+func (s *surface) DrawArc(r geo.Rect, startRadians, stopRadians float64, style Styler) {
 	if style == nil {
 		style = &StrokeStyle{}
 	}
