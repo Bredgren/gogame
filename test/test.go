@@ -215,7 +215,7 @@ func testCanvas() {
 
 	font = gogame.Font{
 		Size:   25,
-		Family: gogame.FontFamilySansSerif,
+		Family: gogame.FontFamily("courier new, monospace"),
 	}
 	textStyle := gogame.TextStyle{
 		Colorer:  gogame.Black,

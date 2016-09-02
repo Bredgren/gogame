@@ -206,7 +206,9 @@ const (
 	FontWeightBold FontWeight = "bold"
 )
 
-// FontFamily is the overall appearence of the font.
+// FontFamily is the overall appearence of the font. The predefined families are the generic
+// ones, it is possible to define any valid css font-family though, e.g.
+// FontFamily("courier new, monospace")
 type FontFamily string
 
 const (

@@ -1,5 +1,15 @@
 // Package gogame is wrapper around gopherjs that makes it more convenient to work with for making games.
 // It also provides several utilities commonly used in games.
+//
+// TODO:
+// - Curves
+// - Sounds/music
+// - Image loading
+// - Sprite?
+// - Spritesheet
+// - Primitive shape collision?
+//   - Circles, rectangles, lines, rays
+// - Network?
 package gogame
 
 import (
