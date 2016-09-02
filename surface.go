@@ -32,11 +32,11 @@ type Surface interface {
 	DrawEllipse(geo.Rect, Styler)
 	DrawArc(r geo.Rect, startRadians, stopRadians float64, s Styler)
 	DrawLine(startX, startY, endX, endY float64, s Styler)
-	DrawLines(pointList [][2]float64, s Styler)
-	//DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY, float64, s Styler)
-	//DrawQuadraticCurves(points [][2]float64, cPoints [][2]float64, s Styler)
-	//DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, s Styler)
-	//DrawBezierCurves(points [][2]float64, cPoints [][2]float64, s Styler)
+	DrawLines(points [][2]float64, s Styler)
+	DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY float64, s Styler)
+	DrawQuadraticCurves(points [][2]float64, s Styler)
+	DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, s Styler)
+	DrawBezierCurves(points [][2]float64, s Styler)
 	DrawText(text string, x, y float64, font *Font, style *TextStyle)
 }
 
@@ -282,24 +282,23 @@ func (s *surface) DrawArc(r geo.Rect, startRadians, stopRadians float64, style S
 	s.ctx.Call("restore")
 }
 
-// DrawLine draws a line on the canvas.
+// DrawLine draws a line on the surface.
 func (s *surface) DrawLine(startX, startY, endX, endY float64, style Styler) {
 	if style == nil {
 		style = &StrokeStyle{}
 	}
 	s.ctx.Call("save")
 	style.Style(s.ctx)
-	// Not math.Flooring lines to preserve control with odd width lines.
-	s.ctx.Call("translate", startX, startY)
 	s.ctx.Call("beginPath")
-	s.ctx.Call("moveTo", 0, 0)
-	s.ctx.Call("lineTo", endX-startX, endY-startY)
+	// Not math.Flooring lines to preserve control with odd width lines.
+	s.ctx.Call("moveTo", startX, startY)
+	s.ctx.Call("lineTo", endX, endY)
 	s.ctx.Call(string(style.DrawType()))
 	s.ctx.Call("restore")
 }
 
-// DrawLines draws multiple connectd lines to the surface.
-func (s *surface) DrawLines(pointList [][2]float64, style Styler) {
+// DrawLines draws multiple connected lines to the surface.
+func (s *surface) DrawLines(points [][2]float64, style Styler) {
 	if style == nil {
 		style = &StrokeStyle{}
 	}
@@ -307,8 +306,8 @@ func (s *surface) DrawLines(pointList [][2]float64, style Styler) {
 	style.Style(s.ctx)
 	s.ctx.Call("beginPath")
 	// Not math.Flooring lines to preserve control with odd width lines.
-	s.ctx.Call("moveTo", pointList[0][0], pointList[0][1])
-	for _, p := range pointList[1:] {
+	s.ctx.Call("moveTo", points[0][0], points[0][1])
+	for _, p := range points[1:] {
 		s.ctx.Call("lineTo", p[0], p[1])
 	}
 	s.ctx.Call(string(style.DrawType()))
@@ -322,5 +321,85 @@ func (s *surface) DrawText(text string, x, y float64, font *Font, style *TextSty
 	style.Style(s.ctx)
 	s.ctx.Call("translate", math.Floor(x), math.Floor(y))
 	s.ctx.Call(fmt.Sprintf("%sText", style.DrawType()), text, 0, 0)
+	s.ctx.Call("restore")
+}
+
+// DrawQuadraticCurve draws a quadratic curve to the surface from (startX, startY) to
+// (endX, endY) with the control point (cpX, cpY).
+func (s *surface) DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY float64, style Styler) {
+	if style == nil {
+		style = &StrokeStyle{}
+	}
+	s.ctx.Call("save")
+	style.Style(s.ctx)
+	s.ctx.Call("beginPath")
+	// Not math.Flooring lines to preserve control with odd width lines.
+	s.ctx.Call("moveTo", startX, startY)
+	s.ctx.Call("quadraticCurveTo", cpX, cpY, endX, endY)
+	s.ctx.Call(string(style.DrawType()))
+	s.ctx.Call("restore")
+}
+
+// DrawQuadraticCurves draws multiple connected quadratic curves to the surface. The list
+// of points alternaes between end points and control points, i.e. [startpoint, control1,
+// point2, control2, point3, etc.]. If the list has an even number of points then the last
+// point is ignored. If there are less than 3 points then nothing will drawn.
+func (s *surface) DrawQuadraticCurves(points [][2]float64, style Styler) {
+	if len(points) < 3 {
+		return // Not enough points for event one curve.
+	}
+	if style == nil {
+		style = &StrokeStyle{}
+	}
+	s.ctx.Call("save")
+	style.Style(s.ctx)
+	s.ctx.Call("beginPath")
+	// Not math.Flooring lines to preserve control with odd width lines.
+	s.ctx.Call("moveTo", points[0][0], points[0][1])
+	for i := 1; i+1 < len(points); i += 2 {
+		s.ctx.Call("quadraticCurveTo", points[i][0], points[i][1], points[i+1][0], points[i+1][1])
+	}
+	s.ctx.Call(string(style.DrawType()))
+	s.ctx.Call("restore")
+}
+
+// DrawBezierCurve draws a cubic bezier curve to the surface from (startX, startY) to
+// (endX, endY) with the given respective control points..
+func (s *surface) DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, style Styler) {
+	if style == nil {
+		style = &StrokeStyle{}
+	}
+	s.ctx.Call("save")
+	style.Style(s.ctx)
+	s.ctx.Call("beginPath")
+	// Not math.Flooring lines to preserve control with odd width lines.
+	s.ctx.Call("moveTo", startX, startY)
+	s.ctx.Call("bezierCurveTo", cpStartX, cpStartY, cpEndX, cpEndY, endX, endY)
+	s.ctx.Call(string(style.DrawType()))
+	s.ctx.Call("restore")
+}
+
+// DrawBezierCurves draws multiple connected cubic quadratic curves to the surface. The list
+// of points alternaes between end points and both control points, i.e. [startpoint, control1,
+// control2, point2, control3, control4, point3, etc.]. If there are not enough points at
+// the end of the list then it will stop at the last possible point. If there are less than
+// 4 points then nothing will drawn.
+func (s *surface) DrawBezierCurves(points [][2]float64, style Styler) {
+	if len(points) < 4 {
+		return // Not enough points for event one curve.
+	}
+	if style == nil {
+		style = &StrokeStyle{}
+	}
+	s.ctx.Call("save")
+	style.Style(s.ctx)
+	s.ctx.Call("beginPath")
+	// Not math.Flooring lines to preserve control with odd width lines.
+	s.ctx.Call("moveTo", points[0][0], points[0][1])
+	for i := 1; i+2 < len(points); i += 3 {
+		s.ctx.Call("bezierCurveTo", points[i][0], points[i][1], points[i+1][0], points[i+1][1],
+			points[i+2][0], points[i+2][1])
+	}
+	s.ctx.Call(string(style.DrawType()))
 	s.ctx.Call("restore")
 }

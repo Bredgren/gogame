@@ -264,6 +264,52 @@ func testCanvas() {
 	copy.DrawRect(copy.Rect(), &gogame.StrokeStyle{Colorer: gogame.White, Width: 2})
 	display.Blit(copy, float64(display.Width()-copy.Width()), float64(display.Height()-copy.Height()))
 
+	// Test curves
+	display.SetAt(590, 20, gogame.Green)
+	display.DrawQuadraticCurve(550, 10, 550, 60, 590, 20, &gogame.StrokeStyle{
+		Colorer: gogame.White,
+		Width:   5,
+	})
+
+	display.DrawQuadraticCurves([][2]float64{
+		{620, 30}, {630, 0},
+		{640, 30}, {670, 40},
+		{640, 50}, {630, 80},
+		{620, 50}, {590, 40},
+		{620, 30},
+	}, gogame.FillWhite)
+
+	display.DrawQuadraticCurves([][2]float64{
+		{620, 130}, {630, 100},
+		{640, 130}, {670, 140},
+		{640, 150}, {630, 180},
+		{620, 150}, {590, 140},
+		{620, 130}, {0, 0}, // Last point ignored
+	}, gogame.FillWhite)
+
+	display.SetAt(695, 40, gogame.Green)
+	display.SetAt(695, 0, gogame.Green)
+	display.DrawBezierCurve(670, 20, 720, 20, 695, 40, 695, 0, &gogame.StrokeStyle{
+		Colorer: gogame.White,
+		Width:   5,
+	})
+
+	display.DrawBezierCurves([][2]float64{
+		{750, 20}, {775, 40}, {775, 0},
+		{800, 20}, {780, 45}, {820, 45},
+		{800, 70}, {775, 50}, {775, 90},
+		{750, 70}, {770, 45}, {730, 45},
+		{750, 20},
+	}, gogame.FillWhite)
+
+	display.DrawBezierCurves([][2]float64{
+		{750, 120}, {775, 140}, {775, 100},
+		{800, 120}, {780, 145}, {820, 145},
+		{800, 170}, {775, 150}, {775, 190},
+		{750, 170}, {770, 145}, {730, 145},
+		{750, 120}, {0, 0}, {0, 0}, // Last two ignored
+	}, gogame.FillWhite)
+
 	display.Flip()
 
 	eventSurf := gogame.NewSurface(300, 100)

@@ -2,7 +2,6 @@
 // It also provides several utilities commonly used in games.
 //
 // TODO:
-// - Curves
 // - Sounds/music
 // - Image loading
 // - Sprite?
