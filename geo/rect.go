@@ -335,7 +335,7 @@ func (r *Rect) Normalize() {
 
 // Contains returns true if other is completely inside this one.
 func (r *Rect) Contains(other *Rect) bool {
-	return other.X >= r.X && other.Y >= r.W && other.Right() <= r.Right() && other.Bottom() <= r.Bottom()
+	return other.X >= r.X && other.Y >= r.Y && other.Right() <= r.Right() && other.Bottom() <= r.Bottom()
 }
 
 // CollidePoint returns true if the point is within the Rect. A point along the right or
