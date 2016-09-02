@@ -26,7 +26,6 @@ type result struct {
 
 func main() {
 	resultList = jq("#test-results")
-	testRect()
 
 	ready := gogame.Ready()
 	go func() {
