@@ -69,16 +69,16 @@ func testCanvas() {
 		&gogame.FillStyle{Colorer: &gogame.LinearGradient{
 			X1: 0, Y1: 0, X2: 50, Y2: 50,
 			ColorStops: []gogame.ColorStop{
-				{0.0, gogame.Red},
-				{1.0, gogame.Blue},
+				{Position: 0.0, Color: gogame.Red},
+				{Position: 1.0, Color: gogame.Blue},
 			},
 		}})
 	display.DrawRect(geo.Rect{X: 130, Y: 10, W: 50, H: 50},
 		&gogame.FillStyle{Colorer: &gogame.RadialGradient{
 			X1: 50 / 2, Y1: 50 / 2, R1: 40, X2: 50 / 4, Y2: 50 / 4, R2: 1,
 			ColorStops: []gogame.ColorStop{
-				{0.0, gogame.Blue},
-				{1.0, gogame.Green},
+				{Position: 0.0, Color: gogame.Blue},
+				{Position: 1.0, Color: gogame.Green},
 			},
 		}})
 
@@ -87,8 +87,8 @@ func testCanvas() {
 		&gogame.FillStyle{Colorer: &gogame.LinearGradient{
 			X1: 0, Y1: 10, X2: 10, Y2: 0,
 			ColorStops: []gogame.ColorStop{
-				{0.0, gogame.Red},
-				{1.0, gogame.Green},
+				{Position: 0.0, Color: gogame.Red},
+				{Position: 1.0, Color: gogame.Green},
 			},
 		}})
 
@@ -190,8 +190,8 @@ func testCanvas() {
 		Colorer: &gogame.LinearGradient{
 			X1: 0, Y1: 0, X2: float64(w), Y2: 0,
 			ColorStops: []gogame.ColorStop{
-				{0.0, gogame.Blue},
-				{1.0, gogame.Green},
+				{Position: 0.0, Color: gogame.Blue},
+				{Position: 1.0, Color: gogame.Green},
 			},
 		},
 		Type:     gogame.Fill,
@@ -309,6 +309,10 @@ func testCanvas() {
 		{750, 170}, {770, 145}, {730, 145},
 		{750, 120}, {0, 0}, {0, 0}, // Last two ignored
 	}, gogame.FillWhite)
+
+	// Test Image
+	img := gogame.LoadImage("img.png")
+	display.Blit(img, 420, 220)
 
 	display.Flip()
 
