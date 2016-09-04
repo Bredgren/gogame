@@ -314,6 +314,13 @@ func testCanvas() {
 	img := gogame.LoadImage("img.png")
 	display.Blit(img, 420, 220)
 
+	display.DrawText("Press 'P' to change cursor", 10, 440, &gogame.Font{
+		Size: 20,
+	}, &gogame.TextStyle{
+		Colorer:   gogame.White,
+		LineWidth: 2,
+	})
+
 	display.Flip()
 
 	eventSurf := gogame.NewSurface(300, 100)
@@ -377,6 +384,13 @@ func testCanvas() {
 					msg = "quit (by escape)"
 					gogame.UnsetMainLoop()
 					done <- struct{}{}
+				case key.P:
+					if display.Cursor() == gogame.CursorDefault {
+						display.SetCursor(gogame.CursorProgress)
+					} else {
+						display.SetCursor(gogame.CursorDefault)
+
+					}
 					// case key.F:
 					// 	gogame.SetFullscreen(!gogame.GetFullscreen())
 				}

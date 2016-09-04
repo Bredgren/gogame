@@ -65,3 +65,46 @@ func (d *Display) Update(rects []geo.Rect) {
 		d.frontSurface.BlitArea(d, r, r.X, r.Y)
 	}
 }
+
+// SetCursor sets the appearence of the cursor when it is over this Display.
+func (d *Display) SetCursor(c Cursor) {
+	d.frontSurface.Canvas().Get("style").Set("cursor", c)
+}
+
+// Cursor returns the current appearence of the cursor when it is over the Display.
+func (d *Display) Cursor() Cursor {
+	c := d.frontSurface.Canvas().Get("style").Get("cursor").String()
+	if c == "" {
+		return CursorDefault
+	}
+	return Cursor(c)
+}
+
+// Cursor is a style for the cursor. It can be any valid css value for the cursor property,
+// most of which are predefined in this package.
+type Cursor string
+
+const (
+	CursorDefault      Cursor = "default"
+	CursorNone         Cursor = "none"
+	CursorPointer      Cursor = "pointer"
+	CursorText         Cursor = "text"
+	CursorVerticalText Cursor = "vertical-text"
+	CursorProgress     Cursor = "progress"
+	CusorWait          Cursor = "wait"
+	CursorAlias        Cursor = "alias"
+	CursorAllScroll    Cursor = "all-scroll"
+	CursorMove         Cursor = "move"
+	CursorCell         Cursor = "cell"
+	CursorCopy         Cursor = "copy"
+	CursorCrosshair    Cursor = "crosshair"
+	CursorNSResize     Cursor = "ns-resize"
+	CursorEWResize     Cursor = "ew-resize"
+	CursorNESWResize   Cursor = "nesw-resize"
+	CursorNWSEResize   Cursor = "nwse-resize"
+	CursorRowReszie    Cursor = "row-resize"
+	CursorColResize    Cursor = "col-resize"
+	CursorHelp         Cursor = "help"
+	CursorNoDrop       Cursor = "no-drop"
+	CursorNotAllowed   Cursor = "not-allowed"
+)
