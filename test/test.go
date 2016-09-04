@@ -12,6 +12,7 @@ import (
 	"github.com/Bredgren/gogame/event"
 	"github.com/Bredgren/gogame/geo"
 	"github.com/Bredgren/gogame/key"
+	"github.com/Bredgren/gogame/sound"
 	"github.com/gopherjs/jquery"
 )
 
@@ -314,12 +315,16 @@ func testCanvas() {
 	img := gogame.LoadImage("img.png")
 	display.Blit(img, 420, 220)
 
-	display.DrawText("Press 'P' to change cursor", 10, 440, &gogame.Font{
+	f := gogame.Font{
 		Size: 20,
-	}, &gogame.TextStyle{
+	}
+	t := gogame.TextStyle{
 		Colorer:   gogame.White,
 		LineWidth: 2,
-	})
+	}
+	display.DrawText("Press 'c' to change cursor", 10, 440, &f, &t)
+	display.DrawText("Press 'p' to toggle music", 10, 460, &f, &t)
+	display.DrawText("Press 's' to play sound", 10, 480, &f, &t)
 
 	display.Flip()
 
@@ -349,6 +354,13 @@ func testCanvas() {
 			{X: 520, Y: 505, W: 15, H: 10},
 		})
 	}()
+
+	music := sound.New("Voice Over Under.mp3")
+	music.SetLoop(true)
+	music.SetVolume(0.2)
+	music.Pause()
+	sfx := sound.New("pop1.wav")
+	sfx.SetVolume(0.3)
 
 	gogame.Log("start main loop")
 	gogame.SetMainLoop(func(t time.Duration) {
@@ -384,13 +396,21 @@ func testCanvas() {
 					msg = "quit (by escape)"
 					gogame.UnsetMainLoop()
 					done <- struct{}{}
-				case key.P:
+				case key.C:
 					if display.Cursor() == gogame.CursorDefault {
 						display.SetCursor(gogame.CursorProgress)
 					} else {
 						display.SetCursor(gogame.CursorDefault)
 
 					}
+				case key.P:
+					if music.Paused() {
+						music.Play()
+					} else {
+						music.Pause()
+					}
+				case key.S:
+					sfx.PlayFromStart()
 					// case key.F:
 					// 	gogame.SetFullscreen(!gogame.GetFullscreen())
 				}

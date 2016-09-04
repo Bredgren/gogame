@@ -164,7 +164,7 @@ var (
 	// ScrolLock = Key{Code: }
 	// Print     = Key{Code: }
 
-	// LShift - RSuper are the modifier keys.
+	// LShift - RMeta are the modifier keys.
 	LShift = Key{Code: 16}
 	RShift = Key{Code: 16, Right: true}
 	LCtrl  = Key{Code: 17}
@@ -173,8 +173,6 @@ var (
 	RAlt   = Key{Code: 18, Right: true}
 	LMeta  = Key{Code: 91}
 	RMeta  = Key{Code: 93, Right: true}
-	// LSuper =
-	// RSuper =
 )
 
 var keyName = map[Key]string{

@@ -68,11 +68,17 @@ func (d *Display) Update(rects []geo.Rect) {
 
 // SetCursor sets the appearence of the cursor when it is over this Display.
 func (d *Display) SetCursor(c Cursor) {
+	if d == nil {
+		return
+	}
 	d.frontSurface.Canvas().Get("style").Set("cursor", c)
 }
 
 // Cursor returns the current appearence of the cursor when it is over the Display.
 func (d *Display) Cursor() Cursor {
+	if d == nil {
+		return CursorDefault
+	}
 	c := d.frontSurface.Canvas().Get("style").Get("cursor").String()
 	if c == "" {
 		return CursorDefault

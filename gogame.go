@@ -2,8 +2,6 @@
 // It also provides several utilities commonly used in games.
 //
 // TODO:
-// - Sounds/music
-// - Image loading
 // - Sprite?
 // - Spritesheet
 // - Primitive shape collision?
