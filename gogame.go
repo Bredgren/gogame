@@ -3,7 +3,7 @@
 //
 // TODO:
 // - Sprite?
-// - Spritesheet
+// - Spritesheet?
 // - Primitive shape collision?
 //   - Circles, rectangles, lines, rays
 // - Network?

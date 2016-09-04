@@ -1,3 +1,5 @@
+// Package key provides a type that represents keys on a keyboard, and predefines most
+// keys.
 package key
 
 import (
