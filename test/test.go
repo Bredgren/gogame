@@ -9,6 +9,7 @@ import (
 	"unicode"
 
 	"github.com/Bredgren/gogame"
+	"github.com/Bredgren/gogame/composite"
 	"github.com/Bredgren/gogame/event"
 	"github.com/Bredgren/gogame/geo"
 	"github.com/Bredgren/gogame/key"
@@ -325,6 +326,40 @@ func testCanvas() {
 	display.DrawText("Press 'c' to change cursor", 10, 440, &f, &t)
 	display.DrawText("Press 'p' to toggle music", 10, 460, &f, &t)
 	display.DrawText("Press 's' to play sound", 10, 480, &f, &t)
+
+	// Test composite opertaions
+	w, h := 100, 50
+	mask := gogame.NewSurface(w, h)
+	mask.DrawRect(geo.Rect{X: float64(h) / 2, Y: 0, W: float64(w) - float64(h), H: float64(h)}, gogame.FillWhite)
+	mask.DrawArc(geo.Rect{X: 0, Y: 0, W: float64(h), H: float64(h)}, math.Pi/2, 3*math.Pi/2, gogame.FillWhite)
+	mask.DrawArc(geo.Rect{X: float64(w - h), Y: 0, W: float64(h), H: float64(h)}, -math.Pi/2, math.Pi/2, gogame.FillWhite)
+
+	fill := gogame.NewSurface(w, h)
+	for x := 2; x < w; x += 5 {
+		fill.DrawLine(float64(x), 0, float64(x), float64(h), &gogame.StrokeStyle{
+			Colorer: gogame.Red,
+			Width:   2,
+		})
+	}
+	mask.BlitComp(fill, 0, 0, composite.SourceIn)
+
+	mask.DrawLine(float64(h)/2, 1, float64(w)-float64(h)/2, 1, &gogame.StrokeStyle{
+		Colorer: gogame.Red,
+		Width:   2,
+	})
+	mask.DrawLine(float64(h)/2, float64(h)-1, float64(w)-float64(h)/2, float64(h)-1, &gogame.StrokeStyle{
+		Colorer: gogame.Red,
+		Width:   2,
+	})
+	mask.DrawArc(geo.Rect{X: 1, Y: 1, W: float64(h), H: float64(h) - 2}, math.Pi/2, 3*math.Pi/2, &gogame.StrokeStyle{
+		Colorer: gogame.Red,
+		Width:   2,
+	})
+	mask.DrawArc(geo.Rect{X: float64(w-h) - 1, Y: 1, W: float64(h), H: float64(h) - 2}, -math.Pi/2, math.Pi/2, &gogame.StrokeStyle{
+		Colorer: gogame.Red,
+		Width:   2,
+	})
+	display.Blit(mask, 450, 320)
 
 	display.Flip()
 
