@@ -4,40 +4,86 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/Bredgren/gogame/composite"
 	"github.com/Bredgren/gogame/geo"
 	"github.com/gopherjs/gopherjs/js"
 )
 
 // Surface represents an image or drawable surface.
 type Surface interface {
+	// Canvas returns the surface as an HTML canvas.
 	Canvas() *js.Object
+	// Blit draws the given surface to this one at the given position. Source's top-left corner
+	// (according to Surface.Rect() fill be drawn at (x, y).
 	Blit(source Surface, x, y float64)
+	// BlitArea draws the given portion of the source surface defined by the Rect to this
+	// one with its top-left corner (according to Surface.Rect()) at the given position.
 	BlitArea(source Surface, area geo.Rect, x, y float64)
+	// BlitComp is like Blit but takes a composite operation to use.
+	BlitComp(source Surface, x, y float64, c composite.Op)
+	// BlitAreaComp is like BlitArea but takes a composite operation to use.
+	BlitAreaComp(source Surface, area geo.Rect, x, y float64, c composite.Op)
+	// Fill fills the whole surface with the given style.
 	Fill(*FillStyle)
+	// Width returns the unrotated, unscaled width of the surface in pixels. To get the width
+	// after scaling and rotating use Surface.Rect.
 	Width() int
+	// Height returns the unrotated, unscaled height of the surface in pixels. To get the height
+	// after scaling and rotating use Surface.Rect.
 	Height() int
+	// Copy returns a new Surface that is identical to this one.
 	Copy() Surface
+	// GetAt returns the color of the pixel at (x, y).
 	GetAt(x, y int) Color
+	// SetAt sets the color of the pixel at (x, y).
 	SetAt(x, y int, c Color)
+	// SetClip defines a rectangular region of the surface where only the enclosed pixels can
+	// be affected by draw operations.
 	SetClip(geo.Rect)
+	// SetClipPath defines an arbitrary polygon where only the enclosed pixels can be affected
+	// by draw operations. The pointList is a list of xy-coordinates.
 	SetClipPath(pointList [][2]float64)
+	// ClearClip resets the clipping region to the whole canvas.
 	ClearClip()
-	//GetSubsurface(geo.Rect) Surface
-	//GetParent() Surface
+	// Scaled returns a new Surface that is equivalent to this one scaled by the given amount.
 	Scaled(x, y float64) Surface
+	// Rotated returns a new Surface that is equivalent to this one but rotated counter-clockwise
+	// by the given amount.
 	Rotated(radians float64) Surface
+	// Rect returns the bouding rectangle for the surface, taking into acount rotation and scale.
 	Rect() geo.Rect
+	// DrawRect draws a rectangle on the surface.
 	DrawRect(geo.Rect, Styler)
+	// DrawCircle draws a circle on the surface.
 	DrawCircle(posX, posY, radius float64, s Styler)
+	// DrawEllipse draws an ellipse on the canvas within the given Rect.
 	DrawEllipse(geo.Rect, Styler)
+	// DrawArc draws an arc on the canvas within the given Rect between the given angles.
+	// Angles are counter-clockwise.
 	DrawArc(r geo.Rect, startRadians, stopRadians float64, s Styler)
+	// DrawLine draws a line on the surface.
 	DrawLine(startX, startY, endX, endY float64, s Styler)
+	// DrawLines draws multiple connected lines to the surface.
 	DrawLines(points [][2]float64, s Styler)
-	DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY float64, s Styler)
-	DrawQuadraticCurves(points [][2]float64, s Styler)
-	DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, s Styler)
-	DrawBezierCurves(points [][2]float64, s Styler)
+	// DrawText draws the given text to the surface.
 	DrawText(text string, x, y float64, font *Font, style *TextStyle)
+	// DrawQuadraticCurve draws a quadratic curve to the surface from (startX, startY) to
+	// (endX, endY) with the control point (cpX, cpY).
+	DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY float64, s Styler)
+	// DrawQuadraticCurves draws multiple connected quadratic curves to the surface. The list
+	// of points alternaes between end points and control points, i.e. [startpoint, control1,
+	// point2, control2, point3, etc.]. If the list has an even number of points then the last
+	// point is ignored. If there are less than 3 points then nothing will drawn.
+	DrawQuadraticCurves(points [][2]float64, s Styler)
+	// DrawBezierCurve draws a cubic bezier curve to the surface from (startX, startY) to
+	// (endX, endY) with the given respective control points..
+	DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, s Styler)
+	// DrawBezierCurves draws multiple connected cubic quadratic curves to the surface. The list
+	// of points alternaes between end points and both control points, i.e. [startpoint, control1,
+	// control2, point2, control3, control4, point3, etc.]. If there are not enough points at
+	// the end of the list then it will stop at the last possible point. If there are less than
+	// 4 points then nothing will drawn.
+	DrawBezierCurves(points [][2]float64, s Styler)
 }
 
 var _ Surface = &surface{}
@@ -83,27 +129,33 @@ func NewSurfaceFromCanvasID(canvasID string) (Surface, error) {
 	}, nil
 }
 
-// Canvas returns the surface as an HTML canvas.
 func (s *surface) Canvas() *js.Object {
 	// TODO handle nil surface
 	return s.canvas
 }
 
-// Blit draws the given surface to this one at the given position. Source's top-left corner
-// (according to Surface.Rect() fill be drawn at (x, y).
 func (s *surface) Blit(source Surface, x, y float64) {
 	s.ctx.Call("drawImage", source.Canvas(), math.Floor(x), math.Floor(y))
 }
 
-// BlitArea draws the given portion of the source surface defined by the Rect to this
-// one with its top-left corner (according to Surface.Rect()) at the given position.
 func (s *surface) BlitArea(source Surface, area geo.Rect, x, y float64) {
 	s.ctx.Call("drawImage", source.Canvas(), math.Floor(area.X), math.Floor(area.Y),
 		math.Floor(area.W), math.Floor(area.H), math.Floor(x), math.Floor(y), math.Floor(area.W),
 		math.Floor(area.H))
 }
 
-// Fill fills the whole surface with the given style.
+func (s *surface) BlitComp(source Surface, x, y float64, c composite.Op) {
+	s.ctx.Set("globalCompositeOperation", c)
+	s.Blit(source, x, y)
+	s.ctx.Set("globalCompositeOperation", composite.SourceOver)
+}
+
+func (s *surface) BlitAreaComp(source Surface, area geo.Rect, x, y float64, c composite.Op) {
+	s.ctx.Set("globalCompositeOperation", c)
+	s.BlitArea(source, area, x, y)
+	s.ctx.Set("globalCompositeOperation", composite.SourceOver)
+}
+
 func (s *surface) Fill(style *FillStyle) {
 	s.ctx.Call("save")
 	style.Style(s.ctx)
@@ -111,19 +163,14 @@ func (s *surface) Fill(style *FillStyle) {
 	s.ctx.Call("restore")
 }
 
-// Width returns the unrotated, unscaled width of the surface in pixels. To get the width
-// after scaling and rotating use Surface.Rect.
 func (s *surface) Width() int {
 	return s.canvas.Get("width").Int()
 }
 
-// Height returns the unrotated, unscaled height of the surface in pixels. To get the height
-// after scaling and rotating use Surface.Rect.
 func (s *surface) Height() int {
 	return s.canvas.Get("height").Int()
 }
 
-// Copy returns a new Surface that is identical to this one.
 func (s *surface) Copy() Surface {
 	copy := NewSurface(s.Width(), s.Height())
 	copy.Blit(s, 0, 0)
@@ -146,16 +193,12 @@ func (s *surface) SetAt(x, y int, c Color) {
 	s.ctx.Call("putImageData", imgData, x, y)
 }
 
-// SetClip defines a rectangular region of the surface where only the enclosed pixels can
-// be affected by draw operations.
 func (s *surface) SetClip(r geo.Rect) {
 	s.SetClipPath([][2]float64{
 		{r.X, r.Y}, {r.X + r.W, r.Y}, {r.X + r.W, r.Y + r.H}, {r.X, r.Y + r.H},
 	})
 }
 
-// SetClipPath defines an arbitrary polygon where only the enclosed pixels can be affected
-// by draw operations. The pointList is a list of xy-coordinates.
 func (s *surface) SetClipPath(pointList [][2]float64) {
 	s.ctx.Call("save")
 	s.ctx.Call("beginPath")
@@ -166,12 +209,10 @@ func (s *surface) SetClipPath(pointList [][2]float64) {
 	s.ctx.Call("clip")
 }
 
-// ClearClip resets the clipping region to the whole canvas.
 func (s *surface) ClearClip() {
 	s.ctx.Call("restore")
 }
 
-// Scaled returns a new Surface that is equivalent to this one scaled by the given amount.
 func (s *surface) Scaled(x, y float64) Surface {
 	newS := NewSurface(int(float64(s.Width())*x), int(float64(s.Height())*y))
 	ctx := newS.(*surface).ctx
@@ -182,8 +223,6 @@ func (s *surface) Scaled(x, y float64) Surface {
 	return newS
 }
 
-// Rotated returns a new Surface that is equivalent to this one but rotated counter-clockwise
-// by the given amount.
 func (s *surface) Rotated(radians float64) Surface {
 	newW, newH := s.getRotatedSize(radians)
 	newS := NewSurface(newW, newH)
@@ -220,12 +259,10 @@ func (s *surface) getRotatedSize(radians float64) (w, h int) {
 	return int(maxX - minX), int(maxY - minY)
 }
 
-// Rect returns the bouding rectangle for the surface, taking into acount rotation and scale.
 func (s *surface) Rect() geo.Rect {
 	return geo.Rect{X: 0, Y: 0, W: float64(s.Width()), H: float64(s.Height())}
 }
 
-// DrawRect draws a rectangle on the surface.
 func (s *surface) DrawRect(r geo.Rect, style Styler) {
 	if style == nil {
 		style = &FillStyle{}
@@ -237,7 +274,6 @@ func (s *surface) DrawRect(r geo.Rect, style Styler) {
 	s.ctx.Call("restore")
 }
 
-// DrawCircle draws a circle on the surface.
 func (s *surface) DrawCircle(posX, posY, radius float64, style Styler) {
 	if style == nil {
 		style = &FillStyle{}
@@ -251,7 +287,6 @@ func (s *surface) DrawCircle(posX, posY, radius float64, style Styler) {
 	s.ctx.Call("restore")
 }
 
-// DrawEllipse draws an ellipse on the canvas within the given Rect.
 func (s *surface) DrawEllipse(r geo.Rect, style Styler) {
 	if style == nil {
 		style = &FillStyle{}
@@ -266,8 +301,6 @@ func (s *surface) DrawEllipse(r geo.Rect, style Styler) {
 	s.ctx.Call("restore")
 }
 
-// DrawArc draws an arc on the canvas within the given Rect between the given angles.
-// Angles are counter-clockwise.
 func (s *surface) DrawArc(r geo.Rect, startRadians, stopRadians float64, style Styler) {
 	if style == nil {
 		style = &StrokeStyle{}
@@ -282,7 +315,6 @@ func (s *surface) DrawArc(r geo.Rect, startRadians, stopRadians float64, style S
 	s.ctx.Call("restore")
 }
 
-// DrawLine draws a line on the surface.
 func (s *surface) DrawLine(startX, startY, endX, endY float64, style Styler) {
 	if style == nil {
 		style = &StrokeStyle{}
@@ -297,7 +329,6 @@ func (s *surface) DrawLine(startX, startY, endX, endY float64, style Styler) {
 	s.ctx.Call("restore")
 }
 
-// DrawLines draws multiple connected lines to the surface.
 func (s *surface) DrawLines(points [][2]float64, style Styler) {
 	if style == nil {
 		style = &StrokeStyle{}
@@ -314,7 +345,6 @@ func (s *surface) DrawLines(points [][2]float64, style Styler) {
 	s.ctx.Call("restore")
 }
 
-// DrawText draws the given text to the surface.
 func (s *surface) DrawText(text string, x, y float64, font *Font, style *TextStyle) {
 	s.ctx.Call("save")
 	s.ctx.Set("font", font.String())
@@ -324,8 +354,6 @@ func (s *surface) DrawText(text string, x, y float64, font *Font, style *TextSty
 	s.ctx.Call("restore")
 }
 
-// DrawQuadraticCurve draws a quadratic curve to the surface from (startX, startY) to
-// (endX, endY) with the control point (cpX, cpY).
 func (s *surface) DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY float64, style Styler) {
 	if style == nil {
 		style = &StrokeStyle{}
@@ -340,10 +368,6 @@ func (s *surface) DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY float6
 	s.ctx.Call("restore")
 }
 
-// DrawQuadraticCurves draws multiple connected quadratic curves to the surface. The list
-// of points alternaes between end points and control points, i.e. [startpoint, control1,
-// point2, control2, point3, etc.]. If the list has an even number of points then the last
-// point is ignored. If there are less than 3 points then nothing will drawn.
 func (s *surface) DrawQuadraticCurves(points [][2]float64, style Styler) {
 	if len(points) < 3 {
 		return // Not enough points for event one curve.
@@ -363,8 +387,6 @@ func (s *surface) DrawQuadraticCurves(points [][2]float64, style Styler) {
 	s.ctx.Call("restore")
 }
 
-// DrawBezierCurve draws a cubic bezier curve to the surface from (startX, startY) to
-// (endX, endY) with the given respective control points..
 func (s *surface) DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, style Styler) {
 	if style == nil {
 		style = &StrokeStyle{}
@@ -379,11 +401,6 @@ func (s *surface) DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY
 	s.ctx.Call("restore")
 }
 
-// DrawBezierCurves draws multiple connected cubic quadratic curves to the surface. The list
-// of points alternaes between end points and both control points, i.e. [startpoint, control1,
-// control2, point2, control3, control4, point3, etc.]. If there are not enough points at
-// the end of the list then it will stop at the last possible point. If there are less than
-// 4 points then nothing will drawn.
 func (s *surface) DrawBezierCurves(points [][2]float64, style Styler) {
 	if len(points) < 4 {
 		return // Not enough points for event one curve.
