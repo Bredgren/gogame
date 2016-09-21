@@ -3,6 +3,7 @@ package gogame
 import (
 	"fmt"
 	"math"
+	"strings"
 
 	"github.com/Bredgren/gogame/composite"
 	"github.com/Bredgren/gogame/geo"
@@ -95,7 +96,7 @@ type surface struct {
 
 // NewSurface creates a new Surface.
 func NewSurface(width, height int) Surface {
-	canvas := jq("<canvas>").Get(0)
+	canvas := js.Global.Get("document").Call("createElement", "canvas")
 	canvas.Set("width", width)
 	canvas.Set("height", height)
 	return &surface{
@@ -119,7 +120,10 @@ func NewSurfaceFromCanvas(canvas *js.Object) (Surface, error) {
 // NewSurfaceFromCanvasID creates a new Surface using the canvas with the given ID. An
 // error is returned if no canvas was found.
 func NewSurfaceFromCanvasID(canvasID string) (Surface, error) {
-	canvas := jq("#" + canvasID).Get(0)
+	if !strings.HasPrefix(canvasID, "#") {
+		canvasID = "#" + canvasID
+	}
+	canvas := js.Global.Get("document").Call("getElementById", canvasID)
 	if canvas == js.Undefined {
 		return nil, fmt.Errorf("no canvas found with ID '%s'", canvasID)
 	}

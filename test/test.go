@@ -14,12 +14,7 @@ import (
 	"github.com/Bredgren/gogame/geo"
 	"github.com/Bredgren/gogame/key"
 	"github.com/Bredgren/gogame/sound"
-	"github.com/gopherjs/jquery"
 )
-
-var jq = jquery.NewJQuery
-
-var resultList jquery.JQuery
 
 type result struct {
 	TestName string
@@ -27,36 +22,7 @@ type result struct {
 }
 
 func main() {
-	resultList = jq("#test-results")
-
-	ready := gogame.Ready()
-	go func() {
-		<-ready
-		testCanvas()
-	}()
-}
-
-func appendResultSection(sectionName string, results []*result) {
-	section := jq("<li>").AddClass("result-section")
-	section.Append(jq("<h1>").SetText(sectionName))
-	sectionRes := jq("<ul>").AddClass("result-section-list")
-	section.Append(sectionRes)
-	for _, result := range results {
-		res := jq("<li>").AddClass("result")
-		res.Append(jq("<h2>").SetText(result.TestName))
-		if len(result.Errors) == 0 {
-			res.AddClass("result-pass")
-		} else {
-			res.AddClass("result-fail")
-			errors := jq("<ul>").AddClass("result-error-list")
-			for _, e := range result.Errors {
-				errors.Append(jq("<li>").AddClass("result-error").SetText(e))
-			}
-			res.Append(errors)
-		}
-		sectionRes.Append(res)
-	}
-	resultList.Append(section)
+	gogame.Ready(testCanvas)
 }
 
 func testCanvas() {
@@ -341,25 +307,25 @@ func testCanvas() {
 			Width:   2,
 		})
 	}
-	mask.BlitComp(fill, 0, 0, composite.SourceIn)
+	fill.BlitComp(mask, 0, 0, composite.DestinationIn)
 
-	mask.DrawLine(float64(h)/2, 1, float64(w)-float64(h)/2, 1, &gogame.StrokeStyle{
+	fill.DrawLine(float64(h)/2, 1, float64(w)-float64(h)/2, 1, &gogame.StrokeStyle{
 		Colorer: gogame.Red,
 		Width:   2,
 	})
-	mask.DrawLine(float64(h)/2, float64(h)-1, float64(w)-float64(h)/2, float64(h)-1, &gogame.StrokeStyle{
+	fill.DrawLine(float64(h)/2, float64(h)-1, float64(w)-float64(h)/2, float64(h)-1, &gogame.StrokeStyle{
 		Colorer: gogame.Red,
 		Width:   2,
 	})
-	mask.DrawArc(geo.Rect{X: 1, Y: 1, W: float64(h), H: float64(h) - 2}, math.Pi/2, 3*math.Pi/2, &gogame.StrokeStyle{
+	fill.DrawArc(geo.Rect{X: 1, Y: 1, W: float64(h), H: float64(h) - 2}, math.Pi/2, 3*math.Pi/2, &gogame.StrokeStyle{
 		Colorer: gogame.Red,
 		Width:   2,
 	})
-	mask.DrawArc(geo.Rect{X: float64(w-h) - 1, Y: 1, W: float64(h), H: float64(h) - 2}, -math.Pi/2, math.Pi/2, &gogame.StrokeStyle{
+	fill.DrawArc(geo.Rect{X: float64(w-h) - 1, Y: 1, W: float64(h), H: float64(h) - 2}, -math.Pi/2, math.Pi/2, &gogame.StrokeStyle{
 		Colorer: gogame.Red,
 		Width:   2,
 	})
-	display.Blit(mask, 450, 320)
+	display.Blit(fill, 450, 320)
 
 	display.Flip()
 

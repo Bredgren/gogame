@@ -16,31 +16,32 @@ import (
 	"github.com/Bredgren/gogame/event"
 	"github.com/Bredgren/gogame/key"
 	"github.com/gopherjs/gopherjs/js"
-	"github.com/gopherjs/jquery"
 )
 
-var jq = jquery.NewJQuery
 var console = js.Global.Get("console")
 
 var display *Display
 
-// Ready returns a channel that will send one item before closing, signaling that the
-// page has loaded and gogame is ready to be used. There must be a canvas element in the
-// DOM for Ready to succeed. It will use this canvas as the main Display. A different
-// canvas may be specified afterward, if desired, using the SetMainDisplay function.
-func Ready() chan struct{} {
-	ch := make(chan struct{}, 1)
-	jq("body").SetAttr("onload", func() {
-		d, err := NewDisplay(jq("canvas").Get(0))
+// Ready calls the callback function when the page has loaded and gogame is ready to be
+// used. The first canvas in the DOM will be used as the initial main display. If there
+// is no canvas, or you would like to set the main display to a different one then use
+// the SetMainDisplay function.
+func Ready(callback func()) {
+	onload := func() {
+		d, err := NewDisplay(js.Global.Get("document").Call("getElementsByTagName", "canvas").Index(0))
 		if err != nil {
-			panic("gogame requires there to be a canvas in the DOM")
+			// No canvas available, do nothing.
 		}
 		SetMainDisplay(d)
 		log.Println("gogame ready")
-		ch <- struct{}{}
-		close(ch)
-	})
-	return ch
+		go callback()
+	}
+	if js.Global.Get("document").Get("readyState").String() == "complete" {
+		onload()
+		return
+	}
+	js.Global.Get("document").Call("addEventListener", "DOMContentLoaded", onload, false)
+	js.Global.Call("addEventListener", "load", onload, false)
 }
 
 // SetMainDisplay changes the main canvas being used. If unset then gogame will default
@@ -122,7 +123,7 @@ func unsetupDisplay() {
 
 func setupDisplay() {
 	// Setup event listeners for the display.
-	js.Global.Call("addEventListener", jquery.RESIZE, func(e *js.Object) {
+	js.Global.Call("addEventListener", "resize", func(e *js.Object) {
 		if err := event.Post(event.Event{
 			Type: event.VideoResize,
 			Data: event.ResizeData{
@@ -140,7 +141,7 @@ func setupDisplay() {
 		}
 	})
 
-	js.Global.Call("addEventListener", jquery.KEYDOWN, func(e *js.Object) {
+	js.Global.Call("addEventListener", "keydown", func(e *js.Object) {
 		k := key.FromJsEvent(e)
 		// Ignore key repeats
 		if keyState[k] {
@@ -155,7 +156,7 @@ func setupDisplay() {
 		}
 	})
 
-	js.Global.Call("addEventListener", jquery.KEYUP, func(e *js.Object) {
+	js.Global.Call("addEventListener", "keyup", func(e *js.Object) {
 		k := key.FromJsEvent(e)
 		keyState[k] = false
 		if err := event.Post(event.Event{
@@ -168,7 +169,7 @@ func setupDisplay() {
 
 	canvas := display.frontSurface.Canvas()
 
-	canvas.Call("addEventListener", jquery.MOUSEMOVE, func(e *js.Object) {
+	canvas.Call("addEventListener", "mousemove", func(e *js.Object) {
 		x, y := e.Get("offsetX").Float(), e.Get("offsetY").Float()
 		dx, dy := e.Get("movementX").Float(), e.Get("movementY").Float()
 		mouseState.PosX = x
@@ -187,7 +188,7 @@ func setupDisplay() {
 		}
 	})
 
-	canvas.Call("addEventListener", jquery.MOUSEDOWN, func(e *js.Object) {
+	canvas.Call("addEventListener", "mousedown", func(e *js.Object) {
 		button := e.Get("button").Int()
 		mouseState.Buttons[button] = true
 		if err := event.Post(event.Event{
@@ -204,7 +205,7 @@ func setupDisplay() {
 		}
 	})
 
-	canvas.Call("addEventListener", jquery.MOUSEUP, func(e *js.Object) {
+	canvas.Call("addEventListener", "mouseup", func(e *js.Object) {
 		button := e.Get("button").Int()
 		mouseState.Buttons[button] = false
 		if err := event.Post(event.Event{

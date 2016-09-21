@@ -37,7 +37,7 @@ func NewDisplayID(canvasID string) (*Display, error) {
 // SetMode initalizes the Display.
 func (d *Display) SetMode(width, height int) {
 	if d.canvas == nil {
-		d.canvas = jq("<canvas>").Get(0)
+		d.canvas = js.Global.Get("document").Call("createElement", "canvas")
 	}
 	d.canvas.Set("width", width)
 	d.canvas.Set("height", height)
