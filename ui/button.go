@@ -25,6 +25,12 @@ type BasicButton struct {
 	State ButtonState
 }
 
+// DrawTo draws the button to the surface matching the topleft corner with that of its Rect.
+// The correct surface for the current state is used.
+func (b *BasicButton) DrawTo(surface gogame.Surface) {
+	surface.Blit(b.Surface(), b.Rect.X, b.Rect.Y)
+}
+
 // Surface returns the Surface for the current State. If there is no surface for the current
 // state then the DefaultSurf is returned. If that is not set either then a blank Surface
 // of size 0 is returned.
