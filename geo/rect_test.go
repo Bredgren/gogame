@@ -35,12 +35,12 @@ func TestRectClamp(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		got := c.r.Clamp(&c.bounds)
+		got := c.r.Clamp(c.bounds)
 		if got != c.want {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
 		}
 
-		c.r.ClampIP(&c.bounds)
+		c.r.ClampIP(c.bounds)
 		if c.r != c.want {
 			t.Errorf("IP case %d: got %#v, want %#v", i, c.r, c.want)
 		}
@@ -58,12 +58,12 @@ func TestRectIntersect(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		got := c.r1.Intersect(&c.r2)
+		got := c.r1.Intersect(c.r2)
 		if got != c.want {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
 		}
 
-		got = c.r2.Intersect(&c.r1)
+		got = c.r2.Intersect(c.r1)
 		if got != c.want {
 			t.Errorf("reverse case %d: got %#v, want %#v", i, got, c.want)
 		}
@@ -81,17 +81,17 @@ func TestRectUnion(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		got := c.r1.Union(&c.r2)
+		got := c.r1.Union(c.r2)
 		if got != c.want {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
 		}
 
-		got = c.r2.Union(&c.r1)
+		got = c.r2.Union(c.r1)
 		if got != c.want {
 			t.Errorf("reverse case %d: got %#v, want %#v", i, got, c.want)
 		}
 
-		c.r1.UnionIP(&c.r2)
+		c.r1.UnionIP(c.r2)
 		if c.r1 != c.want {
 			t.Errorf("IP case %d: got %#v, want %#v", i, c.r1, c.want)
 		}
@@ -101,13 +101,13 @@ func TestRectUnion(t *testing.T) {
 func TestRectUnionAll(t *testing.T) {
 	cases := []struct {
 		r, want Rect
-		rs      []*Rect
+		rs      []Rect
 	}{
 		{
 			r: Rect{X: 1, Y: 1, W: 5, H: 5},
-			rs: []*Rect{
-				&Rect{X: 0, Y: 2, W: 3, H: 6},
-				&Rect{X: 4, Y: -1, W: 4, H: 4},
+			rs: []Rect{
+				Rect{X: 0, Y: 2, W: 3, H: 6},
+				Rect{X: 4, Y: -1, W: 4, H: 4},
 			},
 			want: Rect{X: 0, Y: -1, W: 8, H: 9},
 		},
@@ -148,7 +148,7 @@ func TestRectFit(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		got := c.r1.Fit(&c.r2)
+		got := c.r1.Fit(c.r2)
 		if got != c.want {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
 		}
@@ -180,7 +180,7 @@ func TestRectContains(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		got := c.r1.Contains(&c.r2)
+		got := c.r1.Contains(c.r2)
 		if got != c.want {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
 		}
@@ -222,7 +222,7 @@ func TestRectCollideRect(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		got := c.r1.CollideRect(&c.r2)
+		got := c.r1.CollideRect(c.r2)
 		if got != c.want {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
 		}

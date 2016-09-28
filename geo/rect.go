@@ -8,7 +8,7 @@ type Rect struct {
 }
 
 // Top returns the top boundary.
-func (r *Rect) Top() (top float64) {
+func (r Rect) Top() (top float64) {
 	return r.Y
 }
 
@@ -18,7 +18,7 @@ func (r *Rect) SetTop(top float64) {
 }
 
 // Bottom returns the bottom boundary.
-func (r *Rect) Bottom() float64 {
+func (r Rect) Bottom() float64 {
 	return r.Y + r.H
 }
 
@@ -28,7 +28,7 @@ func (r *Rect) SetBottom(bottom float64) {
 }
 
 // Left returns the left boundary.
-func (r *Rect) Left() float64 {
+func (r Rect) Left() float64 {
 	return r.X
 }
 
@@ -38,7 +38,7 @@ func (r *Rect) SetLeft(left float64) {
 }
 
 // Right returns the right boundary.
-func (r *Rect) Right() float64 {
+func (r Rect) Right() float64 {
 	return r.X + r.W
 }
 
@@ -48,7 +48,7 @@ func (r *Rect) SetRight(right float64) {
 }
 
 // Width returns the width.
-func (r *Rect) Width() float64 {
+func (r Rect) Width() float64 {
 	return r.W
 }
 
@@ -58,7 +58,7 @@ func (r *Rect) SetWidth(w float64) {
 }
 
 // Height returns the height.
-func (r *Rect) Height() float64 {
+func (r Rect) Height() float64 {
 	return r.H
 }
 
@@ -68,7 +68,7 @@ func (r *Rect) SetHeight(h float64) {
 }
 
 // Size returns the width and height.
-func (r *Rect) Size() (w, h float64) {
+func (r Rect) Size() (w, h float64) {
 	return r.W, r.H
 }
 
@@ -79,7 +79,7 @@ func (r *Rect) SetSize(w, h float64) {
 }
 
 // TopLeft returns the coordinates of the top left corner.
-func (r *Rect) TopLeft() (x, y float64) {
+func (r Rect) TopLeft() (x, y float64) {
 	return r.Left(), r.Top()
 }
 
@@ -90,7 +90,7 @@ func (r *Rect) SetTopLeft(x, y float64) {
 }
 
 // BottomLeft returns the coordinates of the bottom left corner.
-func (r *Rect) BottomLeft() (x, y float64) {
+func (r Rect) BottomLeft() (x, y float64) {
 	return r.Left(), r.Bottom()
 }
 
@@ -101,7 +101,7 @@ func (r *Rect) SetBottomLeft(x, y float64) {
 }
 
 // TopRight returns the coordinates of the top right corner.
-func (r *Rect) TopRight() (x, y float64) {
+func (r Rect) TopRight() (x, y float64) {
 	return r.Right(), r.Top()
 }
 
@@ -112,7 +112,7 @@ func (r *Rect) SetTopRight(x, y float64) {
 }
 
 // BottomRight returns the coordinates of the bottom right corner.
-func (r *Rect) BottomRight() (x, y float64) {
+func (r Rect) BottomRight() (x, y float64) {
 	return r.Right(), r.Bottom()
 }
 
@@ -123,7 +123,7 @@ func (r *Rect) SetBottomRight(x, y float64) {
 }
 
 // MidTop returns the coordinates at the top of the rectangle above the center.
-func (r *Rect) MidTop() (x, y float64) {
+func (r Rect) MidTop() (x, y float64) {
 	return r.CenterX(), r.Top()
 }
 
@@ -134,7 +134,7 @@ func (r *Rect) SetMidTop(x, y float64) {
 }
 
 // MidBottom returns the coordinates at the bottom of the rectangle below the center.
-func (r *Rect) MidBottom() (x, y float64) {
+func (r Rect) MidBottom() (x, y float64) {
 	return r.CenterX(), r.Bottom()
 }
 
@@ -145,7 +145,7 @@ func (r *Rect) SetMidBottom(x, y float64) {
 }
 
 // MidLeft returns the coordinates at the left of the rectangle in line with the center.
-func (r *Rect) MidLeft() (x, y float64) {
+func (r Rect) MidLeft() (x, y float64) {
 	return r.Left(), r.CenterY()
 }
 
@@ -156,7 +156,7 @@ func (r *Rect) SetMidLeft(x, y float64) {
 }
 
 // MidRight returns the coordinates at the right of the rectangle in line with the center.
-func (r *Rect) MidRight() (x, y float64) {
+func (r Rect) MidRight() (x, y float64) {
 	return r.Right(), r.CenterY()
 }
 
@@ -167,7 +167,7 @@ func (r *Rect) SetMidRight(x, y float64) {
 }
 
 // Center returns the center coordinates.
-func (r *Rect) Center() (x, y float64) {
+func (r Rect) Center() (x, y float64) {
 	return r.CenterX(), r.CenterY()
 }
 
@@ -178,7 +178,7 @@ func (r *Rect) SetCenter(x, y float64) {
 }
 
 // CenterX returns the center x coordinates
-func (r *Rect) CenterX() float64 {
+func (r Rect) CenterX() float64 {
 	return r.X + r.W/2
 }
 
@@ -188,7 +188,7 @@ func (r *Rect) SetCenterX(x float64) {
 }
 
 // CenterY returns the center y coordinates.
-func (r *Rect) CenterY() float64 {
+func (r Rect) CenterY() float64 {
 	return r.Y + r.H/2
 }
 
@@ -203,7 +203,7 @@ func (r *Rect) Copy() Rect {
 }
 
 // Move returns a new Rect moved by the given offset relative to this one.
-func (r *Rect) Move(dx, dy float64) Rect {
+func (r Rect) Move(dx, dy float64) Rect {
 	return Rect{X: r.X + dx, Y: r.Y + dy, W: r.W, H: r.H}
 }
 
@@ -214,7 +214,7 @@ func (r *Rect) MoveIP(dx, dy float64) {
 }
 
 // Inflate returns a new Rect with the same center whose size is chaged by the given amount.
-func (r *Rect) Inflate(dw, dh float64) Rect {
+func (r Rect) Inflate(dw, dh float64) Rect {
 	return Rect{X: r.X - dw/2, Y: r.Y - dh/2, W: r.W + dw, H: r.H + dh}
 }
 
@@ -228,7 +228,7 @@ func (r *Rect) InflateIP(dw, dh float64) {
 
 // Clamp returns a new Rect that is moved to be within bounds. If it is too large than it
 // is centered within bounds.
-func (r *Rect) Clamp(bounds *Rect) Rect {
+func (r Rect) Clamp(bounds Rect) Rect {
 	var newX, newY float64
 	if r.W > bounds.W {
 		newX = bounds.CenterX() - r.W/2
@@ -245,7 +245,7 @@ func (r *Rect) Clamp(bounds *Rect) Rect {
 
 // ClampIP moves this Rect so that it is within bounds. If it is too large than it is
 // centered within bounds.
-func (r *Rect) ClampIP(bounds *Rect) {
+func (r *Rect) ClampIP(bounds Rect) {
 	if r.W > bounds.W {
 		r.SetCenterX(bounds.CenterX())
 	} else {
@@ -260,7 +260,7 @@ func (r *Rect) ClampIP(bounds *Rect) {
 
 // Intersect returns a new Rect that marks the area where the two overlap. If there is
 // no intersection the returned Rect will have 0 size.
-func (r *Rect) Intersect(other *Rect) Rect {
+func (r Rect) Intersect(other Rect) Rect {
 	newX := math.Max(r.X, other.X)
 	newY := math.Max(r.Y, other.Y)
 	return Rect{
@@ -272,7 +272,7 @@ func (r *Rect) Intersect(other *Rect) Rect {
 }
 
 // Union returns a Rect that contains both Rects.
-func (r *Rect) Union(other *Rect) Rect {
+func (r Rect) Union(other Rect) Rect {
 	newX := math.Min(r.X, other.X)
 	newY := math.Min(r.Y, other.Y)
 	return Rect{
@@ -284,7 +284,7 @@ func (r *Rect) Union(other *Rect) Rect {
 }
 
 // UnionIP same as Union but in place.
-func (r *Rect) UnionIP(other *Rect) {
+func (r *Rect) UnionIP(other Rect) {
 	newX := math.Min(r.X, other.X)
 	newY := math.Min(r.Y, other.Y)
 	r.W = math.Max(r.Right(), other.Right()) - newX
@@ -294,7 +294,7 @@ func (r *Rect) UnionIP(other *Rect) {
 }
 
 // UnionAll returns a Rect that contains all Rects.
-func (r *Rect) UnionAll(others []*Rect) Rect {
+func (r Rect) UnionAll(others []Rect) Rect {
 	newX, newY := r.X, r.Y
 	for _, other := range others {
 		newX = math.Min(newX, other.X)
@@ -312,7 +312,7 @@ func (r *Rect) UnionAll(others []*Rect) Rect {
 
 // Fit returns a new Rect that is moved and resized to fit within bounds while maintaining
 // its original aspect ratio.
-func (r *Rect) Fit(bounds *Rect) Rect {
+func (r Rect) Fit(bounds Rect) Rect {
 	newW := bounds.H * (r.W / r.H)
 	if newW <= bounds.W {
 		return Rect{X: clamp(r.X, bounds.X, bounds.Right()-newW), Y: bounds.Y, W: newW, H: bounds.H}
@@ -333,25 +333,31 @@ func (r *Rect) Normalize() {
 	}
 }
 
+// Normalized returns a fipped but equivalent Rect if its size is negative.
+func (r Rect) Normalized() Rect {
+	r.Normalize()
+	return r
+}
+
 // Contains returns true if other is completely inside this one.
-func (r *Rect) Contains(other *Rect) bool {
+func (r Rect) Contains(other Rect) bool {
 	return other.X >= r.X && other.Y >= r.Y && other.Right() <= r.Right() && other.Bottom() <= r.Bottom()
 }
 
 // CollidePoint returns true if the point is within the Rect. A point along the right or
 // bottom edge is not considered inside.
-func (r *Rect) CollidePoint(x, y float64) bool {
+func (r Rect) CollidePoint(x, y float64) bool {
 	return x >= r.X && x < r.Right() && y >= r.Y && y < r.Bottom()
 }
 
 // CollideRect returns true if the Rects overlap.
-func (r *Rect) CollideRect(other *Rect) bool {
+func (r Rect) CollideRect(other Rect) bool {
 	return r.X < other.Right() && r.Right() > other.X && r.Y < other.Bottom() && r.Bottom() > other.Y
 }
 
 // CollideList returns the index of the first Rect this one collides with, or -1 if it
 // collides with none.
-func (r *Rect) CollideList(others []*Rect) int {
+func (r Rect) CollideList(others []Rect) int {
 	for i, other := range others {
 		if r.CollideRect(other) {
 			return i
@@ -362,7 +368,7 @@ func (r *Rect) CollideList(others []*Rect) int {
 
 // CollideListAll returns a list of indices of the Rects that collide with this one, or an
 // empty list if none.
-func (r *Rect) CollideListAll(others []*Rect) []int {
+func (r Rect) CollideListAll(others []Rect) []int {
 	list := make([]int, 0, len(others))
 	for i, other := range others {
 		if r.CollideRect(other) {
