@@ -31,6 +31,16 @@ func testCanvas() {
 	display.SetMode(width, height)
 	display.Fill(gogame.FillBlack)
 
+	// Test localstorage
+	v1, ok1 := gogame.LocalStorageGet("key")
+	gogame.Log("Get invalid key from storage. v1 is", v1, "ok1 is", ok1)
+	gogame.LocalStorageSet("key", "value")
+	v2, ok2 := gogame.LocalStorageGet("key")
+	gogame.Log("Get valid key from storage. v2 is", v2, "ok2 is", ok2)
+	gogame.LocalStorageRemove("key")
+	v3, ok3 := gogame.LocalStorageGet("key")
+	gogame.Log("Get removed key from storage. v3 is", v3, "ok3 is", ok3)
+
 	// Test shapes and styles
 	display.DrawRect(geo.Rect{X: 11, Y: 11, W: 48, H: 48}, &gogame.StrokeStyle{Colorer: gogame.White, Width: 4})
 	display.DrawRect(geo.Rect{X: 70, Y: 10, W: 50, H: 50},

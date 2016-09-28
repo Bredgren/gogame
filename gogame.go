@@ -2,6 +2,7 @@
 // It also provides several utilities commonly used in games.
 //
 // TODO:
+// - Support for browsers other than Chrome
 // - Sprite?
 // - Spritesheet?
 // - Primitive shape collision?
@@ -273,4 +274,24 @@ func MousePos() (x, y float64) {
 // MouseRel returns the last relative change in mouse position.
 func MouseRel() (dx, dy float64) {
 	return mouseState.RelX, mouseState.RelY
+}
+
+// LocalStorageGet retrieves the value associated with the given key. If there is no value
+// then ok will be false.
+func LocalStorageGet(key string) (val string, ok bool) {
+	v := js.Global.Get("localStorage").Call("getItem", key)
+	if v == nil {
+		return "", false
+	}
+	return v.String(), true
+}
+
+// LocalStorageSet sets the given key's value to val.
+func LocalStorageSet(key, val string) {
+	js.Global.Get("localStorage").Call("setItem", key, val)
+}
+
+// LocalStorageRemove removes the given key (and it's value) from local storage.
+func LocalStorageRemove(key string) {
+	js.Global.Get("localStorage").Call("removeItem", key)
 }
