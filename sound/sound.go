@@ -1,6 +1,7 @@
 package sound
 
 import (
+	"fmt"
 	"math"
 	"time"
 
@@ -46,8 +47,9 @@ type sound struct {
 
 // New creates a new sound.
 func New(filename string) Interface {
+	// Append timestamp to end of file to prevent caching.
 	return &sound{
-		snd: js.Global.Get("Audio").New(filename),
+		snd: js.Global.Get("Audio").New(fmt.Sprintf("%s?cb=%d", filename, time.Now().Unix())),
 	}
 }
 
