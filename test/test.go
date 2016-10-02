@@ -238,7 +238,7 @@ func testCanvas() {
 
 	// Test copy
 	copy := display.Copy()
-	copy = display.Scaled(0.2, 0.2)
+	copy = copy.Scaled(0.4, 0.2)
 	copy.DrawRect(copy.Rect(), &gogame.StrokeStyle{Colorer: gogame.White, Width: 2})
 	display.Blit(copy, float64(display.Width()-copy.Width()), float64(display.Height()-copy.Height()))
 
