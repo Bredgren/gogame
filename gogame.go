@@ -2,6 +2,7 @@
 // It also provides several utilities commonly used in games.
 //
 // TODO:
+// - mouse wheel and touch input
 // - Support for browsers other than Chrome
 // - Sprite?
 // - Spritesheet?
@@ -28,12 +29,18 @@ var display *Display
 // is no canvas, or you would like to set the main display to a different one then use
 // the SetMainDisplay function.
 func Ready(callback func()) {
+	called := false
 	onload := func() {
+		if called {
+			return
+		}
+		called = true
 		d, err := NewDisplay(js.Global.Get("document").Call("getElementsByTagName", "canvas").Index(0))
 		if err != nil {
 			// No canvas available, do nothing.
 		}
 		SetMainDisplay(d)
+		addGlobalEvents()
 		log.Println("gogame ready")
 		go callback()
 	}
@@ -117,57 +124,11 @@ func unsetupDisplay() {
 	if display == nil {
 		return
 	}
-	canvas := display.frontSurface.Canvas()
-	canvas.Call("removeEventListener")
-	js.Global.Call("removeEventListener")
+	// Not going to remove event listeners actually. This should rarely, if ever, be necessary
+	// so I don't think it's worth the effort right now.
 }
 
 func setupDisplay() {
-	// Setup event listeners for the display.
-	js.Global.Call("addEventListener", "resize", func(e *js.Object) {
-		if err := event.Post(event.Event{
-			Type: event.VideoResize,
-			Data: event.ResizeData{
-				W: js.Global.Get("innerWidth").Int(),
-				H: js.Global.Get("innerHeight").Int(),
-			},
-		}); err != nil {
-			Log("Warning: event skipped because queue is full", e)
-		}
-	})
-
-	js.Global.Set("onbeforeunload", func(e *js.Object) {
-		if err := event.Post(event.Event{Type: event.Quit}); err != nil {
-			Log("Warning: event skipped because queue is full", e)
-		}
-	})
-
-	js.Global.Call("addEventListener", "keydown", func(e *js.Object) {
-		k := key.FromJsEvent(e)
-		// Ignore key repeats
-		if keyState[k] {
-			return
-		}
-		keyState[k] = true
-		if err := event.Post(event.Event{
-			Type: event.KeyDown,
-			Data: event.KeyData{Key: k, Mod: ModKeys()},
-		}); err != nil {
-			Log("Warning: event skipped because queue is full", e)
-		}
-	})
-
-	js.Global.Call("addEventListener", "keyup", func(e *js.Object) {
-		k := key.FromJsEvent(e)
-		keyState[k] = false
-		if err := event.Post(event.Event{
-			Type: event.KeyUp,
-			Data: event.KeyData{Key: k, Mod: ModKeys()},
-		}); err != nil {
-			Log("Warning: event skipped because queue is full", e)
-		}
-	})
-
 	canvas := display.frontSurface.Canvas()
 
 	canvas.Call("addEventListener", "mousemove", func(e *js.Object) {
@@ -218,6 +179,52 @@ func setupDisplay() {
 				},
 				Button: button,
 			},
+		}); err != nil {
+			Log("Warning: event skipped because queue is full", e)
+		}
+	})
+}
+
+func addGlobalEvents() {
+	js.Global.Call("addEventListener", "resize", func(e *js.Object) {
+		if err := event.Post(event.Event{
+			Type: event.VideoResize,
+			Data: event.ResizeData{
+				W: js.Global.Get("innerWidth").Int(),
+				H: js.Global.Get("innerHeight").Int(),
+			},
+		}); err != nil {
+			Log("Warning: event skipped because queue is full", e)
+		}
+	})
+
+	js.Global.Set("onbeforeunload", func(e *js.Object) {
+		if err := event.Post(event.Event{Type: event.Quit}); err != nil {
+			Log("Warning: event skipped because queue is full", e)
+		}
+	})
+
+	js.Global.Call("addEventListener", "keydown", func(e *js.Object) {
+		k := key.FromJsEvent(e)
+		// Ignore key repeats
+		if keyState[k] {
+			return
+		}
+		keyState[k] = true
+		if err := event.Post(event.Event{
+			Type: event.KeyDown,
+			Data: event.KeyData{Key: k, Mod: ModKeys()},
+		}); err != nil {
+			Log("Warning: event skipped because queue is full", e)
+		}
+	})
+
+	js.Global.Call("addEventListener", "keyup", func(e *js.Object) {
+		k := key.FromJsEvent(e)
+		keyState[k] = false
+		if err := event.Post(event.Event{
+			Type: event.KeyUp,
+			Data: event.KeyData{Key: k, Mod: ModKeys()},
 		}); err != nil {
 			Log("Warning: event skipped because queue is full", e)
 		}
