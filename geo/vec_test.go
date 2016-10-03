@@ -1,6 +1,9 @@
 package geo
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
 func TestVecLen(t *testing.T) {
 	cases := []struct {
@@ -193,6 +196,35 @@ func TestVecNormalized(t *testing.T) {
 		got := c.v.Normalized()
 		if got != c.want {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
+		}
+	}
+}
+
+func TestVecDot(t *testing.T) {
+	cases := []struct {
+		v1, v2 Vec
+		want   float64
+	}{
+		{Vec{X: 5, Y: 0}, Vec{X: 1, Y: 0}, 5},
+		{Vec{X: 0, Y: -4}, Vec{X: 0, Y: -1}, 4},
+		{Vec{X: 1, Y: 2}, Vec{X: 2, Y: -1}, 0},
+	}
+
+	for i, c := range cases {
+		got := c.v1.Dot(c.v2)
+		if got != c.want {
+			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
+		}
+	}
+}
+
+func TestVecRand(t *testing.T) {
+	cases := 100000
+	maxErr := 1.0 / 100000000
+	for i := 0; i < cases; i++ {
+		got := RandVec()
+		if math.Abs(got.Len()-1) > maxErr {
+			t.Errorf("case %d: %#v is length %f", i, got, got.Len())
 		}
 	}
 }

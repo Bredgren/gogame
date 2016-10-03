@@ -1,6 +1,9 @@
 package geo
 
-import "math"
+import (
+	"math"
+	"math/rand"
+)
 
 // Vec is a 2D vector.
 type Vec struct {
@@ -68,4 +71,15 @@ func (v *Vec) Normalize() {
 func (v Vec) Normalized() Vec {
 	len := math.Sqrt(v.X*v.X + v.Y*v.Y)
 	return Vec{X: v.X / len, Y: v.Y / len}
+}
+
+// Dot returns the dot product between the two vectors.
+func (v Vec) Dot(v2 Vec) float64 {
+	return v.X*v2.X + v.Y*v2.Y
+}
+
+// RandVec returns a unit vector in a random direction.
+func RandVec() Vec {
+	rad := rand.Float64() * 2 * math.Pi
+	return Vec{X: math.Cos(rad), Y: math.Sin(rad)}
 }
