@@ -2,7 +2,7 @@
 // It also provides several utilities commonly used in games.
 //
 // TODO:
-// - mouse wheel and touch input
+// - Touch input
 // - Support for browsers other than Chrome
 // - Sprite?
 // - Spritesheet?
@@ -178,6 +178,20 @@ func setupDisplay() {
 					Y: e.Get("offsetY").Float(),
 				},
 				Button: button,
+			},
+		}); err != nil {
+			Log("Warning: event skipped because queue is full", e)
+		}
+	})
+
+	canvas.Call("addEventListener", "wheel", func(e *js.Object) {
+		dx, dy, dz := e.Get("deltaX").Float(), e.Get("deltaY").Float(), e.Get("deltaZ").Float()
+		if err := event.Post(event.Event{
+			Type: event.MouseWheel,
+			Data: event.MouseWheelData{
+				Dx: dx,
+				Dy: dy,
+				Dz: dz,
 			},
 		}); err != nil {
 			Log("Warning: event skipped because queue is full", e)

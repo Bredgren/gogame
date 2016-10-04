@@ -135,13 +135,18 @@ type KeyData struct {
 	Mod map[key.Key]bool
 }
 
-// MouseMotionData hold the position of the mouse relative to the uppert left corner of
+// MouseMotionData holds the position of the mouse relative to the uppert left corner of
 // the display, the position relative to it's previous position, and which buttons where
 // held down.
 type MouseMotionData struct {
 	Pos     struct{ X, Y float64 }
 	Rel     struct{ Dx, Dy float64 }
 	Buttons map[int]bool
+}
+
+// MouseWheelData holds the delta x, y, and z for the mouse wheel.
+type MouseWheelData struct {
+	Dx, Dy, Dz float64
 }
 
 // MouseData holds the position of the mouse relative to the uppert left corner of the
@@ -177,6 +182,8 @@ const (
 	MouseButtonDown
 	// MouseButtonUp is when a button on the mouse is released. Its data will be of type MouseData.
 	MouseButtonUp
+	// MouseWheel is when the mouse wheel is moved.
+	MouseWheel
 	// VideoResize is when the window's dimensions change. Its data will be of type ResizeData.
 	VideoResize
 	// UserEvent is the base for user events. Users may define custom Types but they're value

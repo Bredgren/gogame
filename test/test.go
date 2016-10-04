@@ -434,6 +434,9 @@ func testCanvas() {
 			case event.MouseMotion:
 				data := evt.Data.(event.MouseMotionData)
 				msg = fmt.Sprintf("mousemove: (%.0f, %.0f) (%.0f, %.0f) %v", data.Pos.X, data.Pos.Y, data.Rel.Dx, data.Rel.Dy, data.Buttons)
+			case event.MouseWheel:
+				data := evt.Data.(event.MouseWheelData)
+				msg = fmt.Sprintf("wheel: %f, %f, %f", data.Dx, data.Dy, data.Dz)
 			}
 			text := eventFont.Render(msg, &eventStyle, gogame.FillBlack)
 			eventSurf.Blit(eventSurf, 0, float64(text.Height()))
