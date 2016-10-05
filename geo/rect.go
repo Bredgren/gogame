@@ -197,38 +197,48 @@ func (r *Rect) SetCenterY(y float64) {
 	r.Y = y - r.H/2
 }
 
-// Copy returns a new Rect that is idential to this one.
-func (r *Rect) Copy() Rect {
-	return Rect{X: r.X, Y: r.Y, W: r.W, H: r.H}
-}
-
-// Move returns a new Rect moved by the given offset relative to this one.
-func (r Rect) Move(dx, dy float64) Rect {
-	return Rect{X: r.X + dx, Y: r.Y + dy, W: r.W, H: r.H}
-}
-
-// MoveIP moves the Rect by the given offset, in place.
-func (r *Rect) MoveIP(dx, dy float64) {
+// Move moves the Rect by the given offset, in place.
+func (r *Rect) Move(dx, dy float64) {
 	r.X += dx
 	r.Y += dy
 }
 
-// Inflate returns a new Rect with the same center whose size is chaged by the given amount.
-func (r Rect) Inflate(dw, dh float64) Rect {
-	return Rect{X: r.X - dw/2, Y: r.Y - dh/2, W: r.W + dw, H: r.H + dh}
+// Moved returns a new Rect moved by the given offset relative to this one.
+func (r Rect) Moved(dx, dy float64) Rect {
+	return Rect{X: r.X + dx, Y: r.Y + dy, W: r.W, H: r.H}
 }
 
-// InflateIP keeps the same center but changes the size by the given amount, in place.
-func (r *Rect) InflateIP(dw, dh float64) {
+// Inflate keeps the same center but changes the size by the given amount, in place.
+func (r *Rect) Inflate(dw, dh float64) {
 	r.X -= dw / 2
 	r.Y -= dh / 2
 	r.W += dw
 	r.H += dh
 }
 
-// Clamp returns a new Rect that is moved to be within bounds. If it is too large than it
+// Inflated returns a new Rect with the same center whose size is chaged by the given amount.
+func (r Rect) Inflated(dw, dh float64) Rect {
+	return Rect{X: r.X - dw/2, Y: r.Y - dh/2, W: r.W + dw, H: r.H + dh}
+}
+
+// Clamp moves this Rect so that it is within bounds. If it is too large than it is
+// centered within bounds.
+func (r *Rect) Clamp(bounds Rect) {
+	if r.W > bounds.W {
+		r.SetCenterX(bounds.CenterX())
+	} else {
+		r.X = clamp(r.X, bounds.X, bounds.Right()-r.W)
+	}
+	if r.H > bounds.H {
+		r.SetCenterY(bounds.CenterY())
+	} else {
+		r.Y = clamp(r.Y, bounds.Y, bounds.Bottom()-r.H)
+	}
+}
+
+// Clamped returns a new Rect that is moved to be within bounds. If it is too large than it
 // is centered within bounds.
-func (r Rect) Clamp(bounds Rect) Rect {
+func (r Rect) Clamped(bounds Rect) Rect {
 	var newX, newY float64
 	if r.W > bounds.W {
 		newX = bounds.CenterX() - r.W/2
@@ -241,21 +251,6 @@ func (r Rect) Clamp(bounds Rect) Rect {
 		newY = clamp(r.Y, bounds.Y, bounds.Bottom()-r.H)
 	}
 	return Rect{X: newX, Y: newY, W: r.W, H: r.H}
-}
-
-// ClampIP moves this Rect so that it is within bounds. If it is too large than it is
-// centered within bounds.
-func (r *Rect) ClampIP(bounds Rect) {
-	if r.W > bounds.W {
-		r.SetCenterX(bounds.CenterX())
-	} else {
-		r.X = clamp(r.X, bounds.X, bounds.Right()-r.W)
-	}
-	if r.H > bounds.H {
-		r.SetCenterY(bounds.CenterY())
-	} else {
-		r.Y = clamp(r.Y, bounds.Y, bounds.Bottom()-r.H)
-	}
 }
 
 // Intersect returns a new Rect that marks the area where the two overlap. If there is
@@ -271,20 +266,8 @@ func (r Rect) Intersect(other Rect) Rect {
 	}
 }
 
-// Union returns a Rect that contains both Rects.
-func (r Rect) Union(other Rect) Rect {
-	newX := math.Min(r.X, other.X)
-	newY := math.Min(r.Y, other.Y)
-	return Rect{
-		X: newX,
-		Y: newY,
-		W: math.Max(r.Right(), other.Right()) - newX,
-		H: math.Max(r.Bottom(), other.Bottom()) - newY,
-	}
-}
-
-// UnionIP same as Union but in place.
-func (r *Rect) UnionIP(other Rect) {
+// Union modifies this Rect to contain both itself and other.
+func (r *Rect) Union(other Rect) {
 	newX := math.Min(r.X, other.X)
 	newY := math.Min(r.Y, other.Y)
 	r.W = math.Max(r.Right(), other.Right()) - newX
@@ -293,26 +276,38 @@ func (r *Rect) UnionIP(other Rect) {
 	r.Y = newY
 }
 
-// UnionAll returns a Rect that contains all Rects.
-func (r Rect) UnionAll(others []Rect) Rect {
-	newX, newY := r.X, r.Y
-	for _, other := range others {
-		newX = math.Min(newX, other.X)
-		newY = math.Min(newY, other.Y)
-	}
-
-	farRight, farBottom := r.Right(), r.Bottom()
-	for _, other := range others {
-		farRight = math.Max(farRight, other.Right())
-		farBottom = math.Max(farBottom, other.Bottom())
-	}
-
-	return Rect{X: newX, Y: newY, W: farRight - newX, H: farBottom - newY}
+// Unioned retruns a new Rect that contain both Rects.
+func (r Rect) Unioned(other Rect) Rect {
+	newX := math.Min(r.X, other.X)
+	newY := math.Min(r.Y, other.Y)
+	r.W = math.Max(r.Right(), other.Right()) - newX
+	r.H = math.Max(r.Bottom(), other.Bottom()) - newY
+	r.X = newX
+	r.Y = newY
+	return r
 }
 
-// Fit returns a new Rect that is moved and resized to fit within bounds while maintaining
+// Fit modifies this Rect so that it is moved and resized to fit within bounds while maintaining
 // its original aspect ratio.
-func (r Rect) Fit(bounds Rect) Rect {
+func (r *Rect) Fit(bounds Rect) {
+	newW := bounds.H * (r.W / r.H)
+	if newW <= bounds.W {
+		r.X = clamp(r.X, bounds.X, bounds.Right()-newW)
+		r.Y = bounds.Y
+		r.W = newW
+		r.H = bounds.H
+		return
+	}
+	newH := bounds.W * (r.H / r.W)
+	r.X = bounds.X
+	r.Y = clamp(r.Y, bounds.Y, bounds.Bottom()-newH)
+	r.W = bounds.W
+	r.H = newH
+}
+
+// Fitted returns a new Rect that is moved and resized to fit within bounds while maintaining
+// its original aspect ratio.
+func (r Rect) Fitted(bounds Rect) Rect {
 	newW := bounds.H * (r.W / r.H)
 	if newW <= bounds.W {
 		return Rect{X: clamp(r.X, bounds.X, bounds.Right()-newW), Y: bounds.Y, W: newW, H: bounds.H}
@@ -380,4 +375,26 @@ func (r Rect) CollideListAll(others []Rect) []int {
 
 func clamp(i, min, max float64) float64 {
 	return math.Max(math.Min(i, max), min)
+}
+
+// RectUnion returns a Rect that contains all the given Rects. An empty list returns a
+// Rect with size 0.
+func RectUnion(rects []Rect) Rect {
+	if len(rects) == 0 {
+		return Rect{}
+	}
+
+	newX, newY := rects[0].X, rects[0].Y
+	for _, r := range rects {
+		newX = math.Min(newX, r.X)
+		newY = math.Min(newY, r.Y)
+	}
+
+	farRight, farBottom := rects[0].Right(), rects[0].Bottom()
+	for _, r := range rects {
+		farRight = math.Max(farRight, r.Right())
+		farBottom = math.Max(farBottom, r.Bottom())
+	}
+
+	return Rect{X: newX, Y: newY, W: farRight - newX, H: farBottom - newY}
 }

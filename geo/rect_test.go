@@ -12,12 +12,12 @@ func TestRectInflate(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		got := c.r.Inflate(c.dw, c.dh)
+		got := c.r.Inflated(c.dw, c.dh)
 		if got != c.want {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
 		}
 
-		c.r.InflateIP(c.dw, c.dh)
+		c.r.Inflate(c.dw, c.dh)
 		if c.r != c.want {
 			t.Errorf("IP case %d: got %#v, want %#v", i, c.r, c.want)
 		}
@@ -35,12 +35,12 @@ func TestRectClamp(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		got := c.r.Clamp(c.bounds)
+		got := c.r.Clamped(c.bounds)
 		if got != c.want {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
 		}
 
-		c.r.ClampIP(c.bounds)
+		c.r.Clamp(c.bounds)
 		if c.r != c.want {
 			t.Errorf("IP case %d: got %#v, want %#v", i, c.r, c.want)
 		}
@@ -81,17 +81,17 @@ func TestRectUnion(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		got := c.r1.Union(c.r2)
+		got := c.r1.Unioned(c.r2)
 		if got != c.want {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
 		}
 
-		got = c.r2.Union(c.r1)
+		got = c.r2.Unioned(c.r1)
 		if got != c.want {
 			t.Errorf("reverse case %d: got %#v, want %#v", i, got, c.want)
 		}
 
-		c.r1.UnionIP(c.r2)
+		c.r1.Union(c.r2)
 		if c.r1 != c.want {
 			t.Errorf("IP case %d: got %#v, want %#v", i, c.r1, c.want)
 		}
@@ -100,12 +100,12 @@ func TestRectUnion(t *testing.T) {
 
 func TestRectUnionAll(t *testing.T) {
 	cases := []struct {
-		r, want Rect
-		rs      []Rect
+		rs   []Rect
+		want Rect
 	}{
 		{
-			r: Rect{X: 1, Y: 1, W: 5, H: 5},
 			rs: []Rect{
+				Rect{X: 1, Y: 1, W: 5, H: 5},
 				Rect{X: 0, Y: 2, W: 3, H: 6},
 				Rect{X: 4, Y: -1, W: 4, H: 4},
 			},
@@ -114,7 +114,7 @@ func TestRectUnionAll(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		got := c.r.UnionAll(c.rs)
+		got := RectUnion(c.rs)
 		if got != c.want {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
 		}
@@ -148,9 +148,14 @@ func TestRectFit(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		got := c.r1.Fit(c.r2)
+		got := c.r1.Fitted(c.r2)
 		if got != c.want {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
+		}
+
+		c.r1.Fit(c.r2)
+		if c.r1 != c.want {
+			t.Errorf("IP case %d: got %#v, want %#v", i, got, c.want)
 		}
 	}
 }
