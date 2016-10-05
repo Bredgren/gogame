@@ -114,6 +114,11 @@ func (v Vec) Rotated(rad float64) Vec {
 	return Vec{X: v.X*math.Cos(rad) - v.Y*math.Sin(rad), Y: v.X*math.Sin(rad) + v.Y*math.Cos(rad)}
 }
 
+// Equals returns true if both components of both vectors are within the error e.
+func (v Vec) Equals(v2 Vec, e float64) bool {
+	return math.Abs(v.X-v2.X) < e && math.Abs(v.Y-v2.Y) < e
+}
+
 // RandVec returns a unit vector in a random direction.
 func RandVec() Vec {
 	rad := rand.Float64() * 2 * math.Pi

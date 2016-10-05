@@ -5,6 +5,10 @@ import (
 	"testing"
 )
 
+const (
+	e = 1e-10
+)
+
 func TestVecLen(t *testing.T) {
 	cases := []struct {
 		v    Vec
@@ -308,7 +312,7 @@ func TestVecRotate(t *testing.T) {
 	for i, c := range cases {
 		got := c.v
 		got.Rotate(c.rad)
-		if !vecsEqual(got, c.want) {
+		if !got.Equals(c.want, e) {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
 		}
 	}
@@ -333,7 +337,7 @@ func TestVecRotated(t *testing.T) {
 
 	for i, c := range cases {
 		got := c.v.Rotated(c.rad)
-		if !vecsEqual(got, c.want) {
+		if !got.Equals(c.want, e) {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
 		}
 	}
@@ -348,14 +352,9 @@ func TestVecRotateStress(t *testing.T) {
 		rotated := v2.Rotated(between)
 		v2rotated := v2
 		v2rotated.Rotate(between)
-		if !vecsEqual(v1, rotated) || !vecsEqual(v1, v2rotated) {
+		if !v1.Equals(rotated, e) || !v1.Equals(v2rotated, e) {
 			t.Errorf("case %d: v1: %#v v2: %#v between: %#v rotated: %#v v2rotated: %#v",
 				i, v1, v2, between, rotated, v2rotated)
 		}
 	}
-}
-
-func vecsEqual(v1, v2 Vec) bool {
-	e := 1e-10
-	return math.Abs(v1.X-v2.X) < e && math.Abs(v1.Y-v2.Y) < e
 }
