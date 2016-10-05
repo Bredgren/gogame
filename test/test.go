@@ -337,6 +337,8 @@ func testCanvas() {
 	})
 	display.Blit(fill, 450, 320)
 
+	testSubSurf()
+
 	display.Flip()
 
 	eventSurf := gogame.NewSurface(300, 100)
@@ -459,4 +461,26 @@ func testCanvas() {
 		// display.Flip()
 		display.Update([]geo.Rect{{X: r.X, Y: r.Y, W: math.Max(r.W, eventSurf.Rect().W), H: r.H + eventSurf.Rect().H}})
 	})
+}
+
+func testSubSurf() {
+	display := gogame.MainDisplay()
+	sub := display.SubSurface(geo.Rect{X: 600, Y: 200, W: 20, H: 20})
+	sub.DrawCircle(sub.Rect().CenterX(), sub.Rect().CenterY(), sub.Rect().W/2+2, gogame.FillWhite)
+
+	display.Blit(sub, 650, 200)
+
+	// Clipping parent and subsurface doesn't work properly
+	// r1 := geo.Rect{X: 600, Y: 250, W: 100, H: 75}
+	// r2 := r1.Move(75, 50)
+	// stroke := &gogame.StrokeStyle{Colorer: gogame.White, Width: 2}
+	// display.DrawRect(r1, stroke)
+	// display.DrawRect(r2, stroke)
+	// display.SetClip(r1)
+	// display.DrawCircle(r1.Left(), r1.Bottom(), 10, gogame.FillWhite)
+	// sub2 := display.SubSurface(r2)
+	// sub2.DrawCircle(0, 0, 10, gogame.FillWhite)
+	// sub2.DrawCircle(r2.W, r2.H, 10, gogame.FillWhite)
+	// display.DrawCircle(r1.Right(), r1.Top(), 10, gogame.FillWhite)
+	// display.ClearClip()
 }

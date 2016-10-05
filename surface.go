@@ -12,7 +12,8 @@ import (
 
 // Surface represents an image or drawable surface.
 type Surface interface {
-	// Canvas returns the surface as an HTML canvas.
+	// Canvas returns the surface as an HTML canvas. Returns the parent's canvas if this
+	// is a sub-surface.
 	Canvas() *js.Object
 	// Blit draws the given surface to this one at the given position. Source's top-left corner
 	// (according to Surface.Rect() fill be drawn at (x, y).
@@ -34,12 +35,19 @@ type Surface interface {
 	Height() int
 	// Copy returns a new Surface that is identical to this one.
 	Copy() Surface
+	// SubSurface creates a surface that is a reference to a sub area, defined by the given rect,
+	// of this surface. Draw operations to either surface affect the other. Note that calling
+	// Canvas() on a sub-surface returns the parent's canvas.
+	SubSurface(geo.Rect) Surface
+	// Parent returns the parent surface if this one is a sub-surface, otherwise nil.
+	Parent() Surface
 	// GetAt returns the color of the pixel at (x, y).
 	GetAt(x, y int) Color
 	// SetAt sets the color of the pixel at (x, y).
 	SetAt(x, y int, c Color)
 	// SetClip defines a rectangular region of the surface where only the enclosed pixels can
-	// be affected by draw operations.
+	// be affected by draw operations. Note that a parent surface and a subsurface cannot be
+	// clipped at the same time.
 	SetClip(geo.Rect)
 	// SetClipPath defines an arbitrary polygon where only the enclosed pixels can be affected
 	// by draw operations. The pointList is a list of xy-coordinates.
@@ -134,15 +142,20 @@ func NewSurfaceFromCanvasID(canvasID string) (Surface, error) {
 }
 
 func (s *surface) Canvas() *js.Object {
-	// TODO handle nil surface
 	return s.canvas
 }
 
 func (s *surface) Blit(source Surface, x, y float64) {
+	if _, ok := source.(*subsurface); ok {
+		source = source.Copy()
+	}
 	s.ctx.Call("drawImage", source.Canvas(), math.Floor(x), math.Floor(y))
 }
 
 func (s *surface) BlitArea(source Surface, area geo.Rect, x, y float64) {
+	if _, ok := source.(*subsurface); ok {
+		source = source.Copy()
+	}
 	s.ctx.Call("drawImage", source.Canvas(), math.Floor(area.X), math.Floor(area.Y),
 		math.Floor(area.W), math.Floor(area.H), math.Floor(x), math.Floor(y), math.Floor(area.W),
 		math.Floor(area.H))
@@ -179,6 +192,17 @@ func (s *surface) Copy() Surface {
 	copy := NewSurface(s.Width(), s.Height())
 	copy.Blit(s, 0, 0)
 	return copy
+}
+
+func (s *surface) SubSurface(area geo.Rect) Surface {
+	return &subsurface{
+		area:   area,
+		parent: s,
+	}
+}
+
+func (s *surface) Parent() Surface {
+	return nil
 }
 
 func (s *surface) GetAt(x, y int) Color {
@@ -423,4 +447,216 @@ func (s *surface) DrawBezierCurves(points [][2]float64, style Styler) {
 	}
 	s.ctx.Call(string(style.DrawType()))
 	s.ctx.Call("restore")
+}
+
+var _ Surface = &subsurface{}
+
+type subsurface struct {
+	area   geo.Rect
+	parent Surface
+}
+
+func (s *subsurface) Canvas() *js.Object {
+	return s.parent.Canvas()
+}
+
+func (s *subsurface) Blit(source Surface, x, y float64) {
+	s.parent.SetClip(s.area)
+	s.parent.Blit(source, s.area.X+x, s.area.Y+y)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) BlitArea(source Surface, area geo.Rect, x, y float64) {
+	s.parent.SetClip(s.area)
+	s.parent.BlitArea(source, area, s.area.X+x, s.area.Y+y)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) BlitComp(source Surface, x, y float64, c composite.Op) {
+	s.parent.SetClip(s.area)
+	s.parent.BlitComp(source, s.area.X+x, s.area.Y+y, c)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) BlitAreaComp(source Surface, area geo.Rect, x, y float64, c composite.Op) {
+	s.parent.SetClip(s.area)
+	s.parent.BlitAreaComp(source, area, s.area.X+x, s.area.Y+y, c)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) Fill(style *FillStyle) {
+	s.parent.DrawRect(s.area, style)
+}
+
+func (s *subsurface) Width() int {
+	return int(s.area.W)
+}
+
+func (s *subsurface) Height() int {
+	return int(s.area.H)
+}
+
+func (s *subsurface) Copy() Surface {
+	canvas := js.Global.Get("document").Call("createElement", "canvas")
+	canvas.Set("width", int(s.area.W))
+	canvas.Set("height", int(s.area.H))
+	ctx := canvas.Call("getContext", "2d")
+	ctx.Call("drawImage", s.Canvas(), math.Floor(s.area.X), math.Floor(s.area.Y),
+		math.Floor(s.area.W), math.Floor(s.area.H), 0, 0, math.Floor(s.area.W), math.Floor(s.area.H))
+	// Ignoring impossible error since we know we're giving it a valid canvas
+	copy, _ := NewSurfaceFromCanvas(canvas)
+	return copy
+}
+
+func (s *subsurface) SubSurface(area geo.Rect) Surface {
+	return &subsurface{
+		area:   area,
+		parent: s,
+	}
+}
+
+func (s *subsurface) Parent() Surface {
+	return s.parent
+}
+
+func (s *subsurface) GetAt(x, y int) Color {
+	return s.parent.GetAt(int(s.area.X)+x, int(s.area.Y)+y)
+}
+
+func (s *subsurface) SetAt(x, y int, c Color) {
+	s.parent.SetClip(s.area)
+	s.parent.SetAt(int(s.area.X)+x, int(s.area.Y)+y, c)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) SetClip(area geo.Rect) {
+	s.parent.SetClip(s.area.Intersect(area))
+}
+
+func (s *subsurface) SetClipPath(pointList [][2]float64) {
+	for i := range pointList {
+		pointList[i][0] += s.area.X
+		pointList[i][1] += s.area.Y
+	}
+	s.parent.SetClipPath(pointList)
+}
+
+func (s *subsurface) ClearClip() {
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) Scaled(x, y float64) Surface {
+	surf := s.Copy()
+	return surf.Scaled(x, y)
+}
+
+func (s *subsurface) Rotated(radians float64) Surface {
+	surf := s.Copy()
+	return surf.Rotated(radians)
+}
+
+func (s *subsurface) Rect() geo.Rect {
+	return geo.Rect{X: 0, Y: 0, W: float64(s.Width()), H: float64(s.Height())}
+}
+
+func (s *subsurface) DrawRect(r geo.Rect, style Styler) {
+	s.parent.SetClip(s.area)
+	r.X += s.area.X
+	r.Y += s.area.Y
+	s.parent.DrawRect(r, style)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) DrawCircle(posX, posY, radius float64, style Styler) {
+	s.parent.SetClip(s.area)
+	s.parent.DrawCircle(posX+s.area.X, posY+s.area.Y, radius, style)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) DrawEllipse(r geo.Rect, style Styler) {
+	s.parent.SetClip(s.area)
+	r.X += s.area.X
+	r.Y += s.area.Y
+	s.parent.DrawEllipse(r, style)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) DrawArc(r geo.Rect, startRadians, stopRadians float64, style Styler) {
+	s.parent.SetClip(s.area)
+	r.X += s.area.X
+	r.Y += s.area.Y
+	s.parent.DrawArc(r, startRadians, stopRadians, style)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) DrawLine(startX, startY, endX, endY float64, style Styler) {
+	s.parent.SetClip(s.area)
+	startX += s.area.X
+	startY += s.area.Y
+	endX += s.area.X
+	endY += s.area.Y
+	s.parent.DrawLine(startX, startY, endX, endY, style)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) DrawLines(points [][2]float64, style Styler) {
+	s.parent.SetClip(s.area)
+	for i := range points {
+		points[i][0] += s.area.X
+		points[i][1] += s.area.Y
+	}
+	s.parent.DrawLines(points, style)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) DrawText(text string, x, y float64, font *Font, style *TextStyle) {
+	s.parent.SetClip(s.area)
+	s.parent.DrawText(text, x+s.area.X, y+s.area.Y, font, style)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY float64, style Styler) {
+	s.parent.SetClip(s.area)
+	startX += s.area.X
+	startY += s.area.Y
+	endX += s.area.X
+	endY += s.area.Y
+	cpX += s.area.X
+	cpY += s.area.Y
+	s.parent.DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY, style)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) DrawQuadraticCurves(points [][2]float64, style Styler) {
+	s.parent.SetClip(s.area)
+	for i := range points {
+		points[i][0] += s.area.X
+		points[i][1] += s.area.Y
+	}
+	s.parent.DrawQuadraticCurves(points, style)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, style Styler) {
+	s.parent.SetClip(s.area)
+	startX += s.area.X
+	startY += s.area.Y
+	endX += s.area.X
+	endY += s.area.Y
+	cpStartX += s.area.X
+	cpStartY += s.area.Y
+	cpEndX += s.area.X
+	cpEndY += s.area.Y
+	s.parent.DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY, style)
+	s.parent.ClearClip()
+}
+
+func (s *subsurface) DrawBezierCurves(points [][2]float64, style Styler) {
+	s.parent.SetClip(s.area)
+	for i := range points {
+		points[i][0] += s.area.X
+		points[i][1] += s.area.Y
+	}
+	s.parent.DrawBezierCurves(points, style)
+	s.parent.ClearClip()
 }
