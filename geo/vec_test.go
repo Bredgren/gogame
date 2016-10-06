@@ -44,16 +44,18 @@ func TestVecLen2(t *testing.T) {
 func TestVecSetLen(t *testing.T) {
 	cases := []struct {
 		v    Vec
-		want float64
+		len  float64
+		want Vec
 	}{
-		{Vec{X: 3, Y: 4}, 10},
+		{Vec{X: 3, Y: 4}, 10, Vec{X: 3, Y: 4}.Normalized().Times(10)},
+		{Vec{X: 3, Y: 4}, -10, Vec{X: 3, Y: 4}.Normalized().Times(-10)},
+		{Vec{X: 3, Y: 4}, 0, Vec{}},
 	}
 
 	for i, c := range cases {
-		c.v.SetLen(c.want)
-		got := c.v.Len()
-		if got != c.want {
-			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
+		c.v.SetLen(c.len)
+		if !c.v.Equals(c.want, e) {
+			t.Errorf("case %d: got %#v, want %#v", i, c.v, c.want)
 		}
 	}
 }
@@ -163,6 +165,43 @@ func TestVecTimes(t *testing.T) {
 
 	for i, c := range cases {
 		got := c.v.Times(c.n)
+		if got != c.want {
+			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
+		}
+	}
+}
+
+func TestVecDiv(t *testing.T) {
+	cases := []struct {
+		v    Vec
+		n    float64
+		want Vec
+	}{
+		{Vec{X: 6, Y: -4}, 2, Vec{X: 3, Y: -2}},
+		{Vec{X: 3, Y: 4}, 1, Vec{X: 3, Y: 4}},
+	}
+
+	for i, c := range cases {
+		got := c.v
+		got.Div(c.n)
+		if got != c.want {
+			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
+		}
+	}
+}
+
+func TestVecDividedBy(t *testing.T) {
+	cases := []struct {
+		v    Vec
+		n    float64
+		want Vec
+	}{
+		{Vec{X: 6, Y: -4}, 2, Vec{X: 3, Y: -2}},
+		{Vec{X: 3, Y: 4}, 1, Vec{X: 3, Y: 4}},
+	}
+
+	for i, c := range cases {
+		got := c.v.DividedBy(c.n)
 		if got != c.want {
 			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
 		}

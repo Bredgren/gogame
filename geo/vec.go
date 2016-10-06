@@ -5,7 +5,10 @@ import (
 	"math/rand"
 )
 
-// Vec is a 2D vector.
+// Vec is a 2D vector. Many of the functions for Vec have two versions, one that modifies
+// the Vec and one that returns a new Vec. Their names follow a convention that is hopefully
+// inuitive. For example, when working with Vec as a value you use v1.Plus(v2) which returns
+// a new value and reads like when working with other value types such as "1 + 2".
 type Vec struct {
 	X, Y float64
 }
@@ -20,7 +23,7 @@ func (v Vec) Len2() float64 {
 	return v.X*v.X + v.Y*v.Y
 }
 
-// SetLen sets the length of the vector.
+// SetLen sets the length of the vector. Negative lengths will flip the vectors direction.
 func (v *Vec) SetLen(l float64) {
 	len := math.Sqrt(v.X*v.X + v.Y*v.Y)
 	v.X = v.X / len * l
@@ -60,6 +63,17 @@ func (v Vec) Times(n float64) Vec {
 	return Vec{X: v.X * n, Y: v.Y * n}
 }
 
+// Div modifies v to be itself divided by n.
+func (v *Vec) Div(n float64) {
+	v.X /= n
+	v.Y /= n
+}
+
+// DividedBy returns a new vector that is v divided by n.
+func (v Vec) DividedBy(n float64) Vec {
+	return Vec{X: v.X / n, Y: v.Y / n}
+}
+
 // Normalize modifies v to be of length one in the same direction.
 func (v *Vec) Normalize() {
 	len := math.Sqrt(v.X*v.X + v.Y*v.Y)
@@ -88,13 +102,13 @@ func (v *Vec) Limit(len float64) {
 }
 
 // Angle returns the radians relative to the positive x-axis (counterclockwise in screen
-// coordinates). The returned values is in the range (-π, π].
+// coordinates). The returned value is in the range (-π, π].
 func (v Vec) Angle() float64 {
 	return math.Atan2(v.Y, v.X)
 }
 
 // AngleFrom returns the radians from v2 to v (counterclockwise in screen coordinates).
-// The returned values is in the range (-π, π].
+// The returned value is in the range (-π, π].
 func (v Vec) AngleFrom(v2 Vec) float64 {
 	r := math.Atan2(v.Y, v.X) - math.Atan2(v2.Y, v2.X)
 	if r > math.Pi {
@@ -114,7 +128,7 @@ func (v Vec) Rotated(rad float64) Vec {
 	return Vec{X: v.X*math.Cos(rad) - v.Y*math.Sin(rad), Y: v.X*math.Sin(rad) + v.Y*math.Cos(rad)}
 }
 
-// Equals returns true if both components of both vectors are within the error e.
+// Equals returns true if the corresponding components of the vectors are within the error e.
 func (v Vec) Equals(v2 Vec, e float64) bool {
 	return math.Abs(v.X-v2.X) < e && math.Abs(v.Y-v2.Y) < e
 }
