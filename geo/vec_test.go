@@ -2,6 +2,7 @@ package geo
 
 import (
 	"math"
+	"math/rand"
 	"testing"
 )
 
@@ -50,6 +51,7 @@ func TestVecSetLen(t *testing.T) {
 		{Vec{X: 3, Y: 4}, 10, Vec{X: 3, Y: 4}.Normalized().Times(10)},
 		{Vec{X: 3, Y: 4}, -10, Vec{X: 3, Y: 4}.Normalized().Times(-10)},
 		{Vec{X: 3, Y: 4}, 0, Vec{}},
+		{Vec{X: 0, Y: 0}, 1, Vec{}},
 	}
 
 	for i, c := range cases {
@@ -394,6 +396,89 @@ func TestVecRotateStress(t *testing.T) {
 		if !v1.Equals(rotated, e) || !v1.Equals(v2rotated, e) {
 			t.Errorf("case %d: v1: %#v v2: %#v between: %#v rotated: %#v v2rotated: %#v",
 				i, v1, v2, between, rotated, v2rotated)
+		}
+	}
+}
+
+func TestDynamicVec(t *testing.T) {
+	v := Vec{}
+	dyn := DynamicVec(&v)
+	v2 := dyn()
+	if !v.Equals(v2, e) {
+		t.Error(v, v2)
+	}
+	v.X = 10
+	v3 := dyn()
+	if !v.Equals(v3, e) {
+		t.Error(v, v3)
+	}
+}
+
+func TestRandVecCircle(t *testing.T) {
+	trials := 100000
+	cases := []struct {
+		minR, maxR float64
+	}{
+		{0, 0},
+		{0, 1},
+		{1, 1},
+		{0, 5},
+		{3, 5},
+		{5, 5},
+	}
+
+	for i, c := range cases {
+		vecGen := RandVecCircle(c.minR, c.maxR)
+		for l := 0; l < trials; l++ {
+			v := vecGen()
+			if v.Len() > c.maxR+e || v.Len() < c.minR-e {
+				t.Errorf("case %d: trial %d: %#v, %#v, %#v, %#v", i, l, c.minR, c.maxR, v, v.Len())
+			}
+		}
+	}
+}
+
+func TestRandVecArc(t *testing.T) {
+	trials := 100000
+	cases := []struct {
+		minR, maxR float64
+	}{
+		{0, 0},
+		{0, 1},
+		{1, 1},
+		{0, 5},
+		{3, 5},
+		{5, 5},
+	}
+
+	for i, c := range cases {
+		minRad, maxRad := -math.Pi/4, math.Pi/4
+		vecGen := RandVecArc(c.minR, c.maxR, minRad, maxRad)
+		for l := 0; l < trials; l++ {
+			v := vecGen()
+			len := v.Len()
+			rad := v.Angle()
+			if len > c.maxR+e || len < c.minR-e || rad > maxRad && rad < minRad {
+				t.Errorf("case %d: trial %d: %#v, %#v, %#v, %#v, %#v", i, l, c.minR, c.maxR, v, len, rad)
+			}
+		}
+	}
+}
+
+func TestRandVecRect(t *testing.T) {
+	trials := 100000
+	rect := Rect{
+		X: rand.Float64()*100 - 50,
+		Y: rand.Float64()*100 - 50,
+		W: rand.Float64() * 100,
+		H: rand.Float64() * 100,
+	}
+
+	vecGen := RandVecRect(rect)
+	for l := 0; l < trials; l++ {
+		v := vecGen()
+		if !rect.CollidePoint(v.X, v.Y) {
+			t.Errorf("trial %d: %#v, %#v", l, rect, v)
 		}
 	}
 }

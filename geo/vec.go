@@ -24,8 +24,12 @@ func (v Vec) Len2() float64 {
 }
 
 // SetLen sets the length of the vector. Negative lengths will flip the vectors direction.
+// If v's length is zero then it will remain unchanged.
 func (v *Vec) SetLen(l float64) {
 	len := math.Sqrt(v.X*v.X + v.Y*v.Y)
+	if len == 0 {
+		return
+	}
 	v.X = v.X / len * l
 	v.Y = v.Y / len * l
 }
@@ -133,8 +137,71 @@ func (v Vec) Equals(v2 Vec, e float64) bool {
 	return math.Abs(v.X-v2.X) < e && math.Abs(v.Y-v2.Y) < e
 }
 
+// VecGen (Vector Generator) is a function that returns a vector.
+type VecGen func() Vec
+
 // RandVec returns a unit vector in a random direction.
 func RandVec() Vec {
 	rad := rand.Float64() * 2 * math.Pi
 	return Vec{X: math.Cos(rad), Y: math.Sin(rad)}
+}
+
+// StaticVec returns a VecGen that always returns the constant vector v.
+func StaticVec(v Vec) VecGen {
+	return func() Vec {
+		return v
+	}
+}
+
+// DynamicVec returns a VecGen that always returns a copy of the vector pointed to by v.
+func DynamicVec(v *Vec) VecGen {
+	return func() Vec {
+		return *v
+	}
+}
+
+// OffsetVec returns a VecGen that adds offset to gen. For example, if you wanted to use
+// RandCircle as an initial position you might use
+//  OffsetVec(RandVecCircle(5, 10), StaticVec(Vec{X: 100, Y: 100}))
+// to center the circle at position 100, 100.
+func OffsetVec(gen VecGen, offset VecGen) VecGen {
+	return func() Vec {
+		return gen().Plus(offset())
+	}
+}
+
+// RandVecCircle returns a VecGen that will generate a random vector within the given radii.
+func RandVecCircle(minRadius, maxRadius float64) VecGen {
+	return func() Vec {
+		return RandVec().Times(circleRadius(minRadius, maxRadius))
+	}
+}
+
+// RandVecArc returns a VecGen that will generate a random vector within the slice of a
+// circle defined by the parameters. The radians are relative to the +x axis.
+func RandVecArc(minRadius, maxRadius, minRadians, maxRadians float64) VecGen {
+	return func() Vec {
+		r := circleRadius(minRadius, maxRadius)
+		rad := rand.Float64()*(maxRadians-minRadians) + minRadians
+		return Vec{X: 1}.Times(r).Rotated(rad)
+	}
+}
+
+// RandVecRect returns a VecGen that will generate a random vector within the given Rect.
+func RandVecRect(rect Rect) VecGen {
+	return func() Vec {
+		return Vec{
+			X: rand.Float64()*rect.W + rect.X,
+			Y: rand.Float64()*rect.H + rect.Y,
+		}
+	}
+}
+
+// Returns a uniformaly distributed radius between minR and maxR. Negative radii are undefined.
+func circleRadius(minR, maxR float64) float64 {
+	if maxR == 0 || maxR == minR {
+		return maxR
+	}
+	unitMin := minR / maxR
+	return math.Sqrt(rand.Float64()*(1-unitMin)+unitMin)*(maxR-minR) + minR
 }
