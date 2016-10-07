@@ -1,14 +1,26 @@
 // Package gogame is wrapper around gopherjs that makes it more convenient to work with for making games.
 // It also provides several utilities commonly used in games.
 //
-// TODO:
-// - Touch input
-// - Support for browsers other than Chrome
-// - Sprite?
-// - Spritesheet?
-// - Primitive shape collision?
-//   - Circles, rectangles, lines, rays
-// - Network?
+// A few lines to help get started, assuming there is a canvas element already in the page
+// (see the test directory for more examples)
+//  func main() {
+//    gogame.Ready(onReady)
+//  }
+//
+//  func onReady() {
+//    display := gogame.MainDisplay()
+//    display.SetMode(900, 600)
+//    display.Fill(gogame.FillBlack)
+//  }
+//
+// TODO
+//  - Touch input
+//  - Support for browsers other than Chrome
+//  - Sprite?
+//  - Spritesheet?
+//  - Primitive shape collision?
+//  - Circles, rectangles, lines, rays
+//  - Network?
 package gogame
 
 import (
