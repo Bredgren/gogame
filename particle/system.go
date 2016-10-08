@@ -10,82 +10,92 @@ import (
 // SystemParticle a particle with extra information for use by a System.
 type SystemParticle struct {
 	Particle
-	Life   time.Duration
-	Active bool
+	Life       time.Duration
+	Active     bool
+	inFreeList bool
 }
 
 // System is a manager for large groups of particles.
 type System struct {
 	// Rate is the number of new particles per second.
 	Rate float64
-	// InitPos/Vel/Life are the starting parameters for each new particle.
-	InitPos     geo.VecGen
-	InitVel     geo.VecGen
-	InitLife    time.Duration
-	pool        []SystemParticle
-	freeList    chan *SystemParticle
-	globalForce geo.Vec
+	// InitPos/Vel/Mass/Life are the starting parameters for each new particle.
+	InitPos      geo.VecGen
+	InitVel      geo.VecGen
+	InitMass     float64
+	InitLife     time.Duration
+	pool         []SystemParticle
+	freeList     chan *SystemParticle
+	globalForce  geo.Vec
+	lastParticle time.Duration
 }
 
 // NewSystem initializes a particle system configured to contain at most size particles.
 func NewSystem(size int) *System {
-	system := System{}
-	system.pool = make([]SystemParticle, 0, size)
-	system.freeList = make(chan *SystemParticle, size)
-	for i := range system.pool {
-		system.freeList <- &system.pool[i]
+	s := System{}
+	s.pool = make([]SystemParticle, size)
+	s.freeList = make(chan *SystemParticle, size)
+	for i := range s.pool {
+		s.freeList <- &s.pool[i]
+		s.pool[i].inFreeList = true
 	}
-	return &system
+	return &s
 }
 
 // Particles returns a slice of all active particles.
-func (p *System) Particles() []*SystemParticle {
-	active := make([]*SystemParticle, 0, len(p.pool))
-	for i := range p.pool {
-		if p.pool[i].Active {
-			active = append(active, &p.pool[i])
+func (s *System) Particles() []*SystemParticle {
+	active := make([]*SystemParticle, 0, len(s.pool))
+	for i := range s.pool {
+		if s.pool[i].Active {
+			active = append(active, &s.pool[i])
 		}
 	}
 	return active
 }
 
 // ForEachParticle calls f for each active particle.
-func (p *System) ForEachParticle(f func(p *SystemParticle)) {
-	for i := range p.pool {
-		if p.pool[i].Active {
-			f(&p.pool[i])
+func (s *System) ForEachParticle(f func(p *SystemParticle)) {
+	for i := range s.pool {
+		if s.pool[i].Active {
+			f(&s.pool[i])
 		}
 	}
 }
 
 // Update updates the state of all active particles and creates new particles if the limit
 // hasn't been reached yet. dt is the amount of time to simulate.
-func (p *System) Update(dt time.Duration) {
-	for i := range p.pool {
-		if p.pool[i].Active {
-			p.pool[i].ApplyForce(p.globalForce)
-			p.pool[i].Update(dt)
-			p.pool[i].Life -= dt
-			if p.pool[i].Life <= 0 {
-				p.pool[i].Active = false
+func (s *System) Update(dt time.Duration) {
+	for i := range s.pool {
+		if s.pool[i].Active {
+			s.pool[i].ApplyForce(s.globalForce)
+			s.pool[i].Update(dt)
+			s.pool[i].Life -= dt
+			if s.pool[i].Life <= 0 {
+				s.pool[i].Active = false
 			}
 		}
 	}
-	p.globalForce.Mul(0)
+	s.globalForce.Mul(0)
 
-	for i := range p.pool {
-		if !p.pool[i].Active {
-			p.freeList <- &p.pool[i]
+	for i := range s.pool {
+		if !s.pool[i].Active && !s.pool[i].inFreeList {
+			s.freeList <- &s.pool[i]
+			s.pool[i].inFreeList = true
 		}
 	}
 
-	newCount := int(math.Floor(p.Rate * dt.Seconds()))
-	for newCount < 0 && len(p.freeList) <= newCount {
-		newParticle := <-p.freeList
+	s.lastParticle += dt
+	newCount := int(math.Floor(s.Rate * s.lastParticle.Seconds()))
+	for newCount > 0 && len(s.freeList) > 0 {
+		newParticle := <-s.freeList
+		newParticle.inFreeList = false
 		newParticle.Active = true
-		newParticle.Life = p.InitLife
-		newParticle.Pos = p.InitPos()
-		newParticle.Vel = p.InitVel()
+		newParticle.Life = s.InitLife
+		newParticle.Pos = s.InitPos()
+		newParticle.Vel = s.InitVel()
+		newParticle.Mass = s.InitMass
+		s.lastParticle = 0
+		newCount--
 	}
 }
 
@@ -97,6 +107,6 @@ func (p *System) Update(dt time.Duration) {
 //    p.ApplyForce(force)
 //  })
 //  system.Update()
-func (p *System) ApplyForce(force geo.Vec) {
-	p.globalForce.Add(force)
+func (s *System) ApplyForce(force geo.Vec) {
+	s.globalForce.Add(force)
 }
