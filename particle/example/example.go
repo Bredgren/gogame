@@ -7,6 +7,7 @@ import (
 	"github.com/Bredgren/gogame"
 	"github.com/Bredgren/gogame/event"
 	"github.com/Bredgren/gogame/geo"
+	"github.com/Bredgren/gogame/key"
 	"github.com/Bredgren/gogame/particle"
 )
 
@@ -32,15 +33,15 @@ func setup() {
 	ps1.InitLife = time.Duration(3 * time.Second)
 	ps1.Rate = 50
 	ps1.InitMass = 1
-	ps1.InitPos = geo.StaticVec(geo.Vec{X: 150, Y: 300})
-	ps1.InitVel = geo.RandVecArc(0, -150, math.Pi/4, 3*math.Pi/4)
+	ps1.InitPos = geo.StaticVec(geo.Vec{X: 150, Y: 200})
+	ps1.InitVel = geo.RandVecArc(0, -200, math.Pi/4, 3*math.Pi/4)
 
 	ps2 = particle.NewSystem(100)
 	ps2.InitLife = time.Duration(500 * time.Millisecond)
 	ps2.Rate = 0
 	ps2.InitMass = 1
 	ps2.InitPos = geo.DynamicVec(&explosionPos)
-	ps2.InitVel = geo.RandVecCircle(50, 300)
+	ps2.InitVel = geo.RandVecCircle(50, 500)
 }
 
 var lastT time.Duration
@@ -51,28 +52,32 @@ func loop(t time.Duration) {
 
 	for evt := event.Poll(); evt.Type != event.NoEvent; evt = event.Poll() {
 		switch evt.Type {
-		case event.KeyDown:
-		case event.KeyUp:
 		case event.MouseButtonDown:
 			data := evt.Data.(event.MouseData)
 			if data.Button == 0 {
 				explosionPos.X = data.Pos.X
 				explosionPos.Y = data.Pos.Y
+				// Make all 100 particles at once
 				ps2.Rate = 100 / dt.Seconds()
 			}
-		case event.MouseButtonUp:
 		}
 	}
 
-	gravity := geo.Vec{Y: 100}
+	if gogame.PressedKeys()[key.W] {
+		wind := geo.Vec{X: 1000}
+		ps1.ApplyForce(wind)
+		ps2.ApplyForce(wind)
+	}
+
+	gravity := geo.Vec{Y: 500}
 
 	ps1.ApplyForce(gravity)
 	ps1.Update(dt)
 	ps2.ForEachParticle(func(p *particle.SystemParticle) {
-		p.ApplyForce(p.Vel.Times(-0.2))
+		p.ApplyForce(p.Vel.Normalized().Times(-p.Vel.Len2() * 0.01))
 	})
 	ps2.Update(dt)
-	ps2.Rate = 0
+	ps2.Rate = 0 // Stop making particles
 
 	display := gogame.MainDisplay()
 	display.Fill(gogame.FillBlack)
@@ -80,13 +85,11 @@ func loop(t time.Duration) {
 		display.DrawCircle(p.Pos.X, p.Pos.Y, 5, &gogame.FillStyle{
 			Colorer: gogame.Color{R: 1, G: 1, B: 1, A: p.Life.Seconds() / 3},
 		})
-		// display.SetAt(int(p.Pos.X), int(p.Pos.Y), gogame.White)
 	})
 	ps2.ForEachParticle(func(p *particle.SystemParticle) {
 		display.DrawCircle(p.Pos.X, p.Pos.Y, 5, &gogame.FillStyle{
 			Colorer: gogame.Color{R: 1, G: 0.2, B: 0.2, A: p.Life.Seconds()},
 		})
-		// display.SetAt(int(p.Pos.X), int(p.Pos.Y), gogame.White)
 	})
 	display.DrawText(gogame.Stats.LoopDuration.String(), 2, 0,
 		&gogame.Font{
