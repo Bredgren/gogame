@@ -34,7 +34,7 @@ func setup() {
 	ps1.Rate = 50
 	ps1.InitMass = 1
 	ps1.InitPos = geo.StaticVec(geo.Vec{X: 150, Y: 200})
-	ps1.InitVel = geo.RandVecArc(0, -200, math.Pi/4, 3*math.Pi/4)
+	ps1.InitVel = geo.RandVecArc(0, 200, math.Pi/4, 3*math.Pi/4)
 
 	ps2 = particle.NewSystem(100)
 	ps2.InitLife = time.Duration(500 * time.Millisecond)

@@ -106,30 +106,30 @@ func (v *Vec) Limit(len float64) {
 }
 
 // Angle returns the radians relative to the positive x-axis (counterclockwise in screen
-// coordinates). The returned value is in the range (-π, π].
+// coordinates). The returned value is in the range [-π, π).
 func (v Vec) Angle() float64 {
-	return math.Atan2(v.Y, v.X)
+	return -math.Atan2(v.Y, v.X)
 }
 
 // AngleFrom returns the radians from v2 to v (counterclockwise in screen coordinates).
-// The returned value is in the range (-π, π].
+// The returned value is in the range [-π, π).
 func (v Vec) AngleFrom(v2 Vec) float64 {
-	r := math.Atan2(v.Y, v.X) - math.Atan2(v2.Y, v2.X)
-	if r > math.Pi {
-		r -= 2 * math.Pi
+	r := math.Atan2(v2.Y, v2.X) - math.Atan2(v.Y, v.X)
+	if r < -math.Pi {
+		r += 2 * math.Pi
 	}
 	return r
 }
 
 // Rotate rotates the vector (counterclockwise in screen coordinates) by the given radians.
 func (v *Vec) Rotate(rad float64) {
-	v.X, v.Y = v.X*math.Cos(rad)-v.Y*math.Sin(rad), v.X*math.Sin(rad)+v.Y*math.Cos(rad)
+	v.X, v.Y = v.X*math.Cos(rad)+v.Y*math.Sin(rad), -v.X*math.Sin(rad)+v.Y*math.Cos(rad)
 }
 
 // Rotated returns a new vector that is equal to this one rotated (counterclockwise in
 // screen coordinates) by the given radians.
 func (v Vec) Rotated(rad float64) Vec {
-	return Vec{X: v.X*math.Cos(rad) - v.Y*math.Sin(rad), Y: v.X*math.Sin(rad) + v.Y*math.Cos(rad)}
+	return Vec{X: v.X*math.Cos(rad) + v.Y*math.Sin(rad), Y: -v.X*math.Sin(rad) + v.Y*math.Cos(rad)}
 }
 
 // Equals returns true if the corresponding components of the vectors are within the error e.
@@ -171,6 +171,7 @@ func OffsetVec(gen VecGen, offset VecGen) VecGen {
 }
 
 // RandVecCircle returns a VecGen that will generate a random vector within the given radii.
+// Negative radii are undefined.
 func RandVecCircle(minRadius, maxRadius float64) VecGen {
 	return func() Vec {
 		return RandVec().Times(circleRadius(minRadius, maxRadius))
@@ -179,11 +180,15 @@ func RandVecCircle(minRadius, maxRadius float64) VecGen {
 
 // RandVecArc returns a VecGen that will generate a random vector within the slice of a
 // circle defined by the parameters. The radians are relative to the +x axis.
+// Negative radii are undefined.
 func RandVecArc(minRadius, maxRadius, minRadians, maxRadians float64) VecGen {
+	if maxRadians < minRadians {
+		minRadians, maxRadians = maxRadians, minRadians
+	}
 	return func() Vec {
 		r := circleRadius(minRadius, maxRadius)
 		rad := rand.Float64()*(maxRadians-minRadians) + minRadians
-		return Vec{X: 1}.Times(r).Rotated(rad)
+		return Vec{X: r}.Rotated(rad)
 	}
 }
 
@@ -197,11 +202,12 @@ func RandVecRect(rect Rect) VecGen {
 	}
 }
 
-// Returns a uniformaly distributed radius between minR and maxR. Negative radii are undefined.
+// Returns a uniformaly distributed radius between minR and maxR.
 func circleRadius(minR, maxR float64) float64 {
 	if maxR == 0 || maxR == minR {
 		return maxR
 	}
 	unitMin := minR / maxR
-	return math.Sqrt(rand.Float64()*(1-unitMin)+unitMin)*(maxR-minR) + minR
+	unitMin *= unitMin
+	return math.Sqrt(rand.Float64()*(1-unitMin)+unitMin) * maxR
 }

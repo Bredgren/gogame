@@ -4,11 +4,16 @@ import (
 	"math"
 	"math/rand"
 	"testing"
+	"time"
 )
 
 const (
 	e = 1e-10
 )
+
+func init() {
+	rand.Seed(time.Now().Unix())
+}
 
 func TestVecLen(t *testing.T) {
 	cases := []struct {
@@ -264,7 +269,7 @@ func TestVecDot(t *testing.T) {
 }
 
 func TestVecRand(t *testing.T) {
-	cases := 100000
+	cases := 10000
 	maxErr := 1e-10
 	for i := 0; i < cases; i++ {
 		got := RandVec()
@@ -300,9 +305,9 @@ func TestVecAngle(t *testing.T) {
 		want float64
 	}{
 		{Vec{X: 5, Y: 0}, 0},
-		{Vec{X: -3, Y: 0}, math.Pi},
-		{Vec{X: 0, Y: -4}, -math.Pi / 2},
-		{Vec{X: 0, Y: 1}, math.Pi / 2},
+		{Vec{X: -3, Y: 0}, -math.Pi},
+		{Vec{X: 0, Y: -4}, math.Pi / 2},
+		{Vec{X: 0, Y: 1}, -math.Pi / 2},
 	}
 
 	for i, c := range cases {
@@ -320,9 +325,9 @@ func TestVecAngleFrom(t *testing.T) {
 	}{
 		{Vec{X: 5, Y: 0}, Vec{X: 2, Y: 0}, 0},
 		{Vec{X: -5, Y: 0}, Vec{X: -2, Y: 0}, 0},
-		{Vec{X: 0, Y: -4}, Vec{X: -1, Y: -1}, math.Pi / 4},
-		{Vec{X: -1, Y: 0}, Vec{X: 1, Y: 0}, math.Pi},
-		{Vec{X: -1, Y: 0}, Vec{X: 0, Y: -1}, -math.Pi / 2},
+		{Vec{X: 0, Y: -4}, Vec{X: -1, Y: -1}, -math.Pi / 4},
+		{Vec{X: -1, Y: 0}, Vec{X: 1, Y: 0}, -math.Pi},
+		{Vec{X: -1, Y: 0}, Vec{X: 0, Y: -1}, math.Pi / 2},
 	}
 
 	for i, c := range cases {
@@ -340,14 +345,14 @@ func TestVecRotate(t *testing.T) {
 		want Vec
 	}{
 		{Vec{X: 5, Y: 0}, 0, Vec{X: 5, Y: 0}},
-		{Vec{X: 3, Y: 0}, math.Pi / 2, Vec{X: 0, Y: 3}},
-		{Vec{X: 3, Y: 0}, -math.Pi / 2, Vec{X: 0, Y: -3}},
+		{Vec{X: 3, Y: 0}, math.Pi / 2, Vec{X: 0, Y: -3}},
+		{Vec{X: 3, Y: 0}, -math.Pi / 2, Vec{X: 0, Y: 3}},
 		{Vec{X: 3, Y: 0}, math.Pi, Vec{X: -3, Y: 0}},
 		{Vec{X: 3, Y: 0}, -math.Pi, Vec{X: -3, Y: 0}},
 		{Vec{X: 0, Y: -1}, math.Pi, Vec{X: 0, Y: 1}},
-		{Vec{X: 0, Y: -1}, math.Pi / 4, Vec{X: 1, Y: -1}.Normalized()},
+		{Vec{X: 0, Y: -1}, math.Pi / 4, Vec{X: -1, Y: -1}.Normalized()},
 		{Vec{X: -1, Y: 0}, -math.Pi, Vec{X: 1, Y: 0}},
-		{Vec{X: -1, Y: 0}, 3 * math.Pi / 2, Vec{X: 0, Y: 1}},
+		{Vec{X: -1, Y: 0}, 3 * math.Pi / 2, Vec{X: 0, Y: -1}},
 	}
 
 	for i, c := range cases {
@@ -366,14 +371,14 @@ func TestVecRotated(t *testing.T) {
 		want Vec
 	}{
 		{Vec{X: 5, Y: 0}, 0, Vec{X: 5, Y: 0}},
-		{Vec{X: 3, Y: 0}, math.Pi / 2, Vec{X: 0, Y: 3}},
-		{Vec{X: 3, Y: 0}, -math.Pi / 2, Vec{X: 0, Y: -3}},
+		{Vec{X: 3, Y: 0}, math.Pi / 2, Vec{X: 0, Y: -3}},
+		{Vec{X: 3, Y: 0}, -math.Pi / 2, Vec{X: 0, Y: 3}},
 		{Vec{X: 3, Y: 0}, math.Pi, Vec{X: -3, Y: 0}},
 		{Vec{X: 3, Y: 0}, -math.Pi, Vec{X: -3, Y: 0}},
 		{Vec{X: 0, Y: -1}, math.Pi, Vec{X: 0, Y: 1}},
-		{Vec{X: 0, Y: -1}, math.Pi / 4, Vec{X: 1, Y: -1}.Normalized()},
+		{Vec{X: 0, Y: -1}, math.Pi / 4, Vec{X: -1, Y: -1}.Normalized()},
 		{Vec{X: -1, Y: 0}, -math.Pi, Vec{X: 1, Y: 0}},
-		{Vec{X: -1, Y: 0}, 3 * math.Pi / 2, Vec{X: 0, Y: 1}},
+		{Vec{X: -1, Y: 0}, 3 * math.Pi / 2, Vec{X: 0, Y: -1}},
 	}
 
 	for i, c := range cases {
@@ -385,7 +390,7 @@ func TestVecRotated(t *testing.T) {
 }
 
 func TestVecRotateStress(t *testing.T) {
-	cases := 100000
+	cases := 10000
 	for i := 0; i < cases; i++ {
 		v1 := RandVec()
 		v2 := RandVec()
@@ -415,7 +420,7 @@ func TestDynamicVec(t *testing.T) {
 }
 
 func TestRandVecCircle(t *testing.T) {
-	trials := 100000
+	trials := 10000
 	cases := []struct {
 		minR, maxR float64
 	}{
@@ -439,7 +444,7 @@ func TestRandVecCircle(t *testing.T) {
 }
 
 func TestRandVecArc(t *testing.T) {
-	trials := 100000
+	trials := 10000
 	cases := []struct {
 		minR, maxR float64
 	}{
@@ -466,7 +471,7 @@ func TestRandVecArc(t *testing.T) {
 }
 
 func TestRandVecRect(t *testing.T) {
-	trials := 100000
+	trials := 10000
 	rect := Rect{
 		X: rand.Float64()*100 - 50,
 		Y: rand.Float64()*100 - 50,

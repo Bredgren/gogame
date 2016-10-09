@@ -47,16 +47,16 @@ func testCanvas() {
 		&gogame.FillStyle{Colorer: &gogame.LinearGradient{
 			X1: 0, Y1: 0, X2: 50, Y2: 50,
 			ColorStops: []gogame.ColorStop{
-				{Position: 0.0, Color: gogame.Red},
-				{Position: 1.0, Color: gogame.Blue},
+				{Position: 0.0, Colorer: gogame.Red},
+				{Position: 1.0, Colorer: gogame.Blue},
 			},
 		}})
 	display.DrawRect(geo.Rect{X: 130, Y: 10, W: 50, H: 50},
 		&gogame.FillStyle{Colorer: &gogame.RadialGradient{
 			X1: 50 / 2, Y1: 50 / 2, R1: 40, X2: 50 / 4, Y2: 50 / 4, R2: 1,
 			ColorStops: []gogame.ColorStop{
-				{Position: 0.0, Color: gogame.Blue},
-				{Position: 1.0, Color: gogame.Green},
+				{Position: 0.0, Colorer: gogame.Blue},
+				{Position: 1.0, Colorer: gogame.Green},
 			},
 		}})
 
@@ -65,8 +65,8 @@ func testCanvas() {
 		&gogame.FillStyle{Colorer: &gogame.LinearGradient{
 			X1: 0, Y1: 10, X2: 10, Y2: 0,
 			ColorStops: []gogame.ColorStop{
-				{Position: 0.0, Color: gogame.Red},
-				{Position: 1.0, Color: gogame.Green},
+				{Position: 0.0, Colorer: gogame.Red},
+				{Position: 1.0, Colorer: gogame.Green},
 			},
 		}})
 
@@ -168,8 +168,8 @@ func testCanvas() {
 		Colorer: &gogame.LinearGradient{
 			X1: 0, Y1: 0, X2: float64(w), Y2: 0,
 			ColorStops: []gogame.ColorStop{
-				{Position: 0.0, Color: gogame.Blue},
-				{Position: 1.0, Color: gogame.Green},
+				{Position: 0.0, Colorer: gogame.Blue},
+				{Position: 1.0, Colorer: gogame.Green},
 			},
 		},
 		Type:     gogame.Fill,
@@ -243,7 +243,7 @@ func testCanvas() {
 	display.Blit(copy, float64(display.Width()-copy.Width()), float64(display.Height()-copy.Height()))
 
 	// Test curves
-	display.SetAt(590, 20, gogame.Green)
+	display.SetAt(590, 20, gogame.Color{G: 1, A: 1})
 	display.DrawQuadraticCurve(550, 10, 550, 60, 590, 20, &gogame.StrokeStyle{
 		Colorer: gogame.White,
 		Width:   5,
@@ -265,8 +265,8 @@ func testCanvas() {
 		{620, 130}, {0, 0}, // Last point ignored
 	}, gogame.FillWhite)
 
-	display.SetAt(695, 40, gogame.Green)
-	display.SetAt(695, 0, gogame.Green)
+	display.SetAt(695, 40, gogame.Color{G: 1, A: 1})
+	display.SetAt(695, 0, gogame.Color{G: 1, A: 1})
 	display.DrawBezierCurve(670, 20, 720, 20, 695, 40, 695, 0, &gogame.StrokeStyle{
 		Colorer: gogame.White,
 		Width:   5,

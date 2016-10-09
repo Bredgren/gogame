@@ -15,6 +15,15 @@ type Colorer interface {
 	Color(ctx *js.Object) interface{}
 }
 
+var (
+	Transparent = ColorCSS("rgba(0, 0, 0, 0)")
+	Black       = ColorCSS("#000")
+	White       = ColorCSS("#FFF")
+	Red         = ColorCSS("#F00")
+	Green       = ColorCSS("#0F0")
+	Blue        = ColorCSS("#00B")
+)
+
 var _ Colorer = &Color{}
 
 // Color is a flat rgba color. Each component ranges from 0.0 to 1.0. An alpha (A) of
@@ -22,21 +31,6 @@ var _ Colorer = &Color{}
 type Color struct {
 	R, G, B, A float64
 }
-
-var (
-	// Transparent is no color (the default).
-	Transparent = Color{}
-	// Black is the color black.
-	Black = Color{0.0, 0.0, 0.0, 1.0}
-	// White is the color white.
-	White = Color{1.0, 1.0, 1.0, 1.0}
-	// Red is the color red.
-	Red = Color{1.0, 0.0, 0.0, 1.0}
-	// Green is the color green.
-	Green = Color{0.0, 1.0, 0.0, 1.0}
-	// Blue is the color blue.
-	Blue = Color{0.0, 0.0, 1.0, 1.0}
-)
 
 // Color implements the Colorer interface.
 func (c Color) Color(*js.Object) interface{} {
@@ -75,7 +69,7 @@ func (c ColorCSS) Color(*js.Object) interface{} {
 // and 1.0 being the end.
 type ColorStop struct {
 	Position float64
-	Color
+	Colorer
 }
 
 var _ Colorer = &LinearGradient{}
@@ -96,7 +90,7 @@ func (l *LinearGradient) Color(ctx *js.Object) interface{} {
 	grad := ctx.Call("createLinearGradient", math.Floor(lg.X1), math.Floor(lg.Y1), math.Floor(lg.X2),
 		math.Floor(lg.Y2))
 	for _, stop := range lg.ColorStops {
-		grad.Call("addColorStop", stop.Position, stop.Color.Color(ctx))
+		grad.Call("addColorStop", stop.Position, stop.Colorer.Color(ctx))
 	}
 	return grad
 }
@@ -118,7 +112,7 @@ func (r *RadialGradient) Color(ctx *js.Object) interface{} {
 	grad := ctx.Call("createRadialGradient", math.Floor(rg.X1), math.Floor(rg.Y1), math.Floor(rg.R1),
 		math.Floor(rg.X2), math.Floor(rg.Y2), math.Floor(rg.R2))
 	for _, stop := range rg.ColorStops {
-		grad.Call("addColorStop", stop.Position, stop.Color.Color(ctx))
+		grad.Call("addColorStop", stop.Position, stop.Colorer.Color(ctx))
 	}
 	return grad
 }
