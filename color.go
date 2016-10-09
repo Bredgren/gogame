@@ -1,8 +1,8 @@
 package gogame
 
 import (
-	"fmt"
 	"math"
+	"strconv"
 
 	"github.com/gopherjs/gopherjs/js"
 )
@@ -46,11 +46,10 @@ func (c Color) Color(*js.Object) interface{} {
 // String implements the Stringer interface. The format of the returned string is of a
 // CSS color, i.e. "rgba(r, g, b, a)".
 func (c Color) String() string {
-	return fmt.Sprintf("rgba(%d, %d, %d, %f)",
-		clampToInt(255*c.R, 0, 255),
-		clampToInt(255*c.G, 0, 255),
-		clampToInt(255*c.B, 0, 255),
-		clampToFloat(c.A, 0.0, 1.0))
+	return "rgba(" + strconv.Itoa(clampToInt(255*c.R, 0, 255)) + "," +
+		strconv.Itoa(clampToInt(255*c.G, 0, 255)) + "," +
+		strconv.Itoa(clampToInt(255*c.B, 0, 255)) + "," +
+		strconv.FormatFloat(clampToFloat(c.A, 0.0, 1.0), 'f', -1, 64) + ")"
 }
 
 func clampToInt(v, min, max float64) int {
@@ -59,6 +58,16 @@ func clampToInt(v, min, max float64) int {
 
 func clampToFloat(v, min, max float64) float64 {
 	return math.Min(math.Max(v, min), max)
+}
+
+// ColorCSS is CSS style color, e.g. "rgb(1,2,3)", "#FFF". Using this type instead of
+// the Color type can be better for performance in certain cases since converting numbers
+// to strings can be expensive.
+type ColorCSS string
+
+// Color implements the Colorer interface.
+func (c ColorCSS) Color(*js.Object) interface{} {
+	return string(c)
 }
 
 // ColorStop is used for gradients to specify at which point it reaches a color. Position

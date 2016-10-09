@@ -82,23 +82,25 @@ func loop(t time.Duration) {
 	display := gogame.MainDisplay()
 	display.Fill(gogame.FillBlack)
 	ps1.ForEachParticle(func(p *particle.SystemParticle) {
+
 		display.DrawCircle(p.Pos.X, p.Pos.Y, 5, &gogame.FillStyle{
-			Colorer: gogame.Color{R: 1, G: 1, B: 1, A: p.Life.Seconds() / 3},
+			Colorer: gogame.ColorCSS("#FFF"),
 		})
 	})
 	ps2.ForEachParticle(func(p *particle.SystemParticle) {
+		// Note that using Color is a major performance bottleneck because it converts numbers
+		// to a strings, using ColorCSS, like above, can save a lot of time.
 		display.DrawCircle(p.Pos.X, p.Pos.Y, 5, &gogame.FillStyle{
 			Colorer: gogame.Color{R: 1, G: 0.2, B: 0.2, A: p.Life.Seconds()},
 		})
 	})
-	display.DrawText(gogame.Stats.LoopDuration.String(), 2, 0,
-		&gogame.Font{
-			Size: 20,
-		},
-		&gogame.TextStyle{
-			Colorer:  gogame.White,
-			Align:    gogame.TextAlignLeft,
-			Baseline: gogame.TextBaselineTop,
-		})
+	textStyle := gogame.TextStyle{
+		Colorer:  gogame.White,
+		Align:    gogame.TextAlignLeft,
+		Baseline: gogame.TextBaselineTop,
+	}
+	display.DrawText(gogame.Stats.LoopDuration.String(), 2, 0, &gogame.Font{Size: 20}, &textStyle)
+	display.DrawText("click to explode", 2, 30, &gogame.Font{Size: 15}, &textStyle)
+	display.DrawText("w for wind", 2, 45, &gogame.Font{Size: 15}, &textStyle)
 	display.Flip()
 }
