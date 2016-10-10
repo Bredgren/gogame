@@ -32,7 +32,7 @@ func (p *Particle) Update(dt time.Duration) {
 // not affect the particle until Update is called. If multiple forces are applied then they
 // will accumulate. Forces will not persist between calls to Update.
 func (p *Particle) ApplyForce(force geo.Vec) {
-	if p.Mass > 0 {
+	if p.Mass != 0 {
 		p.accel.Add(force.DividedBy(p.Mass))
 	}
 }
