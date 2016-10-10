@@ -470,6 +470,9 @@ func testSubSurf() {
 
 	display.Blit(sub, 650, 200)
 
+	subCopy := sub.Copy()
+	display.Blit(subCopy, 700, 200)
+
 	// Clipping parent and subsurface doesn't work properly
 	// r1 := geo.Rect{X: 600, Y: 250, W: 100, H: 75}
 	// r2 := r1.Move(75, 50)
