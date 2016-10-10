@@ -32,14 +32,14 @@ func setup() {
 	ps1 = particle.NewSystem(200)
 	ps1.InitLife = time.Duration(3 * time.Second)
 	ps1.Rate = 50
-	ps1.InitMass = 1
+	ps1.InitMass = geo.RandNum(0.5, 3)
 	ps1.InitPos = geo.StaticVec(geo.Vec{X: 150, Y: 200})
 	ps1.InitVel = geo.RandVecArc(0, 200, math.Pi/4, 3*math.Pi/4)
 
 	ps2 = particle.NewSystem(100)
 	ps2.InitLife = time.Duration(500 * time.Millisecond)
 	ps2.Rate = 0
-	ps2.InitMass = 1
+	ps2.InitMass = geo.RandNum(0.9, 1.1)
 	ps2.InitPos = geo.DynamicVec(&explosionPos)
 	ps2.InitVel = geo.RandVecCircle(50, 500)
 }
@@ -82,15 +82,14 @@ func loop(t time.Duration) {
 	display := gogame.MainDisplay()
 	display.Fill(gogame.FillBlack)
 	ps1.ForEachParticle(func(p *particle.SystemParticle) {
-
-		display.DrawCircle(p.Pos.X, p.Pos.Y, 5, &gogame.FillStyle{
+		display.DrawCircle(p.Pos.X, p.Pos.Y, 5*p.Mass, &gogame.FillStyle{
 			Colorer: gogame.ColorCSS("#FFF"),
 		})
 	})
 	ps2.ForEachParticle(func(p *particle.SystemParticle) {
 		// Note that using Color is a major performance bottleneck because it converts numbers
 		// to a strings, using ColorCSS, like above, can save a lot of time.
-		display.DrawCircle(p.Pos.X, p.Pos.Y, 5, &gogame.FillStyle{
+		display.DrawCircle(p.Pos.X, p.Pos.Y, 5*p.Mass, &gogame.FillStyle{
 			Colorer: gogame.Color{R: 1, G: 0.2, B: 0.2, A: p.Life.Seconds()},
 		})
 	})

@@ -22,7 +22,7 @@ type System struct {
 	// InitPos/Vel/Mass/Life are the starting parameters for each new particle.
 	InitPos      geo.VecGen
 	InitVel      geo.VecGen
-	InitMass     float64
+	InitMass     geo.NumGen
 	InitLife     time.Duration
 	pool         []SystemParticle
 	freeList     chan *SystemParticle
@@ -93,7 +93,7 @@ func (s *System) Update(dt time.Duration) {
 		newParticle.Life = s.InitLife
 		newParticle.Pos = s.InitPos()
 		newParticle.Vel = s.InitVel()
-		newParticle.Mass = s.InitMass
+		newParticle.Mass = s.InitMass()
 		s.lastParticle = 0
 		newCount--
 	}
