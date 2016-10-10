@@ -67,6 +67,52 @@ func TestVecSetLen(t *testing.T) {
 	}
 }
 
+func TestVecWithLen(t *testing.T) {
+	cases := []struct {
+		v    Vec
+		len  float64
+		want Vec
+	}{
+		{Vec{X: 3, Y: 4}, 10, Vec{X: 3, Y: 4}.Normalized().Times(10)},
+		{Vec{X: 3, Y: 4}, -10, Vec{X: 3, Y: 4}.Normalized().Times(-10)},
+		{Vec{X: 3, Y: 4}, 0, Vec{}},
+		{Vec{X: 0, Y: 0}, 1, Vec{}},
+	}
+
+	for i, c := range cases {
+		got := c.v.WithLen(c.len)
+		if !got.Equals(c.want, e) {
+			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
+		}
+	}
+}
+
+func TestVecDist(t *testing.T) {
+	trials := 100
+	for i := 0; i < trials; i++ {
+		v1 := RandVec().Times(rand.Float64() * 100)
+		v2 := RandVec().Times(rand.Float64() * 100)
+		got := v1.Dist(v2)
+		want := v1.Minus(v2).Len()
+		if math.Abs(got-want) > e {
+			t.Errorf("trial %d: v1: %#v, v2: %#v, got %#v, want %#v", i, v1, v2, got, want)
+		}
+	}
+}
+
+func TestVecDist2(t *testing.T) {
+	trials := 100
+	for i := 0; i < trials; i++ {
+		v1 := RandVec().Times(rand.Float64() * 100)
+		v2 := RandVec().Times(rand.Float64() * 100)
+		got := v1.Dist2(v2)
+		want := v1.Minus(v2).Len2()
+		if math.Abs(got-want) > e {
+			t.Errorf("trial %d: v1: %#v, v2: %#v, got %#v, want %#v", i, v1, v2, got, want)
+		}
+	}
+}
+
 func TestVecAdd(t *testing.T) {
 	cases := []struct {
 		v1   Vec
@@ -269,11 +315,10 @@ func TestVecDot(t *testing.T) {
 }
 
 func TestVecRand(t *testing.T) {
-	cases := 10000
-	maxErr := 1e-10
-	for i := 0; i < cases; i++ {
+	trials := 10000
+	for i := 0; i < trials; i++ {
 		got := RandVec()
-		if math.Abs(got.Len()-1) > maxErr {
+		if math.Abs(got.Len()-1) > e {
 			t.Errorf("case %d: %#v is length %f", i, got, got.Len())
 		}
 	}
@@ -390,8 +435,8 @@ func TestVecRotated(t *testing.T) {
 }
 
 func TestVecRotateStress(t *testing.T) {
-	cases := 10000
-	for i := 0; i < cases; i++ {
+	trials := 10000
+	for i := 0; i < trials; i++ {
 		v1 := RandVec()
 		v2 := RandVec()
 		between := v1.AngleFrom(v2)

@@ -34,6 +34,28 @@ func (v *Vec) SetLen(l float64) {
 	v.Y = v.Y / len * l
 }
 
+// WithLen returns a new vector in the same direction as v but with the given length.
+// It v's length is 0 then the zero vector is returned.
+func (v Vec) WithLen(l float64) Vec {
+	len := math.Sqrt(v.X*v.X + v.Y*v.Y)
+	if len == 0 {
+		return Vec{}
+	}
+	v.X = v.X / len * l
+	v.Y = v.Y / len * l
+	return v
+}
+
+// Dist returns the distance between the two vectors.
+func (v Vec) Dist(v2 Vec) float64 {
+	return math.Sqrt((v.X-v2.X)*(v.X-v2.X) + (v.Y-v2.Y)*(v.Y-v2.Y))
+}
+
+// Dist2 returns the distance squared between the two vectors.
+func (v Vec) Dist2(v2 Vec) float64 {
+	return (v.X-v2.X)*(v.X-v2.X) + (v.Y-v2.Y)*(v.Y-v2.Y)
+}
+
 // Add modifies v to be the sum of v2 and itself.
 func (v *Vec) Add(v2 Vec) {
 	v.X += v2.X
