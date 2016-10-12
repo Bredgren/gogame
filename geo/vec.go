@@ -3,6 +3,8 @@ package geo
 import (
 	"math"
 	"math/rand"
+
+	"github.com/Bredgren/wrand"
 )
 
 // Vec is a 2D vector. Many of the functions for Vec have two versions, one that modifies
@@ -217,6 +219,23 @@ func RandVecArc(minRadius, maxRadius, minRadians, maxRadians float64) VecGen {
 // RandVecRect returns a VecGen that will generate a random vector within the given Rect.
 func RandVecRect(rect Rect) VecGen {
 	return func() Vec {
+		return Vec{
+			X: rand.Float64()*rect.W + rect.X,
+			Y: rand.Float64()*rect.H + rect.Y,
+		}
+	}
+}
+
+// RandVecRects returns a VecGen that will generate a random vector that is uniformly
+// distributed between all the given rects. If the slice given is empty then the zero
+// vector is returned.
+func RandVecRects(rects []Rect) VecGen {
+	areas := make([]float64, len(rects))
+	for i := range rects {
+		areas[i] = rects[i].Area()
+	}
+	return func() Vec {
+		rect := rects[wrand.SelectIndex(areas)]
 		return Vec{
 			X: rand.Float64()*rect.W + rect.X,
 			Y: rand.Float64()*rect.H + rect.Y,

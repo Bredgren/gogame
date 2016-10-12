@@ -197,6 +197,11 @@ func (r *Rect) SetCenterY(y float64) {
 	r.Y = y - r.H/2
 }
 
+// Area returns the area of the rectangle.
+func (r Rect) Area() float64 {
+	return r.W * r.H
+}
+
 // Move moves the Rect by the given offset, in place.
 func (r *Rect) Move(dx, dy float64) {
 	r.X += dx
