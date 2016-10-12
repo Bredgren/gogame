@@ -230,6 +230,9 @@ func RandVecRect(rect Rect) VecGen {
 // distributed between all the given rects. If the slice given is empty then the zero
 // vector is returned.
 func RandVecRects(rects []Rect) VecGen {
+	if len(rects) == 0 {
+		return func() Vec { return Vec{} }
+	}
 	areas := make([]float64, len(rects))
 	for i := range rects {
 		areas[i] = rects[i].Area()

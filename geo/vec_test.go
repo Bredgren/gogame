@@ -532,3 +532,40 @@ func TestRandVecRect(t *testing.T) {
 		}
 	}
 }
+
+func TestRandVecRects(t *testing.T) {
+	zeroGen := RandVecRects([]Rect{})
+	v := zeroGen()
+	if !v.Equals(Vec{}, e) {
+		t.Errorf("no rects: got %#v, want %#v", v, Vec{})
+	}
+
+	trials := 10000
+	numRects := rand.Intn(19) + 1
+
+	rects := []Rect{}
+	for i := 0; i < numRects; i++ {
+		rects = append(rects, Rect{
+			X: rand.Float64()*100 - 50,
+			Y: rand.Float64()*100 - 50,
+			W: rand.Float64() * 100,
+			H: rand.Float64() * 100,
+		})
+	}
+	t.Logf("rects: %#v", rects)
+
+	vecGen := RandVecRects(rects)
+	for l := 0; l < trials; l++ {
+		v := vecGen()
+		collides := false
+		for _, r := range rects {
+			if r.CollidePoint(v.X, v.Y) {
+				collides = true
+				break
+			}
+		}
+		if !collides {
+			t.Errorf("trial %d: %#v", l, v)
+		}
+	}
+}
