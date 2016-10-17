@@ -344,6 +344,25 @@ func TestVecLimit(t *testing.T) {
 	}
 }
 
+func TestVecLimited(t *testing.T) {
+	cases := []struct {
+		v    Vec
+		len  float64
+		want Vec
+	}{
+		{Vec{X: 5, Y: 0}, 2, Vec{X: 2, Y: 0}},
+		{Vec{X: 0, Y: -4}, 2, Vec{X: 0, Y: -2}},
+		{Vec{X: 3, Y: 4}, 6, Vec{X: 3, Y: 4}},
+	}
+
+	for i, c := range cases {
+		got := c.v.Limited(c.len)
+		if got != c.want {
+			t.Errorf("case %d: len: %#v, got %#v, want %#v", i, c.len, got, c.want)
+		}
+	}
+}
+
 func TestVecAngle(t *testing.T) {
 	cases := []struct {
 		v    Vec

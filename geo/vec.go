@@ -129,6 +129,16 @@ func (v *Vec) Limit(len float64) {
 	}
 }
 
+// Limited returns a new vector in the same direction as v with length no greater than
+// len. The vector returned will be equivalent to v if v.Len() <= len.
+func (v Vec) Limited(len float64) Vec {
+	l := v.Len()
+	if l > len {
+		v.SetLen(len)
+	}
+	return v
+}
+
 // Angle returns the radians relative to the positive x-axis (counterclockwise in screen
 // coordinates). The returned value is in the range [-π, π).
 func (v Vec) Angle() float64 {
