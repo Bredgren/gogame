@@ -1,7 +1,5 @@
 package gogame
 
-import "image/color"
-
 // import (
 // 	"math"
 // 	"strconv"
@@ -69,19 +67,19 @@ import "image/color"
 // ColorStop is used for gradients to specify at which point it reaches a color. Position
 // is from 0.0 to 1.0 and is its relative position in the gradient, 0.0 being the start
 // and 1.0 being the end.
-type ColorStop struct {
-	Position float64
-	color.Color
-}
+// type ColorStop struct {
+// 	Position float64
+// 	color.Color
+// }
 
 // var _ Colorer = &LinearGradient{}
 
 // LinearGradient smoothly transitions between multiple colors in the direction defined
 // by two points.
-type LinearGradient struct {
-	X1, Y1, X2, Y2 float64
-	ColorStops     []ColorStop
-}
+// type LinearGradient struct {
+// 	X1, Y1, X2, Y2 float64
+// 	ColorStops     []ColorStop
+// }
 
 // // Color implements the Colorer interface.
 // func (l *LinearGradient) Color(ctx *js.Object) interface{} {
@@ -100,10 +98,10 @@ type LinearGradient struct {
 // var _ Colorer = &RadialGradient{}
 
 // RadialGradient smoothly transitions between multiple colors from one circle to another.
-type RadialGradient struct {
-	X1, Y1, R1, X2, Y2, R2 float64
-	ColorStops             []ColorStop
-}
+// type RadialGradient struct {
+// 	X1, Y1, R1, X2, Y2, R2 float64
+// 	ColorStops             []ColorStop
+// }
 
 // // Color implements the Colorer interface.
 // func (r *RadialGradient) Color(ctx *js.Object) interface{} {

@@ -101,7 +101,15 @@ func (s *Surface) StyleColor(draw DrawType, c color.Color) {
 	s.Ctx.Set(string(draw)+"Style", ColorToCSS(c))
 }
 
-// func (s *Surface) StyleLinearGradient(FillType, LinearGradient)
+func (s *Surface) StyleLinearGradient(draw DrawType, g LinearGradient) {
+	grad := s.Ctx.Call("createLinearGradient", math.Floor(g.X1), math.Floor(g.Y1), math.Floor(g.X2),
+		math.Floor(g.Y2))
+	for _, stop := range g.ColorStops {
+		grad.Call("addColorStop", stop.Position, ColorToCSS(stop.Color))
+	}
+	s.Ctx.Set(string(draw)+"Style", grad)
+}
+
 // func (s *Surface) StyleRadialGradient(FillType, RadialGradient)
 // func (s *Surface) StylePattern(FillType, *Surface, RepeatType)
 
