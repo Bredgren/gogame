@@ -120,6 +120,20 @@ func (v Vec) Dot(v2 Vec) float64 {
 	return v.X*v2.X + v.Y*v2.Y
 }
 
+// Project modifies v to be the vector that is the projection of v onto v2.
+func (v *Vec) Project(v2 Vec) {
+	v2.Normalize()
+	v2.Mul(v.X*v2.X + v.Y*v2.Y)
+	v.X, v.Y = v2.X, v2.Y
+}
+
+// Projected return the vetor that is v projected onto v2.
+func (v Vec) Projected(v2 Vec) Vec {
+	v2.Normalize()
+	v2.Mul(v.X*v2.X + v.Y*v2.Y)
+	return v2
+}
+
 // Limit constrains the length of the vector be no greater than len. If the vector is already
 // less than len then no change is made.
 func (v *Vec) Limit(len float64) {
