@@ -197,9 +197,41 @@ func (s *Surface) ClipPath(p *Path) {
 	s.Ctx.Call("clip", p.obj)
 }
 
-// func (s *Surface) Scale(x, y)
-// func (s *Surface) Rotate(angle)
-// func (s *Surface) Translate(x, y)
+// Translate moves the orgin by the distances given.
+func (s *Surface) Translate(x, y float64) {
+	s.Ctx.Call("translate", math.Floor(x), math.Floor(y))
+}
+
+// Rotate rotates the surface conterclockwise around the current origin.
+func (s *Surface) Rotate(radians float64) {
+	s.Ctx.Call("rotate", 2*math.Pi-radians)
+}
+
+// Scale changes the scale of the surface. 1.0 keeps the current size, smaller values
+// shrink and larger grow.
+func (s *Surface) Scale(x, y float64) {
+	s.Ctx.Call("scale", x, y)
+}
+
+// Transform multiplies the current transformation matrix by the one described by the
+// parameters:
+// a c e
+// b d f
+// 0 0 1
+func (s *Surface) Transform(a, b, c, d, e, f float64) {
+	s.Ctx.Call("transform", a, b, c, d, e, f)
+}
+
+// SetTransform resets the transformation matrix then applies the one given.
+func (s *Surface) SetTransform(a, b, c, d, e, f float64) {
+	s.Ctx.Call("setTransform", a, b, c, d, e, f)
+}
+
+// ResetTransform resets the transformation to the identy matrix.
+func (s *Surface) ResetTransform() {
+	s.Ctx.Call("resetTransform")
+}
+
 // func (s *Surface) (Set)Transform(...)
 //  + *ed versions for each that return new Surface
 

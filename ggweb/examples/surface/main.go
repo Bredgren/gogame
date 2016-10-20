@@ -24,6 +24,7 @@ func testCanvas() {
 	Styles(display)
 	CircleEllipseArc(display)
 	Path(display)
+	Transform(display)
 }
 
 func Rect(display *ggweb.Surface) {
@@ -143,6 +144,33 @@ func Path(display *ggweb.Surface) {
 	display.DrawPath(ggweb.Fill, path)
 	display.DrawPath(ggweb.Stroke, path)
 
+	display.Restore()
+}
+
+func Transform(display *ggweb.Surface) {
+	display.Save()
+	x, y := 600.0, 10.0
+	display.Translate(x, y)
+	display.StyleColor(ggweb.Stroke, color.RGBA{100, 100, 255, 255})
+	display.SetLineWidth(3)
+	r := geo.Rect{X: 0, Y: 0, W: 30, H: 30}
+	display.DrawRect(ggweb.Stroke, r)
+
+	display.Rotate(-math.Pi / 4)
+	display.StyleColor(ggweb.Stroke, color.RGBA{100, 255, 100, 128})
+	display.DrawRect(ggweb.Stroke, r)
+
+	display.Scale(1.5, 1.5)
+	display.StyleColor(ggweb.Stroke, color.RGBA{255, 100, 100, 128})
+	display.DrawRect(ggweb.Stroke, r)
+
+	display.Restore()
+
+	display.Save()
+	display.StyleColor(ggweb.Stroke, color.RGBA{255, 100, 255, 255})
+	display.SetLineWidth(3)
+	display.Transform(1, 0, 1, 1, x+40, y)
+	display.DrawRect(ggweb.Stroke, geo.Rect{X: 0, Y: 0, W: 30, H: 30})
 	display.Restore()
 }
 
