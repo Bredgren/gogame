@@ -97,44 +97,89 @@ func (s *Surface) Restore() {
 }
 
 // StyleColor sets the fill/stoke to a solid color.
-func (s *Surface) StyleColor(draw DrawType, c color.Color) {
-	s.Ctx.Set(string(draw)+"Style", ColorToCSS(c))
+func (s *Surface) StyleColor(t DrawType, c color.Color) {
+	s.Ctx.Set(string(t)+"Style", ColorToCSS(c))
 }
 
-func (s *Surface) StyleLinearGradient(draw DrawType, g LinearGradient) {
+// StyleLinearGradient sets the fill/stroke style to a linear gradient.
+func (s *Surface) StyleLinearGradient(t DrawType, g LinearGradient) {
 	grad := s.Ctx.Call("createLinearGradient", math.Floor(g.X1), math.Floor(g.Y1), math.Floor(g.X2),
 		math.Floor(g.Y2))
 	for _, stop := range g.ColorStops {
 		grad.Call("addColorStop", stop.Position, ColorToCSS(stop.Color))
 	}
-	s.Ctx.Set(string(draw)+"Style", grad)
+	s.Ctx.Set(string(t)+"Style", grad)
 }
 
-// func (s *Surface) StyleRadialGradient(FillType, RadialGradient)
-// func (s *Surface) StylePattern(FillType, *Surface, RepeatType)
+// StyleRadialGradient sets the fill/stroke style to a radial gradient.
+func (s *Surface) StyleRadialGradient(t DrawType, g RadialGradient) {
+	grad := s.Ctx.Call("createRadialGradient", math.Floor(g.X1), math.Floor(g.Y1), math.Floor(g.R1),
+		math.Floor(g.X2), math.Floor(g.Y2), math.Floor(g.R2))
+	for _, stop := range g.ColorStops {
+		grad.Call("addColorStop", stop.Position, ColorToCSS(stop.Color))
+	}
+	s.Ctx.Set(string(t)+"Style", grad)
+}
 
-// func (s *Surface) SetLineProps(cap, join, width, miter)
+// StylePattern sets the fill/stoke style to a pattern.
+func (s *Surface) StylePattern(t DrawType, p Pattern) {
+	if p.Type == "" {
+		p.Type = RepeatXY
+	}
+	pat := s.Ctx.Call("createPattern", p.Source.Canvas, p.Type)
+	s.Ctx.Set(string(t)+"Style", pat)
+}
+
+// // SetLineProps sets the properties of lines and strokes.
+// func (s *Surface) SetLineProps(cap, join, width, miter) {
+// }
 
 // DrawRect draws a rectangle on the surface.
-func (s *Surface) DrawRect(draw DrawType, r geo.Rect) {
-	s.Ctx.Call(string(draw)+"Rect", math.Floor(r.X), math.Floor(r.Y), math.Floor(r.W), math.Floor(r.H))
+func (s *Surface) DrawRect(t DrawType, r geo.Rect) {
+	s.Ctx.Call(string(t)+"Rect", math.Floor(r.X), math.Floor(r.Y), math.Floor(r.W), math.Floor(r.H))
 }
 
-// func (s *Surface) ClearRect(geo.Rect)
+// ClearRect clears the area within the rectangle.
+func (s *Surface) ClearRect(r geo.Rect) {
+	s.Ctx.Call("clearRect", math.Floor(r.X), math.Floor(r.Y), math.Floor(r.W), math.Floor(r.H))
+}
 
-// func (s *Surface) DrawCircle(FillType, x, y, r)
-// func (s *Surface) DrawEllipse(FillType, geo.Rect)
-// func (s *Surface) DrawArc(FillType, geo.Rect, minR, maxR)
+// DrawCircle draws a circle on the surface.
+func (s *Surface) DrawCircle(t DrawType, x, y, radius float64) {
+	s.Ctx.Call("beginPath")
+	s.Ctx.Call("arc", math.Floor(x), math.Floor(y), math.Floor(radius), 0, 2*math.Pi)
+	s.Ctx.Call(string(t))
+}
 
-// func (s *Surface) BeginPath()
-// func (s *Surface) EndPath(FillType)
-// func (s *Surface) ClosePath()
-// func (s *Surface) ClipPath()
-// func (s *Surface) MoveTo(x, y)
-// func (s *Surface) LineTo(x, y)
-// func (s *Surface) ArcTo(...)
-// func (s *Surface) QuadraticCurveTo(...)
-// func (s *Surface) BezierCurveTo(...)
+// DrawEllipse draws an ellipse on the surface within the given rectangle.
+func (s *Surface) DrawEllipse(t DrawType, r geo.Rect) {
+	s.Ctx.Call("beginPath")
+	s.Ctx.Call("ellipse", math.Floor(r.CenterX()), math.Floor(r.CenterY()),
+		math.Floor(r.W/2), math.Floor(r.H/2), 0, 0, 2*math.Pi)
+	s.Ctx.Call(string(t))
+}
+
+// DrawArc draws an arc on the surface, i.e. any slice of an ellipse. The angles are
+// counterclockwise relative to the +x axis. The counterclockwise parameter is for the
+// direction to draw in.
+func (s *Surface) DrawArc(t DrawType, r geo.Rect, startRadians, endRadians float64, counterclockwise bool) {
+	s.Ctx.Call("beginPath")
+	s.Ctx.Call("ellipse", math.Floor(r.CenterX()), math.Floor(r.CenterY()), math.Floor(r.W/2),
+		math.Floor(r.H/2), 0, 2*math.Pi-startRadians, 2*math.Pi-endRadians, counterclockwise)
+	s.Ctx.Call(string(t))
+}
+
+// DrawPath draws the given path object to the surface.
+func (s *Surface) DrawPath(t DrawType, p *Path) {
+	s.Ctx.Call(string(t), p.obj)
+}
+
+// ClipPath sets the clipping area of the surface to be within the path. Note that if one
+// wishes to only temporarily set the clip area then Save must be called before ClipPath and
+// Restore after the desired drawing operations, there is no other way to reset the clip area.
+func (s *Surface) ClipPath(p *Path) {
+	s.Ctx.Call("clip", p.obj)
+}
 
 // func (s *Surface) Scale(x, y)
 // func (s *Surface) Rotate(angle)

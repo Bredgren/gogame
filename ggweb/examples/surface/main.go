@@ -4,6 +4,7 @@ package main
 
 import (
 	"image/color"
+	"math"
 
 	"github.com/Bredgren/gogame/geo"
 	"github.com/Bredgren/gogame/ggweb"
@@ -18,31 +19,123 @@ func testCanvas() {
 	display := ggweb.NewSurfaceFromID("main")
 	display.SetSize(width, height)
 
+	Rect(display)
+	Surface(display)
+	Styles(display)
+	CircleEllipseArc(display)
+	Path(display)
+}
+
+func Rect(display *ggweb.Surface) {
 	display.StyleColor(ggweb.Fill, color.Black)
 	display.DrawRect(ggweb.Fill, display.Rect())
 
-	RectAndColors(display)
+	display.StyleColor(ggweb.Fill, color.RGBA{100, 100, 255, 255})
+	display.DrawRect(ggweb.Fill, geo.Rect{X: 10, Y: 10, W: 40, H: 40})
+
+	display.ClearRect(geo.Rect{X: 30, Y: 30, W: 25, H: 25})
 }
 
-func RectAndColors(display *ggweb.Surface) {
+func Surface(display *ggweb.Surface) {
 	display.Save()
+	x, y := 10.0, 60.0
+
+	s := ggweb.NewSurface(50, 50)
+	s.StyleColor(ggweb.Fill, color.White)
+	s.DrawRect(ggweb.Fill, s.Rect())
+
+	display.Blit(s, x, y)
+
+	display.Restore()
+}
+
+func Styles(display *ggweb.Surface) {
+	display.Save()
+	x, y := 60.0, 10.0
 
 	display.StyleColor(ggweb.Fill, color.White)
-	display.DrawRect(ggweb.Fill, geo.Rect{X: 10, Y: 10, W: 20, H: 20})
+	display.DrawRect(ggweb.Fill, geo.Rect{X: x, Y: y, W: 20, H: 20})
 
 	display.StyleColor(ggweb.Fill, color.RGBA{255, 0, 0, 150})
-	display.DrawRect(ggweb.Fill, geo.Rect{X: 15, Y: 15, W: 20, H: 20})
+	display.DrawRect(ggweb.Fill, geo.Rect{X: x + 5, Y: y + 5, W: 20, H: 20})
 
 	display.StyleLinearGradient(ggweb.Fill, ggweb.LinearGradient{
-		X1: 40, Y1: 10, X2: 80, Y2: 50,
+		X1: x + 40, Y1: y, X2: x + 80, Y2: y + 50,
 		ColorStops: []ggweb.ColorStop{
 			{Position: 0, Color: color.RGBA{0, 255, 0, 255}},
 			{Position: 1, Color: color.RGBA{0, 0, 255, 255}},
 		},
 	})
-	display.DrawRect(ggweb.Fill, geo.Rect{X: 40, Y: 10, W: 40, H: 40})
+	display.DrawRect(ggweb.Fill, geo.Rect{X: x + 40, Y: y, W: 40, H: 40})
 	display.StyleColor(ggweb.Stroke, color.White)
-	display.DrawRect(ggweb.Stroke, geo.Rect{X: 40, Y: 10, W: 40, H: 40})
+	display.DrawRect(ggweb.Stroke, geo.Rect{X: x + 40, Y: y, W: 40, H: 40})
+
+	display.StyleRadialGradient(ggweb.Fill, ggweb.RadialGradient{
+		X1: x + 110, Y1: y + 20, R1: 25, X2: x + 110, Y2: y + 20, R2: 1,
+		ColorStops: []ggweb.ColorStop{
+			{Position: 0, Color: color.RGBA{255, 0, 0, 255}},
+			{Position: 0.5, Color: color.RGBA{0, 255, 0, 255}},
+			{Position: 1, Color: color.RGBA{0, 0, 255, 255}},
+		},
+	})
+	display.DrawRect(ggweb.Fill, geo.Rect{X: x + 90, Y: y, W: 40, H: 40})
+
+	patSurf := ggweb.NewSurface(10, 10)
+	patSurf.StyleLinearGradient(ggweb.Fill, ggweb.LinearGradient{
+		X1: 0, Y1: 0, X2: 10, Y2: 10,
+		ColorStops: []ggweb.ColorStop{
+			{Position: 0, Color: color.RGBA{255, 0, 0, 255}},
+			{Position: 1, Color: color.RGBA{0, 0, 255, 255}},
+		},
+	})
+	patSurf.DrawRect(ggweb.Fill, patSurf.Rect())
+	display.StylePattern(ggweb.Fill, ggweb.Pattern{
+		Source: patSurf,
+		Type:   ggweb.RepeatXY,
+	})
+	display.DrawRect(ggweb.Fill, geo.Rect{X: x + 140, Y: y, W: 50, H: 50})
+
+	display.Restore()
+}
+
+func CircleEllipseArc(display *ggweb.Surface) {
+	display.Save()
+	x, y := 270.0, 10.0
+
+	display.StyleColor(ggweb.Fill, color.RGBA{100, 255, 100, 255})
+	display.StyleColor(ggweb.Stroke, color.RGBA{100, 255, 100, 255})
+
+	display.DrawCircle(ggweb.Fill, x+20, y+20, 20)
+	display.DrawEllipse(ggweb.Fill, geo.Rect{X: x + 50, Y: y, W: 15, H: 40})
+	display.DrawArc(ggweb.Fill, geo.Rect{X: x + 70, Y: y, W: 40, H: 20}, math.Pi/4, 5*math.Pi/4, true)
+	display.DrawArc(ggweb.Stroke, geo.Rect{X: x + 70, Y: y + 20, W: 40, H: 20}, math.Pi/4, 5*math.Pi/4, true)
+
+	display.Restore()
+}
+
+func Path(display *ggweb.Surface) {
+	display.Save()
+	x, y := 400.0, 10.0
+
+	path := ggweb.NewPath()
+	path.MoveTo(x, y)
+	path.LineTo(x+40, y)
+	path.LineTo(x+40, y+40)
+	path.Close()
+	path.Rect(geo.Rect{X: x + 50, Y: y, W: 20, H: 20})
+	path.MoveTo(x+60, y+30)
+	path.Arc(x+60, y+30, 10, 0, 3*math.Pi/2, true)
+	path.MoveTo(x+80, y)
+	path.ArcTo(x+80, y+40, x+100, y+40, 15)
+	r := geo.Rect{X: x + 100, Y: y, W: 20, H: 40}
+	path.MoveTo(r.Center())
+	path.Ellipse(r, math.Pi/4, math.Pi/4, math.Pi, false)
+
+	display.StyleColor(ggweb.Fill, color.RGBA{255, 255, 100, 255})
+	display.StyleColor(ggweb.Stroke, color.RGBA{255, 100, 100, 255})
+
+	display.DrawPath(ggweb.Fill, path)
+	display.DrawPath(ggweb.Stroke, path)
 
 	display.Restore()
 }

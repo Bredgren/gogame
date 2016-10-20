@@ -38,22 +38,22 @@ type RadialGradient struct {
 	ColorStops             []ColorStop
 }
 
-// // RepeatType describes how to repeat.
-// type RepeatType string
+// RepeatType describes how to repeat.
+type RepeatType string
 
-// const (
-// 	// Repeat repeats in both horizontal and vertical directions.
-// 	Repeat RepeatType = "repeat"
-// 	// RepeatX repeats in the horizontal direction.
-// 	RepeatX RepeatType = "repeat-x"
-// 	// RepeatY repeats in the vertical direction.
-// 	RepeatY RepeatType = "repeat-y"
-// 	// NoRepeat doesn't repeat.
-// 	NoRepeat RepeatType = "no-repeat"
-// )
+const (
+	// RepeatXY repeats in both horizontal and vertical directions.
+	RepeatXY RepeatType = "repeat"
+	// RepeatX repeats in the horizontal direction.
+	RepeatX RepeatType = "repeat-x"
+	// RepeatY repeats in the vertical direction.
+	RepeatY RepeatType = "repeat-y"
+	// NoRepeat doesn't repeat.
+	NoRepeat RepeatType = "no-repeat"
+)
 
-// // Pattern is an image that optionally repeats.
-// type Pattern struct {
-// 	Source Surface
-// 	Type   RepeatType
-// }
+// Pattern is an image that optionally repeats. The default Type is RepeatXY.
+type Pattern struct {
+	Source *Surface
+	Type   RepeatType
+}
