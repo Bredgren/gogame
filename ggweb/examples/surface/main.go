@@ -130,9 +130,15 @@ func Path(display *ggweb.Surface) {
 	r := geo.Rect{X: x + 100, Y: y, W: 20, H: 40}
 	path.MoveTo(r.Center())
 	path.Ellipse(r, math.Pi/4, math.Pi/4, math.Pi, false)
+	path.MoveTo(x+130, y)
+	path.QuadraticCurveTo(x+130, y+30, x+150, y+40)
+	path.BezierCurveTo(x+160, y+20, x+140, y+20, x+150, y)
 
 	display.StyleColor(ggweb.Fill, color.RGBA{255, 255, 100, 255})
 	display.StyleColor(ggweb.Stroke, color.RGBA{255, 100, 100, 255})
+	display.SetLineWidth(5)
+	display.SetLineJoin(ggweb.LineJoinRound)
+	display.SetLineCap(ggweb.LineCapRound)
 
 	display.DrawPath(ggweb.Fill, path)
 	display.DrawPath(ggweb.Stroke, path)

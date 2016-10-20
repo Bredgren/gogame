@@ -34,7 +34,11 @@ func (p *Path) Copy() *Path {
 	}
 }
 
-// func (p *Path) AddPath(p2 *Path)
+// AddPath appends the given path to p.
+func (p *Path) AddPath(p2 *Path) {
+	p.obj.Call("addPath", p2.obj)
+}
+
 // func (p *Path) AddPathTransform(p2 *Path, t Transform)
 
 // MoveTo moves to the point (x, y) without drawing anything.
@@ -72,10 +76,44 @@ func (p *Path) Ellipse(r geo.Rect, rotateRadians, startRadians, endRadians float
 		2*math.Pi-startRadians, 2*math.Pi-endRadians, counterclockwise)
 }
 
-// func (p *Path) QuadraticCurveTo(...)
-// func (p *Path) BezierCurveTo(...)
+// QuadraticCurveTo adds a quadratic curve to the path from the current point to (x, y)
+// with control point (cpx, cpy).
+func (p *Path) QuadraticCurveTo(cpx, cpy, x, y float64) {
+	p.obj.Call("quadraticCurveTo", cpx, cpy, x, y)
+}
+
+// BezierCurveTo adds a bezier curve to the path from the current point to (x, y)
+// with control points (cp1x, cp1y) for the start and (cp2x, cp2y) for the end.
+func (p *Path) BezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y float64) {
+	p.obj.Call("bezierCurveTo", cp1x, cp1y, cp2x, cp2y, x, y)
+}
 
 // Close draws a line to the start of the last continous line.
 func (p *Path) Close() {
 	p.obj.Call("closePath")
 }
+
+// LineCap is a style of line cap.
+type LineCap string
+
+const (
+	// LineCapButt draws a line with no ends.
+	LineCapButt LineCap = "butt"
+	// LineCapRound draws a line with rounded ends with radius equal to half its width.
+	LineCapRound LineCap = "round"
+	// LineCapSquare draws a line with the ends capped with a box that extends by an amount
+	// equal to half the lines width.
+	LineCapSquare LineCap = "square"
+)
+
+// LineJoin is the style for the point where two lines are connected.
+type LineJoin string
+
+const (
+	// LineJoinRound joins lines with rounded corners.
+	LineJoinRound LineJoin = "round"
+	// LineJoinBevel joins lines by filling in the triangular gap between them.
+	LineJoinBevel LineJoin = "bevel"
+	// LineJoinMiter joins lines by extending the edges until they meet.
+	LineJoinMiter LineJoin = "miter"
+)

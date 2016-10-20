@@ -130,9 +130,25 @@ func (s *Surface) StylePattern(t DrawType, p Pattern) {
 	s.Ctx.Set(string(t)+"Style", pat)
 }
 
-// // SetLineProps sets the properties of lines and strokes.
-// func (s *Surface) SetLineProps(cap, join, width, miter) {
-// }
+// SetLineCap sets the style for line end.
+func (s *Surface) SetLineCap(cap LineCap) {
+	s.Ctx.Set("lineCap", string(cap))
+}
+
+// SetLineJoin sets the style for line corners.
+func (s *Surface) SetLineJoin(join LineJoin) {
+	s.Ctx.Set("lineJoin", string(join))
+}
+
+// SetLineWidth sets the width for lines.
+func (s *Surface) SetLineWidth(width float64) {
+	s.Ctx.Set("lineWidth", width)
+}
+
+// SetLineMiterLimit sets the maximum miter length.
+func (s *Surface) SetLineMiterLimit(miter float64) {
+	s.Ctx.Set("miterLimit", miter)
+}
 
 // DrawRect draws a rectangle on the surface.
 func (s *Surface) DrawRect(t DrawType, r geo.Rect) {
