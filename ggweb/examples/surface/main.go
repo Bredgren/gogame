@@ -25,6 +25,7 @@ func testCanvas() {
 	CircleEllipseArc(display)
 	Path(display)
 	Transform(display)
+	Text(display)
 }
 
 func Rect(display *ggweb.Surface) {
@@ -150,6 +151,7 @@ func Path(display *ggweb.Surface) {
 func Transform(display *ggweb.Surface) {
 	display.Save()
 	x, y := 600.0, 10.0
+
 	display.Translate(x, y)
 	display.StyleColor(ggweb.Stroke, color.RGBA{100, 100, 255, 255})
 	display.SetLineWidth(3)
@@ -171,6 +173,30 @@ func Transform(display *ggweb.Surface) {
 	display.SetLineWidth(3)
 	display.Transform(1, 0, 1, 1, x+40, y)
 	display.DrawRect(ggweb.Stroke, geo.Rect{X: 0, Y: 0, W: 30, H: 30})
+	display.Restore()
+}
+
+func Text(display *ggweb.Surface) {
+	display.Save()
+	x, y := 720.0, 10.0
+
+	display.StyleColor(ggweb.Fill, color.White)
+	display.StyleColor(ggweb.Stroke, color.White)
+
+	display.DrawText(ggweb.Fill, "default text", x, y+10)
+
+	f := ggweb.Font{
+		Size:   20,
+		Family: ggweb.FontFamilyMonospace,
+		Weight: ggweb.FontWeightBold,
+	}
+	display.SetFont(&f)
+	display.DrawText(ggweb.Stroke, "different font", x, y+30)
+
+	display.SetTextAlign(ggweb.TextAlignCenter)
+	display.SetTextBaseline(ggweb.TextBaselineMiddle)
+	display.DrawText(ggweb.Fill, "centered", x, y+50)
+
 	display.Restore()
 }
 

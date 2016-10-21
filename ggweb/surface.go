@@ -215,9 +215,9 @@ func (s *Surface) Scale(x, y float64) {
 
 // Transform multiplies the current transformation matrix by the one described by the
 // parameters:
-// a c e
-// b d f
-// 0 0 1
+//  [ a c e ]
+//  [ b d f ]
+//  [ 0 0 1 ]
 func (s *Surface) Transform(a, b, c, d, e, f float64) {
 	s.Ctx.Call("transform", a, b, c, d, e, f)
 }
@@ -232,15 +232,32 @@ func (s *Surface) ResetTransform() {
 	s.Ctx.Call("resetTransform")
 }
 
-// func (s *Surface) (Set)Transform(...)
-//  + *ed versions for each that return new Surface
+// SetFont sets the font style.
+func (s *Surface) SetFont(f *Font) {
+	s.Ctx.Set("font", f.String())
+}
 
-// func (s *Surface) SetFontProps(...)
-// func (s *Surface) SetTextAlign(align, baseline)
-// func (s *Surface) DrawText(FillType, text)
-// func (s *Surface) MeasureText(text)
+// SetTextAlign sets the horizontal alignment of text.
+func (s *Surface) SetTextAlign(a TextAlign) {
+	s.Ctx.Set("textAlign", string(a))
+}
 
-// func (s *Surface) PixeiData() []color.Color?
+// SetTextBaseline sets the vertical alignment of text.
+func (s *Surface) SetTextBaseline(b TextBaseline) {
+	s.Ctx.Set("textBaseline", string(b))
+}
+
+// DrawText draws the text to the surface at (x, y).
+func (s *Surface) DrawText(t DrawType, text string, x, y float64) {
+	s.Ctx.Call(string(t)+"Text", text, math.Floor(x), math.Floor(y))
+}
+
+// MeasureText returns the width in pixels that the given text will occupy.
+func (s *Surface) MeasureText(text string) float64 {
+	return s.Ctx.Call("measureText", text).Float()
+}
+
+// func (s *Surface) PixelData() []color.Color?
 // func (s *Surface) SetAt(x, y, color.Color)
 // func (s *Surface) GetAt(x, y)
 
