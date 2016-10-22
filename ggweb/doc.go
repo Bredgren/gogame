@@ -14,7 +14,7 @@
 //		display.DrawRect(ggweb.Fill, display.Rect())
 //	}
 //
-// Be sure to check out the examples directory.
+// Check out the examples directory for more detailed examples.
 //
 // TODO
 //  - Touch input

@@ -9,50 +9,37 @@ import (
 )
 
 func main() {
-	ggweb.Init(testCanvas)
+	ggweb.Init(testSurface)
 }
 
-func testCanvas() {
+func testSurface() {
 	width, height := 900, 600
 	display := ggweb.NewSurfaceFromID("main")
 	display.SetSize(width, height)
 
-	Rect(display)
-	Surface(display)
-	Styles(display)
-	CircleEllipseArc(display)
-	Path(display)
-	Transform(display)
-	Text(display)
-	// Pixel(display)
+	Rect(display, 10, 10)
+	Styles(display, 60, 10)
+	CircleEllipseArc(display, 270, 10)
+	Path(display, 400, 10)
+	Transform(display, 600, 10)
+	Text(display, 720, 10)
+	Pixel(display, 10, 50)
+	// Image(display)
+	Surface(display, 10, 200)
 }
 
-func Rect(display *ggweb.Surface) {
+func Rect(display *ggweb.Surface, x, y float64) {
 	display.StyleColor(ggweb.Fill, color.Black)
 	display.DrawRect(ggweb.Fill, display.Rect())
 
 	display.StyleColor(ggweb.Fill, color.RGBA{100, 100, 255, 255})
-	display.DrawRect(ggweb.Fill, geo.Rect{X: 10, Y: 10, W: 40, H: 40})
+	display.DrawRect(ggweb.Fill, geo.Rect{X: x, Y: y, W: 40, H: 40})
 
-	display.ClearRect(geo.Rect{X: 30, Y: 30, W: 25, H: 25})
+	display.ClearRect(geo.Rect{X: x + 20, Y: y + 20, W: 25, H: 25})
 }
 
-func Surface(display *ggweb.Surface) {
+func Styles(display *ggweb.Surface, x, y float64) {
 	display.Save()
-	x, y := 10.0, 60.0
-
-	s := ggweb.NewSurface(50, 50)
-	s.StyleColor(ggweb.Fill, color.White)
-	s.DrawRect(ggweb.Fill, s.Rect())
-
-	display.Blit(s, x, y)
-
-	display.Restore()
-}
-
-func Styles(display *ggweb.Surface) {
-	display.Save()
-	x, y := 60.0, 10.0
 
 	display.StyleColor(ggweb.Fill, color.White)
 	display.DrawRect(ggweb.Fill, geo.Rect{X: x, Y: y, W: 20, H: 20})
@@ -99,9 +86,8 @@ func Styles(display *ggweb.Surface) {
 	display.Restore()
 }
 
-func CircleEllipseArc(display *ggweb.Surface) {
+func CircleEllipseArc(display *ggweb.Surface, x, y float64) {
 	display.Save()
-	x, y := 270.0, 10.0
 
 	display.StyleColor(ggweb.Fill, color.RGBA{100, 255, 100, 255})
 	display.StyleColor(ggweb.Stroke, color.RGBA{100, 255, 100, 255})
@@ -114,9 +100,8 @@ func CircleEllipseArc(display *ggweb.Surface) {
 	display.Restore()
 }
 
-func Path(display *ggweb.Surface) {
+func Path(display *ggweb.Surface, x, y float64) {
 	display.Save()
-	x, y := 400.0, 10.0
 
 	path := ggweb.NewPath()
 	path.MoveTo(x, y)
@@ -147,9 +132,8 @@ func Path(display *ggweb.Surface) {
 	display.Restore()
 }
 
-func Transform(display *ggweb.Surface) {
+func Transform(display *ggweb.Surface, x, y float64) {
 	display.Save()
-	x, y := 600.0, 10.0
 
 	display.Translate(x, y)
 	display.StyleColor(ggweb.Stroke, color.RGBA{100, 100, 255, 255})
@@ -175,9 +159,8 @@ func Transform(display *ggweb.Surface) {
 	display.Restore()
 }
 
-func Text(display *ggweb.Surface) {
+func Text(display *ggweb.Surface, x, y float64) {
 	display.Save()
-	x, y := 720.0, 10.0
 
 	display.StyleColor(ggweb.Fill, color.White)
 	display.StyleColor(ggweb.Stroke, color.White)
@@ -195,6 +178,38 @@ func Text(display *ggweb.Surface) {
 	display.SetTextAlign(ggweb.TextAlignCenter)
 	display.SetTextBaseline(ggweb.TextBaselineMiddle)
 	display.DrawText(ggweb.Fill, "centered", x, y+50)
+
+	display.Restore()
+}
+
+func Pixel(display *ggweb.Surface, x, y float64) {
+	display.Save()
+
+	area := geo.Rect{X: 0, Y: 0, W: display.Rect().W, H: 80}
+	pixels := display.PixelData(area)
+	for i := 0; i < len(pixels); i++ {
+		pixels[i].R = 255 - pixels[i].R
+		pixels[i].G = 255 - pixels[i].G
+		pixels[i].B = 255 - pixels[i].B
+	}
+	area.Move(0, area.H+10)
+	display.SetPixelData(pixels, area)
+
+	display.Restore()
+}
+
+func Surface(display *ggweb.Surface, x, y float64) {
+	display.Save()
+
+	s := ggweb.NewSurface(int(display.Rect().W), int(display.Rect().H))
+	s.Blit(display, 0, 0)
+
+	display.Translate(x, y)
+	display.Scale(0.5, 0.5)
+	display.Blit(s, 0, 0)
+	display.StyleColor(ggweb.Stroke, color.White)
+	display.SetLineWidth(3)
+	display.DrawRect(ggweb.Stroke, s.Rect())
 
 	display.Restore()
 }

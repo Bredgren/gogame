@@ -257,9 +257,33 @@ func (s *Surface) MeasureText(text string) float64 {
 	return s.Ctx.Call("measureText", text).Float()
 }
 
-// func (s *Surface) PixelData() []color.Color?
-// func (s *Surface) SetAt(x, y, color.Color)
-// func (s *Surface) GetAt(x, y)
+func (s *Surface) PixelData(area geo.Rect) []color.RGBA {
+	x, y, w, h := math.Floor(area.X), math.Floor(area.Y), math.Floor(area.W), math.Floor(area.H)
+	imgData := s.Ctx.Call("getImageData", x, y, w, h).Get("data")
+	data := make([]color.RGBA, int(w*h))
+	for i := 0; i < len(data); i++ {
+		data[i] = color.RGBA{
+			R: uint8(imgData.Index(i * 4).Int()),
+			G: uint8(imgData.Index(i*4 + 1).Int()),
+			B: uint8(imgData.Index(i*4 + 2).Int()),
+			A: uint8(imgData.Index(i*4 + 3).Int()),
+		}
+	}
+	return data
+}
+
+func (s *Surface) SetPixelData(data []color.RGBA, area geo.Rect) {
+	x, y, w, h := math.Floor(area.X), math.Floor(area.Y), math.Floor(area.W), math.Floor(area.H)
+	imgData := s.Ctx.Call("getImageData", x, y, w, h)
+	pxData := imgData.Get("data")
+	for i := 0; i < len(data); i++ {
+		pxData.SetIndex(i*4, data[i].R)
+		pxData.SetIndex(i*4+1, data[i].G)
+		pxData.SetIndex(i*4+2, data[i].B)
+		pxData.SetIndex(i*4+3, data[i].A)
+	}
+	s.Ctx.Call("putImageData", imgData, x, y)
+}
 
 // func (s *Surface) (Set)Alpha()
 // func (s *Surface) (Set)CompositeOp()

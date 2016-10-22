@@ -1,12 +1,9 @@
 package ggweb
 
-import (
-	"log"
-
-	"github.com/gopherjs/gopherjs/js"
-)
+import "github.com/gopherjs/gopherjs/js"
 
 var ready bool
+var console *js.Object
 
 // Init sets up ggweb and waits for the page to load then calls the onReady function.
 // Calling Init more than once will have no effect. Init takes care of setting up the events
@@ -19,7 +16,6 @@ func Init(onReady func()) {
 			return
 		}
 		addGlobalEvents()
-		log.Println("ggweb ready")
 		go onReady()
 		ready = true
 	}
@@ -30,6 +26,10 @@ func Init(onReady func()) {
 	js.Global.Get("document").Call("addEventListener", "DOMContentLoaded", onload, false)
 	js.Global.Call("addEventListener", "load", onload, false)
 
+	// In order for tests (like color_test.go) to work they can't use any gopherjs things.
+	// initializing console in the global scope causes tests to try and use js so they fail,
+	// that is why we initialize console here.
+	console = js.Global.Get("console")
 }
 
 func addGlobalEvents() {
@@ -201,10 +201,10 @@ func UnRegisterEvents(s *Surface) {
 // // 	return isFullscreen
 // // }
 
-// // Log prints to the console.
-// func Log(args ...interface{}) {
-// 	console.Call("log", args...)
-// }
+// Log prints to the console. This won't work until ggweb is initialized.
+func Log(args ...interface{}) {
+	console.Call("log", args...)
+}
 
 // var keyState = map[key.Key]bool{}
 // var mouseState = struct {
