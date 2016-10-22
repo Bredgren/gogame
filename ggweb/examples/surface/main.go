@@ -23,9 +23,9 @@ func testSurface() {
 	Path(display, 400, 10)
 	Transform(display, 600, 10)
 	Text(display, 720, 10)
-	Pixel(display, 10, 50)
-	// Image(display)
-	Surface(display, 10, 200)
+	Image(display, 10, 70)
+	Pixel(display, 10, 320)
+	Surface(display, 350, 70)
 }
 
 func Rect(display *ggweb.Surface, x, y float64) {
@@ -182,17 +182,28 @@ func Text(display *ggweb.Surface, x, y float64) {
 	display.Restore()
 }
 
+func Image(display *ggweb.Surface, x, y float64) {
+	display.Save()
+
+	img := ggweb.LoadImage("gopher.png")
+	display.Blit(img, x, y)
+	display.BlitArea(img, geo.Rect{X: 50, Y: 10, W: 100, H: 100}, x+img.Rect().W+5, y)
+
+	display.Restore()
+}
+
 func Pixel(display *ggweb.Surface, x, y float64) {
 	display.Save()
 
-	area := geo.Rect{X: 0, Y: 0, W: display.Rect().W, H: 80}
+	area := geo.Rect{X: 0, Y: 0, W: display.Rect().W - 20, H: 260}
 	pixels := display.PixelData(area)
 	for i := 0; i < len(pixels); i++ {
 		pixels[i].R = 255 - pixels[i].R
 		pixels[i].G = 255 - pixels[i].G
 		pixels[i].B = 255 - pixels[i].B
 	}
-	area.Move(0, area.H+10)
+	area.X = x
+	area.Y = y
 	display.SetPixelData(pixels, area)
 
 	display.Restore()
@@ -205,7 +216,7 @@ func Surface(display *ggweb.Surface, x, y float64) {
 	s.Blit(display, 0, 0)
 
 	display.Translate(x, y)
-	display.Scale(0.5, 0.5)
+	display.Scale(0.4, 0.4)
 	display.Blit(s, 0, 0)
 	display.StyleColor(ggweb.Stroke, color.White)
 	display.SetLineWidth(3)
