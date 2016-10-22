@@ -13,7 +13,7 @@ func main() {
 	gogame.Ready(onReady)
 }
 
-const n = 1000
+const n = 2000
 
 func onReady() {
 	rand.Seed(time.Now().Unix())
@@ -66,6 +66,19 @@ func onReady() {
 	r := geo.Rect{X: gap, Y: circlePos.Y + circleR + gap, W: 300, H: 200}
 	display.DrawRect(r, &lineStyle)
 	gens = append(gens, geo.RandVecRect(r))
+
+	x, y := gap+r.W+gap, r.Y
+	w, h, t := 300.0, 150.0, 40.0
+	rs := []geo.Rect{
+		{X: x, Y: y, W: w - t, H: t},
+		{X: x + w - t, Y: y, W: t, H: h - t},
+		{X: x + t, Y: y + h - t, W: w - t, H: t},
+		{X: x, Y: y + t, W: t, H: h - t},
+	}
+	for _, r := range rs {
+		display.DrawRect(r, &lineStyle)
+	}
+	gens = append(gens, geo.RandVecRects(rs))
 
 	pointR := 1.0
 	pointStyle := gogame.FillStyle{Colorer: gogame.White}

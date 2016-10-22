@@ -140,7 +140,7 @@ type KeyData struct {
 // held down.
 type MouseMotionData struct {
 	Pos     struct{ X, Y float64 }
-	Rel     struct{ Dx, Dy float64 }
+	Rel     struct{ X, Y float64 }
 	Buttons map[int]bool
 }
 

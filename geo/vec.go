@@ -3,6 +3,8 @@ package geo
 import (
 	"math"
 	"math/rand"
+
+	"github.com/Bredgren/wrand"
 )
 
 // Vec is a 2D vector. Many of the functions for Vec have two versions, one that modifies
@@ -118,6 +120,20 @@ func (v Vec) Dot(v2 Vec) float64 {
 	return v.X*v2.X + v.Y*v2.Y
 }
 
+// Project modifies v to be the vector that is the projection of v onto v2.
+func (v *Vec) Project(v2 Vec) {
+	v2.Normalize()
+	v2.Mul(v.X*v2.X + v.Y*v2.Y)
+	v.X, v.Y = v2.X, v2.Y
+}
+
+// Projected return the vetor that is v projected onto v2.
+func (v Vec) Projected(v2 Vec) Vec {
+	v2.Normalize()
+	v2.Mul(v.X*v2.X + v.Y*v2.Y)
+	return v2
+}
+
 // Limit constrains the length of the vector be no greater than len. If the vector is already
 // less than len then no change is made.
 func (v *Vec) Limit(len float64) {
@@ -125,6 +141,16 @@ func (v *Vec) Limit(len float64) {
 	if l > len {
 		v.SetLen(len)
 	}
+}
+
+// Limited returns a new vector in the same direction as v with length no greater than
+// len. The vector returned will be equivalent to v if v.Len() <= len.
+func (v Vec) Limited(len float64) Vec {
+	l := v.Len()
+	if l > len {
+		v.SetLen(len)
+	}
+	return v
 }
 
 // Angle returns the radians relative to the positive x-axis (counterclockwise in screen
@@ -220,6 +246,26 @@ func RandVecArc(minRadius, maxRadius, minRadians, maxRadians float64) VecGen {
 // RandVecRect returns a VecGen that will generate a random vector within the given Rect.
 func RandVecRect(rect Rect) VecGen {
 	return func() Vec {
+		return Vec{
+			X: rand.Float64()*rect.W + rect.X,
+			Y: rand.Float64()*rect.H + rect.Y,
+		}
+	}
+}
+
+// RandVecRects returns a VecGen that will generate a random vector that is uniformly
+// distributed between all the given rects. If the slice given is empty then the zero
+// vector is returned.
+func RandVecRects(rects []Rect) VecGen {
+	if len(rects) == 0 {
+		return func() Vec { return Vec{} }
+	}
+	areas := make([]float64, len(rects))
+	for i := range rects {
+		areas[i] = rects[i].Area()
+	}
+	return func() Vec {
+		rect := rects[wrand.SelectIndex(areas)]
 		return Vec{
 			X: rand.Float64()*rect.W + rect.X,
 			Y: rand.Float64()*rect.H + rect.Y,

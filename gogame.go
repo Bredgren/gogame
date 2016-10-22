@@ -23,308 +23,309 @@
 //  - Network?
 package gogame
 
-import (
-	"log"
-	"time"
+// import (
+// 	"log"
+// 	"time"
 
-	"github.com/Bredgren/gogame/event"
-	"github.com/Bredgren/gogame/key"
-	"github.com/gopherjs/gopherjs/js"
-)
+// 	"github.com/Bredgren/gogame/event"
+// 	"github.com/Bredgren/gogame/key"
+// 	"github.com/gopherjs/gopherjs/js"
+// )
 
-var console = js.Global.Get("console")
+// var console = js.Global.Get("console")
 
-var display *Display
+// var display *Display
 
-// Ready calls the callback function when the page has loaded and gogame is ready to be
-// used. The first canvas in the DOM will be used as the initial main display. If there
-// is no canvas, or you would like to set the main display to a different one then use
-// the SetMainDisplay function.
-func Ready(callback func()) {
-	called := false
-	onload := func() {
-		if called {
-			return
-		}
-		called = true
-		d, err := NewDisplay(js.Global.Get("document").Call("getElementsByTagName", "canvas").Index(0))
-		if err != nil {
-			// No canvas available, do nothing.
-		}
-		SetMainDisplay(d)
-		addGlobalEvents()
-		log.Println("gogame ready")
-		go callback()
-	}
-	if js.Global.Get("document").Get("readyState").String() == "complete" {
-		onload()
-		return
-	}
-	js.Global.Get("document").Call("addEventListener", "DOMContentLoaded", onload, false)
-	js.Global.Call("addEventListener", "load", onload, false)
-}
-
-// SetMainDisplay changes the main canvas being used. If unset then gogame will default
-// to the first canvas in the DOM. This is also the only display that will receive input
-// events.
-func SetMainDisplay(d *Display) {
-	unsetupDisplay()
-	display = d
-	setupDisplay()
-}
-
-// MainDisplay returns the main Display being used.
-func MainDisplay() *Display {
-	return display
-}
-
-// Stats holds various bits of information that one may find useful.
-var Stats = struct {
-	// LoopDuration is the amount of time that the last execution of the main loop took.
-	LoopDuration time.Duration
-}{}
-
-// MainLoop is a callback function that returns a time value that can be compared to
-// previous calls to determine the elapsed time.
-type MainLoop func(time.Duration)
-
-var mainLoop *js.Object
-
-// SetMainLoop sets the callback for the main game loop. The given function will be
-// called at a regular interval.
-func SetMainLoop(loop MainLoop) {
-	var f func(timestamp *js.Object)
-	f = func(timestamp *js.Object) {
-		mainLoop = js.Global.Call("requestAnimationFrame", f)
-		start := time.Now()
-		loop(time.Duration(timestamp.Float()) * time.Millisecond)
-		Stats.LoopDuration = time.Now().Sub(start)
-	}
-	f(&js.Object{})
-}
-
-// UnsetMainLoop stops calling the main game loop.
-func UnsetMainLoop() {
-	if mainLoop != nil {
-		js.Global.Call("cancelAnimationFrame", mainLoop)
-		mainLoop = nil
-	}
-}
-
-// var isFullscreen bool
-
-// SetFullscreen sets or unsetd fullscreen mode.
-// func SetFullscreen(fullscreen bool) {
-// 	// display.canvas.Call("requestFullScreen")
-// 	display.frontSurface.Canvas().Call("webkitRequestFullScreen")
-// 	// display.canvas.Call("mozRequestFullScreen")
-// 	isFullscreen = fullscreen
+// // Ready calls the callback function when the page has loaded and gogame is ready to be
+// // used. The first canvas in the DOM will be used as the initial main display. If there
+// // is no canvas, or you would like to set the main display to a different one then use
+// // the SetMainDisplay function.
+// func Ready(callback func()) {
+// 	called := false
+// 	onload := func() {
+// 		if called {
+// 			return
+// 		}
+// 		called = true
+// 		d, err := NewDisplay(js.Global.Get("document").Call("getElementsByTagName", "canvas").Index(0))
+// 		if err != nil {
+// 			// No canvas available, do nothing.
+// 		}
+// 		SetMainDisplay(d)
+// 		addGlobalEvents()
+// 		log.Println("gogame ready")
+// 		go callback()
+// 	}
+// 	if js.Global.Get("document").Get("readyState").String() == "complete" {
+// 		onload()
+// 		return
+// 	}
+// 	js.Global.Get("document").Call("addEventListener", "DOMContentLoaded", onload, false)
+// 	js.Global.Call("addEventListener", "load", onload, false)
 // }
 
-// Fullscreen returns true if fullscreen is currently active.
-// func Fullscreen() bool {
-// 	return isFullscreen
+// // SetMainDisplay changes the main canvas being used. If unset then gogame will default
+// // to the first canvas in the DOM. This is also the only display that will receive input
+// // events.
+// func SetMainDisplay(d *Display) {
+// 	unsetupDisplay()
+// 	display = d
+// 	setupDisplay()
 // }
 
-// Log prints to the console.
-func Log(args ...interface{}) {
-	console.Call("log", args...)
-}
+// // MainDisplay returns the main Display being used.
+// func MainDisplay() *Display {
+// 	return display
+// }
 
-func unsetupDisplay() {
-	// Clean up display before we stop using it by removing event listeners.
-	if display == nil {
-		return
-	}
-	// Not going to remove event listeners actually. This should rarely, if ever, be necessary
-	// so I don't think it's worth the effort right now.
-}
+// // Stats holds various bits of information that one may find useful.
+// var Stats = struct {
+// 	// LoopDuration is the amount of time that the last execution of the main loop took.
+// 	LoopDuration time.Duration
+// }{}
 
-func setupDisplay() {
-	canvas := display.frontSurface.Canvas()
+// // MainLoop is a callback function that returns a time value that can be compared to
+// // previous calls to determine the elapsed time.
+// type MainLoop func(time.Duration)
 
-	canvas.Call("addEventListener", "mousemove", func(e *js.Object) {
-		x, y := e.Get("offsetX").Float(), e.Get("offsetY").Float()
-		dx, dy := e.Get("movementX").Float(), e.Get("movementY").Float()
-		mouseState.PosX = x
-		mouseState.PosY = y
-		mouseState.RelX = dx
-		mouseState.RelY = dy
-		if err := event.Post(event.Event{
-			Type: event.MouseMotion,
-			Data: event.MouseMotionData{
-				Pos:     struct{ X, Y float64 }{X: x, Y: y},
-				Rel:     struct{ Dx, Dy float64 }{Dx: dx, Dy: dy},
-				Buttons: MousePressed(),
-			},
-		}); err != nil {
-			Log("Warning: event skipped because queue is full", e)
-		}
-	})
+// var mainLoop *js.Object
 
-	canvas.Call("addEventListener", "mousedown", func(e *js.Object) {
-		button := e.Get("button").Int()
-		mouseState.Buttons[button] = true
-		if err := event.Post(event.Event{
-			Type: event.MouseButtonDown,
-			Data: event.MouseData{
-				Pos: struct{ X, Y float64 }{
-					X: e.Get("offsetX").Float(),
-					Y: e.Get("offsetY").Float(),
-				},
-				Button: button,
-			},
-		}); err != nil {
-			Log("Warning: event skipped because queue is full", e)
-		}
-	})
+// // SetMainLoop sets the callback for the main game loop. The given function will be
+// // called at a regular interval.
+// func SetMainLoop(loop MainLoop) {
+// 	var f func(timestamp *js.Object)
+// 	f = func(timestamp *js.Object) {
+// 		mainLoop = js.Global.Call("requestAnimationFrame", f)
+// 		start := time.Now()
+// 		loop(time.Duration(timestamp.Float()) * time.Millisecond)
+// 		Stats.LoopDuration = time.Now().Sub(start)
+// 		mouseState.RelX, mouseState.RelY = 0, 0
+// 	}
+// 	f(&js.Object{})
+// }
 
-	canvas.Call("addEventListener", "mouseup", func(e *js.Object) {
-		button := e.Get("button").Int()
-		mouseState.Buttons[button] = false
-		if err := event.Post(event.Event{
-			Type: event.MouseButtonUp,
-			Data: event.MouseData{
-				Pos: struct{ X, Y float64 }{
-					X: e.Get("offsetX").Float(),
-					Y: e.Get("offsetY").Float(),
-				},
-				Button: button,
-			},
-		}); err != nil {
-			Log("Warning: event skipped because queue is full", e)
-		}
-	})
+// // UnsetMainLoop stops calling the main game loop.
+// func UnsetMainLoop() {
+// 	if mainLoop != nil {
+// 		js.Global.Call("cancelAnimationFrame", mainLoop)
+// 		mainLoop = nil
+// 	}
+// }
 
-	canvas.Call("addEventListener", "wheel", func(e *js.Object) {
-		dx, dy, dz := e.Get("deltaX").Float(), e.Get("deltaY").Float(), e.Get("deltaZ").Float()
-		if err := event.Post(event.Event{
-			Type: event.MouseWheel,
-			Data: event.MouseWheelData{
-				Dx: dx,
-				Dy: dy,
-				Dz: dz,
-			},
-		}); err != nil {
-			Log("Warning: event skipped because queue is full", e)
-		}
-	})
-}
+// // var isFullscreen bool
 
-func addGlobalEvents() {
-	js.Global.Call("addEventListener", "resize", func(e *js.Object) {
-		if err := event.Post(event.Event{
-			Type: event.VideoResize,
-			Data: event.ResizeData{
-				W: js.Global.Get("innerWidth").Int(),
-				H: js.Global.Get("innerHeight").Int(),
-			},
-		}); err != nil {
-			Log("Warning: event skipped because queue is full", e)
-		}
-	})
+// // SetFullscreen sets or unsetd fullscreen mode.
+// // func SetFullscreen(fullscreen bool) {
+// // 	// display.canvas.Call("requestFullScreen")
+// // 	display.frontSurface.Canvas().Call("webkitRequestFullScreen")
+// // 	// display.canvas.Call("mozRequestFullScreen")
+// // 	isFullscreen = fullscreen
+// // }
 
-	js.Global.Set("onbeforeunload", func(e *js.Object) {
-		if err := event.Post(event.Event{Type: event.Quit}); err != nil {
-			Log("Warning: event skipped because queue is full", e)
-		}
-	})
+// // Fullscreen returns true if fullscreen is currently active.
+// // func Fullscreen() bool {
+// // 	return isFullscreen
+// // }
 
-	js.Global.Call("addEventListener", "keydown", func(e *js.Object) {
-		k := key.FromJsEvent(e)
-		// Ignore key repeats
-		if keyState[k] {
-			return
-		}
-		keyState[k] = true
-		if err := event.Post(event.Event{
-			Type: event.KeyDown,
-			Data: event.KeyData{Key: k, Mod: ModKeys()},
-		}); err != nil {
-			Log("Warning: event skipped because queue is full", e)
-		}
-	})
+// // Log prints to the console.
+// func Log(args ...interface{}) {
+// 	console.Call("log", args...)
+// }
 
-	js.Global.Call("addEventListener", "keyup", func(e *js.Object) {
-		k := key.FromJsEvent(e)
-		keyState[k] = false
-		if err := event.Post(event.Event{
-			Type: event.KeyUp,
-			Data: event.KeyData{Key: k, Mod: ModKeys()},
-		}); err != nil {
-			Log("Warning: event skipped because queue is full", e)
-		}
-	})
-}
+// func unsetupDisplay() {
+// 	// Clean up display before we stop using it by removing event listeners.
+// 	if display == nil {
+// 		return
+// 	}
+// 	// Not going to remove event listeners actually. This should rarely, if ever, be necessary
+// 	// so I don't think it's worth the effort right now.
+// }
 
-var keyState = map[key.Key]bool{}
-var mouseState = struct {
-	Buttons    map[int]bool
-	PosX, PosY float64
-	RelX, RelY float64
-}{
-	Buttons: make(map[int]bool),
-}
+// func setupDisplay() {
+// 	canvas := display.frontSurface.Canvas()
 
-// PressedKeys returns a map that contoins all pressed keys mapping to true.
-func PressedKeys() map[key.Key]bool {
-	m := make(map[key.Key]bool)
-	for k, press := range keyState {
-		if press {
-			m[k] = true
-		}
-	}
-	return m
-}
+// 	canvas.Call("addEventListener", "mousemove", func(e *js.Object) {
+// 		x, y := e.Get("offsetX").Float(), e.Get("offsetY").Float()
+// 		dx, dy := e.Get("movementX").Float(), e.Get("movementY").Float()
+// 		mouseState.PosX = x
+// 		mouseState.PosY = y
+// 		mouseState.RelX = dx
+// 		mouseState.RelY = dy
+// 		if err := event.Post(event.Event{
+// 			Type: event.MouseMotion,
+// 			Data: event.MouseMotionData{
+// 				Pos:     struct{ X, Y float64 }{X: x, Y: y},
+// 				Rel:     struct{ X, Y float64 }{X: dx, Y: dy},
+// 				Buttons: MousePressed(),
+// 			},
+// 		}); err != nil {
+// 			Log("Warning: event skipped because queue is full", e)
+// 		}
+// 	})
 
-// ModKeys returns just the state for the modifier keys.
-func ModKeys() map[key.Key]bool {
-	m := make(map[key.Key]bool)
-	for k, press := range keyState {
-		if press && k.IsMod() {
-			m[k] = true
-		}
-	}
-	return m
-}
+// 	canvas.Call("addEventListener", "mousedown", func(e *js.Object) {
+// 		button := e.Get("button").Int()
+// 		mouseState.Buttons[button] = true
+// 		if err := event.Post(event.Event{
+// 			Type: event.MouseButtonDown,
+// 			Data: event.MouseData{
+// 				Pos: struct{ X, Y float64 }{
+// 					X: e.Get("offsetX").Float(),
+// 					Y: e.Get("offsetY").Float(),
+// 				},
+// 				Button: button,
+// 			},
+// 		}); err != nil {
+// 			Log("Warning: event skipped because queue is full", e)
+// 		}
+// 	})
 
-// MousePressed returns a map that contains all pressed mouse buttons mapping to true.
-func MousePressed() map[int]bool {
-	m := make(map[int]bool)
-	for b, press := range mouseState.Buttons {
-		if press {
-			m[b] = true
-		}
-	}
-	return m
-}
+// 	canvas.Call("addEventListener", "mouseup", func(e *js.Object) {
+// 		button := e.Get("button").Int()
+// 		mouseState.Buttons[button] = false
+// 		if err := event.Post(event.Event{
+// 			Type: event.MouseButtonUp,
+// 			Data: event.MouseData{
+// 				Pos: struct{ X, Y float64 }{
+// 					X: e.Get("offsetX").Float(),
+// 					Y: e.Get("offsetY").Float(),
+// 				},
+// 				Button: button,
+// 			},
+// 		}); err != nil {
+// 			Log("Warning: event skipped because queue is full", e)
+// 		}
+// 	})
 
-// MousePos returns the mouses current x and y positions.
-func MousePos() (x, y float64) {
-	return mouseState.PosX, mouseState.PosY
-}
+// 	canvas.Call("addEventListener", "wheel", func(e *js.Object) {
+// 		dx, dy, dz := e.Get("deltaX").Float(), e.Get("deltaY").Float(), e.Get("deltaZ").Float()
+// 		if err := event.Post(event.Event{
+// 			Type: event.MouseWheel,
+// 			Data: event.MouseWheelData{
+// 				Dx: dx,
+// 				Dy: dy,
+// 				Dz: dz,
+// 			},
+// 		}); err != nil {
+// 			Log("Warning: event skipped because queue is full", e)
+// 		}
+// 	})
+// }
 
-// MouseRel returns the last relative change in mouse position.
-func MouseRel() (dx, dy float64) {
-	return mouseState.RelX, mouseState.RelY
-}
+// func addGlobalEvents() {
+// 	js.Global.Call("addEventListener", "resize", func(e *js.Object) {
+// 		if err := event.Post(event.Event{
+// 			Type: event.VideoResize,
+// 			Data: event.ResizeData{
+// 				W: js.Global.Get("innerWidth").Int(),
+// 				H: js.Global.Get("innerHeight").Int(),
+// 			},
+// 		}); err != nil {
+// 			Log("Warning: event skipped because queue is full", e)
+// 		}
+// 	})
 
-// LocalStorageGet retrieves the value associated with the given key. If there is no value
-// then ok will be false.
-func LocalStorageGet(key string) (val string, ok bool) {
-	v := js.Global.Get("localStorage").Call("getItem", key)
-	if v == nil {
-		return "", false
-	}
-	return v.String(), true
-}
+// 	js.Global.Set("onbeforeunload", func(e *js.Object) {
+// 		if err := event.Post(event.Event{Type: event.Quit}); err != nil {
+// 			Log("Warning: event skipped because queue is full", e)
+// 		}
+// 	})
 
-// LocalStorageSet sets the given key's value to val.
-func LocalStorageSet(key, val string) {
-	js.Global.Get("localStorage").Call("setItem", key, val)
-}
+// 	js.Global.Call("addEventListener", "keydown", func(e *js.Object) {
+// 		k := key.FromJsEvent(e)
+// 		// Ignore key repeats
+// 		if keyState[k] {
+// 			return
+// 		}
+// 		keyState[k] = true
+// 		if err := event.Post(event.Event{
+// 			Type: event.KeyDown,
+// 			Data: event.KeyData{Key: k, Mod: ModKeys()},
+// 		}); err != nil {
+// 			Log("Warning: event skipped because queue is full", e)
+// 		}
+// 	})
 
-// LocalStorageRemove removes the given key (and it's value) from local storage.
-func LocalStorageRemove(key string) {
-	js.Global.Get("localStorage").Call("removeItem", key)
-}
+// 	js.Global.Call("addEventListener", "keyup", func(e *js.Object) {
+// 		k := key.FromJsEvent(e)
+// 		keyState[k] = false
+// 		if err := event.Post(event.Event{
+// 			Type: event.KeyUp,
+// 			Data: event.KeyData{Key: k, Mod: ModKeys()},
+// 		}); err != nil {
+// 			Log("Warning: event skipped because queue is full", e)
+// 		}
+// 	})
+// }
+
+// var keyState = map[key.Key]bool{}
+// var mouseState = struct {
+// 	Buttons    map[int]bool
+// 	PosX, PosY float64
+// 	RelX, RelY float64
+// }{
+// 	Buttons: make(map[int]bool),
+// }
+
+// // PressedKeys returns a map that contoins all pressed keys mapping to true.
+// func PressedKeys() map[key.Key]bool {
+// 	m := make(map[key.Key]bool)
+// 	for k, press := range keyState {
+// 		if press {
+// 			m[k] = true
+// 		}
+// 	}
+// 	return m
+// }
+
+// // ModKeys returns just the state for the modifier keys.
+// func ModKeys() map[key.Key]bool {
+// 	m := make(map[key.Key]bool)
+// 	for k, press := range keyState {
+// 		if press && k.IsMod() {
+// 			m[k] = true
+// 		}
+// 	}
+// 	return m
+// }
+
+// // MousePressed returns a map that contains all pressed mouse buttons mapping to true.
+// func MousePressed() map[int]bool {
+// 	m := make(map[int]bool)
+// 	for b, press := range mouseState.Buttons {
+// 		if press {
+// 			m[b] = true
+// 		}
+// 	}
+// 	return m
+// }
+
+// // MousePos returns the mouses current x and y positions.
+// func MousePos() (x, y float64) {
+// 	return mouseState.PosX, mouseState.PosY
+// }
+
+// // MouseRel returns the last relative change in mouse position.
+// func MouseRel() (dx, dy float64) {
+// 	return mouseState.RelX, mouseState.RelY
+// }
+
+// // LocalStorageGet retrieves the value associated with the given key. If there is no value
+// // then ok will be false.
+// func LocalStorageGet(key string) (val string, ok bool) {
+// 	v := js.Global.Get("localStorage").Call("getItem", key)
+// 	if v == nil {
+// 		return "", false
+// 	}
+// 	return v.String(), true
+// }
+
+// // LocalStorageSet sets the given key's value to val.
+// func LocalStorageSet(key, val string) {
+// 	js.Global.Get("localStorage").Call("setItem", key, val)
+// }
+
+// // LocalStorageRemove removes the given key (and it's value) from local storage.
+// func LocalStorageRemove(key string) {
+// 	js.Global.Get("localStorage").Call("removeItem", key)
+// }
