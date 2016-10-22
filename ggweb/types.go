@@ -161,3 +161,63 @@ const (
 	CursorNoDrop       Cursor = "no-drop"
 	CursorNotAllowed   Cursor = "not-allowed"
 )
+
+// CompositeOp defines a type of compositing operation for controlling how to draw one
+// surface to another.
+type CompositeOp string
+
+const (
+	// SourceOver is the default behavior. It simply draws the new surface over the destination.
+	SourceOver CompositeOp = "source-over"
+	// SourceIn only draws where the surface overlap, everwhere else will be transparent.
+	SourceIn CompositeOp = "source-in"
+	// SourceOut only draws the new surface where it doesn't overlap with the destination..
+	SourceOut CompositeOp = "source-out"
+	// SourceAtop only draws the new surface where it overlaps with the destination.
+	SourceAtop CompositeOp = "source-atop"
+	// DestinationOver draws the new surface behind the destination.
+	DestinationOver CompositeOp = "destination-over"
+	// DestinationIn keeps the destination content only where it overlaps with the new surface.
+	DestinationIn CompositeOp = "destination-in"
+	// DestinationOut keeps the destination content only where it doesn't overlap.
+	DestinationOut CompositeOp = "destination-out"
+	// DestinationAtop keeps the destination content only where it overlaps and the new surface
+	// is drawn behind.
+	DestinationAtop CompositeOp = "destination-atop"
+	// Lighter determines the color value of overlaping pixels by adding the color values.
+	Lighter CompositeOp = "lighter"
+	// Copy makes the destination surface a copy of the source.
+	Copy CompositeOp = "copy"
+	// Xor makes pixels transparent where both surfaces overlap, everwhere else is drawn normal.
+	Xor CompositeOp = "xor"
+	// Multiply multiplies the values of the corresponding pixels of both surfaces.
+	Multiply CompositeOp = "multiply"
+	// Screen inverts, multiplies, and inverts again (opposite of Multiply)
+	Screen CompositeOp = "screen"
+	// Overlay is a combination of multiply and screen.
+	Overlay CompositeOp = "overlay"
+	// Darken retains the darkest pixels of both surfaces.
+	Darken CompositeOp = "darken"
+	// Lighten retains the lightest pixels of both surfaces.
+	Lighten CompositeOp = "lighten"
+	// ColorDodge divides the destination surfaces by the inverted source surface.
+	ColorDodge CompositeOp = "color-dodge"
+	// ColorBurn divides the inverted destination surface by the source surface and inverts the result.
+	ColorBurn CompositeOp = "color-burn"
+	// HardLight is like overlay but with the source and destination swapped.
+	HardLight CompositeOp = "hard-light"
+	// SoftLight is a softer version of HardLight
+	SoftLight CompositeOp = "soft-light"
+	// Difference subtracts on surface from the other, whichever gives a positive value.
+	Difference CompositeOp = "difference"
+	// Exclusion is like difference but with lower contrast.
+	Exclusion CompositeOp = "exclusion"
+	// Hue preserves the luma and chroma of the destination while adopting the hue of the source.
+	Hue CompositeOp = "hue"
+	// Saturation preserves the luma and hue of the destination while adopting the chroma of the source.
+	Saturation CompositeOp = "saturation"
+	// Color preserves the luma of the destination while adopting the hue and chroma of the source.
+	Color CompositeOp = "color"
+	// Luminosity preserves the hue and chroma of the bottom layer while adopting the luma of the source.
+	Luminosity CompositeOp = "luminosity"
+)

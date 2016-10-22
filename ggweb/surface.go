@@ -257,6 +257,7 @@ func (s *Surface) MeasureText(text string) float64 {
 	return s.Ctx.Call("measureText", text).Float()
 }
 
+// PixelData returns a flat array of colors for each pixel within the given area.
 func (s *Surface) PixelData(area geo.Rect) []color.RGBA {
 	x, y, w, h := math.Floor(area.X), math.Floor(area.Y), math.Floor(area.W), math.Floor(area.H)
 	imgData := s.Ctx.Call("getImageData", x, y, w, h).Get("data")
@@ -272,6 +273,8 @@ func (s *Surface) PixelData(area geo.Rect) []color.RGBA {
 	return data
 }
 
+// SetPixelData sets the pixels within the given area to the colors in data. The number
+// of elemts of data should match area.Area().
 func (s *Surface) SetPixelData(data []color.RGBA, area geo.Rect) {
 	x, y, w, h := math.Floor(area.X), math.Floor(area.Y), math.Floor(area.W), math.Floor(area.H)
 	imgData := s.Ctx.Call("getImageData", x, y, w, h)
@@ -285,8 +288,22 @@ func (s *Surface) SetPixelData(data []color.RGBA, area geo.Rect) {
 	s.Ctx.Call("putImageData", imgData, x, y)
 }
 
-// func (s *Surface) (Set)Alpha()
-// func (s *Surface) (Set)CompositeOp()
+// Alpha returns the global alpha value for the surface. 0.0 is transparent and 1.0 is
+// opaque.
+func (s *Surface) Alpha() float64 {
+	return s.Ctx.Get("globalAlpha").Float()
+}
+
+// SetAlpha sets the global alpha value for the surface. 0.0 is transparent and 1.0 is
+// opaque.
+func (s *Surface) SetAlpha(a float64) {
+	s.Ctx.Set("globalAlpha", a)
+}
+
+// SetCompositeOp sets the composite operation to use. Default is SourceOver.
+func (s *Surface) SetCompositeOp(op CompositeOp) {
+	s.Ctx.Set("globalCompositeOperation", string(op))
+}
 
 // // SetCursor sets the appearence of the cursor when it is over this Display.
 // func (s *Surface) SetCursor(c Cursor) {
