@@ -25,7 +25,7 @@ func testSurface() {
 	Text(display, 720, 10)
 	Image(display, 10, 70)
 	Pixel(display, 10, 320)
-	Surface(display, 350, 70)
+	Surface(display, 520, 70)
 }
 
 func Rect(display *ggweb.Surface, x, y float64) {
@@ -128,6 +128,26 @@ func Path(display *ggweb.Surface, x, y float64) {
 
 	display.DrawPath(ggweb.Fill, path)
 	display.DrawPath(ggweb.Stroke, path)
+
+	clipX, clipY := x, y+80
+	clip := ggweb.NewPath()
+	clip.Arc(clipX, clipY, 30, 0, 2*math.Pi, true)
+	display.ClipPath(clip)
+
+	patSurf := ggweb.NewSurface(15, 15)
+	patSurf.StyleLinearGradient(ggweb.Fill, ggweb.LinearGradient{
+		X1: 0, Y1: 0, X2: 15, Y2: 15,
+		ColorStops: []ggweb.ColorStop{
+			{Position: 0, Color: color.RGBA{255, 0, 0, 255}},
+			{Position: 1, Color: color.RGBA{0, 0, 255, 255}},
+		},
+	})
+	patSurf.DrawRect(ggweb.Fill, patSurf.Rect())
+	display.StylePattern(ggweb.Fill, ggweb.Pattern{
+		Source: patSurf,
+		Type:   ggweb.RepeatXY,
+	})
+	display.DrawRect(ggweb.Fill, geo.Rect{X: clipX - 40, Y: clipY - 40, W: 80, H: 80})
 
 	display.Restore()
 }
