@@ -185,6 +185,13 @@ func (s *Surface) DrawArc(t DrawType, r geo.Rect, startRadians, endRadians float
 	s.Ctx.Call(string(t))
 }
 
+func (s *Surface) DrawLine(x1, y1, x2, y2 float64) {
+	s.Ctx.Call("beginPath")
+	s.Ctx.Call("moveTo", math.Floor(x1), math.Floor(y1))
+	s.Ctx.Call("lineTo", math.Floor(x2), math.Floor(y2))
+	s.Ctx.Call("stroke")
+}
+
 // DrawPath draws the given path object to the surface.
 func (s *Surface) DrawPath(t DrawType, p *Path) {
 	s.Ctx.Call(string(t), p.obj)
@@ -305,19 +312,19 @@ func (s *Surface) SetCompositeOp(op CompositeOp) {
 	s.Ctx.Set("globalCompositeOperation", string(op))
 }
 
-// // SetCursor sets the appearence of the cursor when it is over this Display.
-// func (s *Surface) SetCursor(c Cursor) {
-// 	d.frontSurface.Canvas().Get("style").Set("cursor", c)
-// }
+// SetCursor sets the appearence of the cursor when it is over this Display.
+func (s *Surface) SetCursor(c Cursor) {
+	s.Canvas.Get("style").Set("cursor", c)
+}
 
-// // Cursor returns the current appearence of the cursor when it is over the Display.
-// func (s *Surface) Cursor() Cursor {
-// 	c := d.frontSurface.Canvas().Get("style").Get("cursor").String()
-// 	if c == "" {
-// 		return CursorDefault
-// 	}
-// 	return Cursor(c)
-// }
+// Cursor returns the current appearence of the cursor when it is over the Display.
+func (s *Surface) Cursor() Cursor {
+	c := s.Canvas.Get("style").Get("cursor").String()
+	if c == "" {
+		return CursorDefault
+	}
+	return Cursor(c)
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 // func (s *surface) GetAt(x, y int) Color {
