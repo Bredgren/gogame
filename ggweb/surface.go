@@ -259,9 +259,9 @@ func (s *Surface) DrawText(t DrawType, text string, x, y float64) {
 	s.Ctx.Call(string(t)+"Text", text, math.Floor(x), math.Floor(y))
 }
 
-// MeasureText returns the width in pixels that the given text will occupy.
-func (s *Surface) MeasureText(text string) float64 {
-	return s.Ctx.Call("measureText", text).Float()
+// TextWidth returns the width in pixels that the given text will occupy.
+func (s *Surface) TextWidth(text string) float64 {
+	return s.Ctx.Call("measureText", text).Get("width").Float()
 }
 
 // PixelData returns a flat array of colors for each pixel within the given area.
@@ -327,22 +327,6 @@ func (s *Surface) Cursor() Cursor {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-// func (s *surface) GetAt(x, y int) Color {
-// 	data := s.ctx.Call("getImageData", x, y, 1, 1).Get("data")
-// 	return Color{R: data.Index(0).Float(), G: data.Index(1).Float(), B: data.Index(2).Float(),
-// 		A: data.Index(3).Float()}
-// }
-
-// func (s *surface) SetAt(x, y int, c Color) {
-// 	imgData := s.ctx.Call("getImageData", x, y, 1, 1)
-// 	data := imgData.Get("data")
-// 	data.SetIndex(0, clampToInt(255*c.R, 0, 255))
-// 	data.SetIndex(1, clampToInt(255*c.G, 0, 255))
-// 	data.SetIndex(2, clampToInt(255*c.B, 0, 255))
-// 	data.SetIndex(3, clampToInt(255*c.A, 0, 255))
-// 	s.ctx.Call("putImageData", imgData, x, y)
-// }
-
 // func (s *surface) Copy() Surface {
 // 	copy := NewSurface(s.Width(), s.Height())
 // 	copy.Blit(s, 0, 0)

@@ -197,7 +197,7 @@ func Text(display *ggweb.Surface, x, y float64) {
 
 	display.SetTextAlign(ggweb.TextAlignCenter)
 	display.SetTextBaseline(ggweb.TextBaselineMiddle)
-	display.DrawText(ggweb.Fill, "centered", x, y+50)
+	display.DrawText(ggweb.Fill, "centered", x+display.TextWidth("different font")/2, y+40)
 
 	display.Restore()
 }
