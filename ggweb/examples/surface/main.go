@@ -1,5 +1,3 @@
-// To run the tests run "gopherjs serve $GOPATH/github.com/Bredgren/gogame/test" and navigate
-// to http://localhost:8080/github.com/Bredgren/gogame/test/ in your browser.
 package main
 
 import (
@@ -26,6 +24,7 @@ func testCanvas() {
 	Path(display)
 	Transform(display)
 	Text(display)
+	// Pixel(display)
 }
 
 func Rect(display *ggweb.Surface) {

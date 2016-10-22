@@ -53,6 +53,10 @@ func New(filename string) Interface {
 	}
 }
 
+func (s *sound) PlayMode() {
+	// TODO
+}
+
 func (s *sound) Play() {
 	s.snd.Call("play")
 }

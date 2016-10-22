@@ -264,16 +264,21 @@ func (s *Surface) MeasureText(text string) float64 {
 // func (s *Surface) (Set)Alpha()
 // func (s *Surface) (Set)CompositeOp()
 
-// ... stuff from canvas.go
-
-////////////////////////////////////////////////////////////////////////////////////
-// func (s *surface) Fill(style *FillStyle) {
-// 	s.ctx.Call("save")
-// 	style.Style(s.ctx)
-// 	s.ctx.Call("fillRect", 0, 0, s.canvas.Get("width"), s.canvas.Get("height"))
-// 	s.ctx.Call("restore")
+// // SetCursor sets the appearence of the cursor when it is over this Display.
+// func (s *Surface) SetCursor(c Cursor) {
+// 	d.frontSurface.Canvas().Get("style").Set("cursor", c)
 // }
 
+// // Cursor returns the current appearence of the cursor when it is over the Display.
+// func (s *Surface) Cursor() Cursor {
+// 	c := d.frontSurface.Canvas().Get("style").Get("cursor").String()
+// 	if c == "" {
+// 		return CursorDefault
+// 	}
+// 	return Cursor(c)
+// }
+
+////////////////////////////////////////////////////////////////////////////////////
 // func (s *surface) GetAt(x, y int) Color {
 // 	data := s.ctx.Call("getImageData", x, y, 1, 1).Get("data")
 // 	return Color{R: data.Index(0).Float(), G: data.Index(1).Float(), B: data.Index(2).Float(),
@@ -290,234 +295,10 @@ func (s *Surface) MeasureText(text string) float64 {
 // 	s.ctx.Call("putImageData", imgData, x, y)
 // }
 
-// func (s *surface) SetClip(r geo.Rect) {
-// 	s.SetClipPath([][2]float64{
-// 		{r.X, r.Y}, {r.X + r.W, r.Y}, {r.X + r.W, r.Y + r.H}, {r.X, r.Y + r.H},
-// 	})
-// }
-
-// func (s *surface) SetClipPath(pointList [][2]float64) {
-// 	s.ctx.Call("save")
-// 	s.ctx.Call("beginPath")
-// 	s.ctx.Call("moveTo", pointList[0][0], pointList[0][1])
-// 	for _, p := range pointList[1:] {
-// 		s.ctx.Call("lineTo", p[0], p[1])
-// 	}
-// 	s.ctx.Call("clip")
-// }
-
-// func (s *surface) ClearClip() {
-// 	s.ctx.Call("restore")
-// }
-
 // func (s *surface) Copy() Surface {
 // 	copy := NewSurface(s.Width(), s.Height())
 // 	copy.Blit(s, 0, 0)
 // 	return copy
-// }
-
-// func (s *surface) Scaled(x, y float64) Surface {
-// 	newS := NewSurface(int(float64(s.Width())*x), int(float64(s.Height())*y))
-// 	ctx := newS.(*surface).ctx
-// 	ctx.Call("save")
-// 	ctx.Call("scale", x, y)
-// 	ctx.Call("drawImage", s.canvas, 0, 0)
-// 	ctx.Call("restore")
-// 	return newS
-// }
-
-// func (s *surface) Rotated(radians float64) Surface {
-// 	newW, newH := s.getRotatedSize(radians)
-// 	newS := NewSurface(newW, newH)
-// 	ctx := newS.(*surface).ctx
-// 	ctx.Call("save")
-// 	cx, cy := newW/2, newH/2
-// 	ctx.Call("translate", cx, cy)
-// 	ctx.Call("rotate", -radians)
-// 	ctx.Call("translate", -s.Width()/2, -s.Height()/2)
-// 	ctx.Call("drawImage", s.canvas, 0, 0)
-// 	ctx.Call("restore")
-// 	return newS
-// }
-
-// func (s *surface) getRotatedSize(radians float64) (w, h int) {
-// 	width, height := float64(s.Width()), float64(s.Height())
-// 	cx, cy := width/2, height/2
-// 	cos, sin := math.Cos(radians), math.Sin(radians)
-
-// 	x1 := cx + (0-cx)*cos + (0-cy)*sin
-// 	y1 := cy - (0-cx)*sin + (0-cy)*cos
-// 	x2 := cx + (width-cx)*cos + (0-cy)*sin
-// 	y2 := cy - (width-cx)*sin + (0-cy)*cos
-// 	x3 := cx + (0-cx)*cos + (height-cy)*sin
-// 	y3 := cy - (0-cx)*sin + (height-cy)*cos
-// 	x4 := cx + (width-cx)*cos + (height-cy)*sin
-// 	y4 := cy - (width-cx)*sin + (height-cy)*cos
-
-// 	maxX := math.Max(x1, math.Max(x2, math.Max(x3, x4)))
-// 	minX := math.Min(x1, math.Min(x2, math.Min(x3, x4)))
-// 	maxY := math.Max(y1, math.Max(y2, math.Max(y3, y4)))
-// 	minY := math.Min(y1, math.Min(y2, math.Min(y3, y4)))
-
-// 	return int(maxX - minX), int(maxY - minY)
-// }
-
-// func (s *surface) DrawRect(r geo.Rect, style Styler) {
-// 	if style == nil {
-// 		style = &FillStyle{}
-// 	}
-// 	s.ctx.Call("save")
-// 	style.Style(s.ctx)
-// 	s.ctx.Call("translate", math.Floor(r.X), math.Floor(r.Y))
-// 	s.ctx.Call(fmt.Sprintf("%sRect", style.DrawType()), 0, 0, math.Floor(r.W), math.Floor(r.H))
-// 	s.ctx.Call("restore")
-// }
-
-// func (s *surface) DrawCircle(posX, posY, radius float64, style Styler) {
-// 	if style == nil {
-// 		style = &FillStyle{}
-// 	}
-// 	s.ctx.Call("save")
-// 	style.Style(s.ctx)
-// 	s.ctx.Call("translate", math.Floor(posX), math.Floor(posY))
-// 	s.ctx.Call("beginPath")
-// 	s.ctx.Call("arc", 0, 0, radius, 0, 2*math.Pi)
-// 	s.ctx.Call(string(style.DrawType()))
-// 	s.ctx.Call("restore")
-// }
-
-// func (s *surface) DrawEllipse(r geo.Rect, style Styler) {
-// 	if style == nil {
-// 		style = &FillStyle{}
-// 	}
-// 	s.ctx.Call("save")
-// 	style.Style(s.ctx)
-// 	s.ctx.Call("translate", math.Floor(r.X), math.Floor(r.Y))
-// 	s.ctx.Call("beginPath")
-// 	s.ctx.Call("ellipse", math.Floor(r.Width()/2), math.Floor(r.Height()/2), math.Floor(r.Width()/2),
-// 		math.Floor(r.Height()/2), 0, 0, 2*math.Pi)
-// 	s.ctx.Call(string(style.DrawType()))
-// 	s.ctx.Call("restore")
-// }
-
-// func (s *surface) DrawArc(r geo.Rect, startRadians, stopRadians float64, style Styler) {
-// 	if style == nil {
-// 		style = &StrokeStyle{}
-// 	}
-// 	s.ctx.Call("save")
-// 	style.Style(s.ctx)
-// 	s.ctx.Call("translate", math.Floor(r.X), math.Floor(r.Y))
-// 	s.ctx.Call("beginPath")
-// 	s.ctx.Call("ellipse", math.Floor(r.Width()/2), math.Floor(r.Height()/2), math.Floor(r.Width()/2),
-// 		math.Floor(r.Height()/2), 0, 2*math.Pi-startRadians, 2*math.Pi-stopRadians, true)
-// 	s.ctx.Call(string(style.DrawType()))
-// 	s.ctx.Call("restore")
-// }
-
-// func (s *surface) DrawLine(startX, startY, endX, endY float64, style Styler) {
-// 	if style == nil {
-// 		style = &StrokeStyle{}
-// 	}
-// 	s.ctx.Call("save")
-// 	style.Style(s.ctx)
-// 	s.ctx.Call("beginPath")
-// 	// Not math.Flooring lines to preserve control with odd width lines.
-// 	s.ctx.Call("moveTo", startX, startY)
-// 	s.ctx.Call("lineTo", endX, endY)
-// 	s.ctx.Call(string(style.DrawType()))
-// 	s.ctx.Call("restore")
-// }
-
-// func (s *surface) DrawLines(points [][2]float64, style Styler) {
-// 	if style == nil {
-// 		style = &StrokeStyle{}
-// 	}
-// 	s.ctx.Call("save")
-// 	style.Style(s.ctx)
-// 	s.ctx.Call("beginPath")
-// 	// Not math.Flooring lines to preserve control with odd width lines.
-// 	s.ctx.Call("moveTo", points[0][0], points[0][1])
-// 	for _, p := range points[1:] {
-// 		s.ctx.Call("lineTo", p[0], p[1])
-// 	}
-// 	s.ctx.Call(string(style.DrawType()))
-// 	s.ctx.Call("restore")
-// }
-
-// func (s *surface) DrawText(text string, x, y float64, font *Font, style *TextStyle) {
-// 	s.ctx.Call("save")
-// 	s.ctx.Set("font", font.String())
-// 	style.Style(s.ctx)
-// 	s.ctx.Call("translate", math.Floor(x), math.Floor(y))
-// 	s.ctx.Call(fmt.Sprintf("%sText", style.DrawType()), text, 0, 0)
-// 	s.ctx.Call("restore")
-// }
-
-// func (s *surface) DrawQuadraticCurve(startX, startY, endX, endY, cpX, cpY float64, style Styler) {
-// 	if style == nil {
-// 		style = &StrokeStyle{}
-// 	}
-// 	s.ctx.Call("save")
-// 	style.Style(s.ctx)
-// 	s.ctx.Call("beginPath")
-// 	// Not math.Flooring lines to preserve control with odd width lines.
-// 	s.ctx.Call("moveTo", startX, startY)
-// 	s.ctx.Call("quadraticCurveTo", cpX, cpY, endX, endY)
-// 	s.ctx.Call(string(style.DrawType()))
-// 	s.ctx.Call("restore")
-// }
-
-// func (s *surface) DrawQuadraticCurves(points [][2]float64, style Styler) {
-// 	if len(points) < 3 {
-// 		return // Not enough points for event one curve.
-// 	}
-// 	if style == nil {
-// 		style = &StrokeStyle{}
-// 	}
-// 	s.ctx.Call("save")
-// 	style.Style(s.ctx)
-// 	s.ctx.Call("beginPath")
-// 	// Not math.Flooring lines to preserve control with odd width lines.
-// 	s.ctx.Call("moveTo", points[0][0], points[0][1])
-// 	for i := 1; i+1 < len(points); i += 2 {
-// 		s.ctx.Call("quadraticCurveTo", points[i][0], points[i][1], points[i+1][0], points[i+1][1])
-// 	}
-// 	s.ctx.Call(string(style.DrawType()))
-// 	s.ctx.Call("restore")
-// }
-
-// func (s *surface) DrawBezierCurve(startX, startY, endX, endY, cpStartX, cpStartY, cpEndX, cpEndY float64, style Styler) {
-// 	if style == nil {
-// 		style = &StrokeStyle{}
-// 	}
-// 	s.ctx.Call("save")
-// 	style.Style(s.ctx)
-// 	s.ctx.Call("beginPath")
-// 	// Not math.Flooring lines to preserve control with odd width lines.
-// 	s.ctx.Call("moveTo", startX, startY)
-// 	s.ctx.Call("bezierCurveTo", cpStartX, cpStartY, cpEndX, cpEndY, endX, endY)
-// 	s.ctx.Call(string(style.DrawType()))
-// 	s.ctx.Call("restore")
-// }
-
-// func (s *surface) DrawBezierCurves(points [][2]float64, style Styler) {
-// 	if len(points) < 4 {
-// 		return // Not enough points for event one curve.
-// 	}
-// 	if style == nil {
-// 		style = &StrokeStyle{}
-// 	}
-// 	s.ctx.Call("save")
-// 	style.Style(s.ctx)
-// 	s.ctx.Call("beginPath")
-// 	// Not math.Flooring lines to preserve control with odd width lines.
-// 	s.ctx.Call("moveTo", points[0][0], points[0][1])
-// 	for i := 1; i+2 < len(points); i += 3 {
-// 		s.ctx.Call("bezierCurveTo", points[i][0], points[i][1], points[i+1][0], points[i+1][1],
-// 			points[i+2][0], points[i+2][1])
-// 	}
-// 	s.ctx.Call(string(style.DrawType()))
-// 	s.ctx.Call("restore")
 // }
 
 // var _ Surface = &subsurface{}
