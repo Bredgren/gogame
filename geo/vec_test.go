@@ -373,12 +373,14 @@ func TestVecAngleFrom(t *testing.T) {
 		{Vec{X: 0, Y: -4}, Vec{X: -1, Y: -1}, -math.Pi / 4},
 		{Vec{X: -1, Y: 0}, Vec{X: 1, Y: 0}, -math.Pi},
 		{Vec{X: -1, Y: 0}, Vec{X: 0, Y: -1}, math.Pi / 2},
+		{Vec{X: -1, Y: 1}, Vec{X: -1, Y: -1}, math.Pi / 2},
+		{Vec{X: -1, Y: -1}, Vec{X: -1, Y: 1}, -math.Pi / 2},
 	}
 
 	for i, c := range cases {
 		got := c.v1.AngleFrom(c.v2)
 		if math.Abs(got-c.want) > 1e-10 {
-			t.Errorf("case %d: got %#v, want %#v", i, got, c.want)
+			t.Errorf("case %d: got %#v, want %#v", i, got/math.Pi*180, c.want/math.Pi*180)
 		}
 	}
 }

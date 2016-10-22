@@ -140,6 +140,9 @@ func (v Vec) AngleFrom(v2 Vec) float64 {
 	if r < -math.Pi {
 		r += 2 * math.Pi
 	}
+	if r >= math.Pi {
+		r -= 2 * math.Pi
+	}
 	return r
 }
 
