@@ -1,6 +1,13 @@
 package ggweb
 
-import "github.com/gopherjs/gopherjs/js"
+import (
+	"time"
+
+	"github.com/Bredgren/gogame/event"
+	"github.com/Bredgren/gogame/geo"
+	"github.com/Bredgren/gogame/key"
+	"github.com/gopherjs/gopherjs/js"
+)
 
 var ready bool
 var console *js.Object
@@ -41,41 +48,47 @@ func addGlobalEvents() {
 	// 			H: js.Global.Get("innerHeight").Int(),
 	// 		},
 	// 	}); err != nil {
-	// 		Log("Warning: event skipped because queue is full", e)
+	// 		Warn("Event skipped because queue is full", e)
 	// 	}
 	// })
 
 	// js.Global.Set("onbeforeunload", func(e *js.Object) {
 	// 	if err := event.Post(event.Event{Type: event.Quit}); err != nil {
-	// 		Log("Warning: event skipped because queue is full", e)
+	// 		Warn("Event skipped because queue is full", e)
 	// 	}
 	// })
 
-	// js.Global.Call("addEventListener", "keydown", func(e *js.Object) {
-	// 	k := key.FromJsEvent(e)
-	// 	// Ignore key repeats
-	// 	if keyState[k] {
-	// 		return
-	// 	}
-	// 	keyState[k] = true
-	// 	if err := event.Post(event.Event{
-	// 		Type: event.KeyDown,
-	// 		Data: event.KeyData{Key: k, Mod: ModKeys()},
-	// 	}); err != nil {
-	// 		Log("Warning: event skipped because queue is full", e)
-	// 	}
-	// })
+	js.Global.Call("addEventListener", "keydown", func(e *js.Object) {
+		k := EventToKey(e)
 
-	// js.Global.Call("addEventListener", "keyup", func(e *js.Object) {
-	// 	k := key.FromJsEvent(e)
-	// 	keyState[k] = false
-	// 	if err := event.Post(event.Event{
-	// 		Type: event.KeyUp,
-	// 		Data: event.KeyData{Key: k, Mod: ModKeys()},
-	// 	}); err != nil {
-	// 		Log("Warning: event skipped because queue is full", e)
-	// 	}
-	// })
+		if PreventKeyDefault[k] {
+			e.Call("preventDefault")
+		}
+
+		// Ignore key repeats
+		if keyState[k] {
+			return
+		}
+
+		keyState[k] = true
+		if err := event.Post(event.Event{
+			Type: event.KeyDown,
+			Data: event.KeyData{Key: k, Mod: ModKeys()},
+		}); err != nil {
+			Warn("Event skipped because queue is full", e)
+		}
+	})
+
+	js.Global.Call("addEventListener", "keyup", func(e *js.Object) {
+		k := EventToKey(e)
+		keyState[k] = false
+		if err := event.Post(event.Event{
+			Type: event.KeyUp,
+			Data: event.KeyData{Key: k, Mod: ModKeys()},
+		}); err != nil {
+			Warn("Event skipped because queue is full", e)
+		}
+	})
 }
 
 func RegisterEvents(s *Surface) {
@@ -96,7 +109,7 @@ func RegisterEvents(s *Surface) {
 	// 				Buttons: MousePressed(),
 	// 			},
 	// 		}); err != nil {
-	// 			Log("Warning: event skipped because queue is full", e)
+	// 			Warn("Event skipped because queue is full", e)
 	// 		}
 	// 	})
 
@@ -113,7 +126,7 @@ func RegisterEvents(s *Surface) {
 	// 				Button: button,
 	// 			},
 	// 		}); err != nil {
-	// 			Log("Warning: event skipped because queue is full", e)
+	// 			Warn("Event skipped because queue is full", e)
 	// 		}
 	// 	})
 
@@ -130,7 +143,7 @@ func RegisterEvents(s *Surface) {
 	// 				Button: button,
 	// 			},
 	// 		}); err != nil {
-	// 			Log("Warning: event skipped because queue is full", e)
+	// 			Warn("Event skipped because queue is full", e)
 	// 		}
 	// 	})
 
@@ -144,7 +157,7 @@ func RegisterEvents(s *Surface) {
 	// 				Dz: dz,
 	// 			},
 	// 		}); err != nil {
-	// 			Log("Warning: event skipped because queue is full", e)
+	// 			Warn("Event skipped because queue is full", e)
 	// 		}
 	// 	})
 }
@@ -152,39 +165,44 @@ func RegisterEvents(s *Surface) {
 func UnRegisterEvents(s *Surface) {
 }
 
+// PreventKeyDefault is a set of key that should have their default behavior prevented.
+var PreventKeyDefault = map[key.Key]bool{}
+
+// var PreventDefaultMouse = map[int]bool{}
+
 // // Stats holds various bits of information that one may find useful.
 // var Stats = struct {
 // 	// LoopDuration is the amount of time that the last execution of the main loop took.
 // 	LoopDuration time.Duration
 // }{}
 
-// // MainLoop is a callback function that returns a time value that can be compared to
-// // previous calls to determine the elapsed time.
-// type MainLoop func(time.Duration)
+// MainLoop is a callback function that returns a time value that can be compared to
+// previous calls to determine the elapsed time.
+type MainLoop func(time.Duration)
 
-// var mainLoop *js.Object
+var mainLoop *js.Object
 
-// // SetMainLoop sets the callback for the main game loop. The given function will be
-// // called at a regular interval.
-// func SetMainLoop(loop MainLoop) {
-// 	var f func(timestamp *js.Object)
-// 	f = func(timestamp *js.Object) {
-// 		mainLoop = js.Global.Call("requestAnimationFrame", f)
-// 		start := time.Now()
-// 		loop(time.Duration(timestamp.Float()) * time.Millisecond)
-// 		Stats.LoopDuration = time.Now().Sub(start)
-// 		mouseState.RelX, mouseState.RelY = 0, 0
-// 	}
-// 	f(&js.Object{})
-// }
+// SetMainLoop sets the callback for the main game loop. The given function will be
+// called at a regular interval.
+func SetMainLoop(loop MainLoop) {
+	var f func(timestamp *js.Object)
+	f = func(timestamp *js.Object) {
+		mainLoop = js.Global.Call("requestAnimationFrame", f)
+		// start := time.Now()
+		loop(time.Duration(timestamp.Float()) * time.Millisecond)
+		// Stats.LoopDuration = time.Now().Sub(start)
+		// mouseState.RelX, mouseState.RelY = 0, 0
+	}
+	f(&js.Object{})
+}
 
-// // UnsetMainLoop stops calling the main game loop.
-// func UnsetMainLoop() {
-// 	if mainLoop != nil {
-// 		js.Global.Call("cancelAnimationFrame", mainLoop)
-// 		mainLoop = nil
-// 	}
-// }
+// UnsetMainLoop stops calling the main game loop.
+func UnsetMainLoop() {
+	if mainLoop != nil {
+		js.Global.Call("cancelAnimationFrame", mainLoop)
+		mainLoop = nil
+	}
+}
 
 // // var isFullscreen bool
 
@@ -206,7 +224,23 @@ func Log(args ...interface{}) {
 	console.Call("log", args...)
 }
 
-// var keyState = map[key.Key]bool{}
+// Warn prints a warning to the console. This won't work until ggweb is initialized.
+func Warn(args ...interface{}) {
+	console.Call("warn", args...)
+}
+
+// Info prints an info log to the console. This won't work until ggweb is initialized.
+func Info(args ...interface{}) {
+	console.Call("info", args...)
+}
+
+// Error prints an error to the console. This won't work until ggweb is initialized.
+func Error(args ...interface{}) {
+	console.Call("error", args...)
+}
+
+var keyState = map[key.Key]bool{}
+
 // var mouseState = struct {
 // 	Buttons    map[int]bool
 // 	PosX, PosY float64
@@ -226,16 +260,16 @@ func Log(args ...interface{}) {
 // 	return m
 // }
 
-// // ModKeys returns just the state for the modifier keys.
-// func ModKeys() map[key.Key]bool {
-// 	m := make(map[key.Key]bool)
-// 	for k, press := range keyState {
-// 		if press && k.IsMod() {
-// 			m[k] = true
-// 		}
-// 	}
-// 	return m
-// }
+// ModKeys returns just the state for the modifier keys.
+func ModKeys() map[key.Key]bool {
+	m := make(map[key.Key]bool)
+	for k, press := range keyState {
+		if press && k.IsMod() {
+			m[k] = true
+		}
+	}
+	return m
+}
 
 // // MousePressed returns a map that contains all pressed mouse buttons mapping to true.
 // func MousePressed() map[int]bool {
@@ -257,6 +291,14 @@ func Log(args ...interface{}) {
 // func MouseRel() (dx, dy float64) {
 // 	return mouseState.RelX, mouseState.RelY
 // }
+
+// WindowRect returns a rectangle that covers the entire inner window of the browser.
+func WindowRect() geo.Rect {
+	return geo.Rect{
+		W: js.Global.Get("innerWidth").Float(),
+		H: js.Global.Get("innerHeight").Float(),
+	}
+}
 
 // // LocalStorageGet retrieves the value associated with the given key. If there is no value
 // // then ok will be false.

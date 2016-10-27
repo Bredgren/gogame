@@ -2,308 +2,141 @@
 // keys.
 package key
 
-import (
-	"fmt"
-	"regexp"
-	"strings"
-
-	"github.com/gopherjs/gopherjs/js"
-)
-
-// Key represents a key on a keyboard. It does not differentiate between capitalization,
-// (e.g. 'a' and 'A' are the same Key), but it does differentiate between other keys that
-// that have dual characters (e.g. '1' and '!', are different Keys). A user of this package
-// will usueally find the predefined Keys below enough, and wont need to use the Key struct
-// directly.
+// Key represents a key on a keyboard.
 type Key struct {
-	Code int
-	// Right is only used for the mod keys: false means the left one and true means right.
-	// For non-mod keys this should be false.
-	Right bool
-	// Upper is used to indicate whether it is the upper or lower version of the key, e.g.
-	// '/' is lower (so Upper will be false) and '?' is upper (so it will be true). This
-	// field is necessary because the upper and lower versions share the same Code. Upper
-	// will always be false for alphebetic keys. Keys with a single use (e.g. space or enter)
-	// will also have Upper as false.
-	Upper bool
+	// Name is a unique string that identifies the key.
+	Name string
+
+	// Rune is the printable character for this key if there is one, otherwise it's the
+	// null character.
+	Rune rune
+
+	// ShifRune is the printable character for this key when combined with the shift key.
+	// If there isn't one then this is the null character.
+	ShiftRune rune
 }
 
 var (
-	// A - Z are the alphebetic characters. These do not differentiate between upper and
-	// lower case, and their string representations are always uppercase.
-	A = Key{Code: 65}
-	B = Key{Code: 66}
-	C = Key{Code: 67}
-	D = Key{Code: 68}
-	E = Key{Code: 69}
-	F = Key{Code: 70}
-	G = Key{Code: 71}
-	H = Key{Code: 72}
-	I = Key{Code: 73}
-	J = Key{Code: 74}
-	K = Key{Code: 75}
-	L = Key{Code: 76}
-	M = Key{Code: 77}
-	N = Key{Code: 78}
-	O = Key{Code: 79}
-	P = Key{Code: 80}
-	Q = Key{Code: 81}
-	R = Key{Code: 82}
-	S = Key{Code: 83}
-	T = Key{Code: 84}
-	U = Key{Code: 85}
-	V = Key{Code: 86}
-	W = Key{Code: 87}
-	X = Key{Code: 88}
-	Y = Key{Code: 89}
-	Z = Key{Code: 90}
+	// Alphabetic.
+	A = Key{Name: "A", Rune: 'a', ShiftRune: 'A'}
+	B = Key{Name: "B", Rune: 'b', ShiftRune: 'B'}
+	C = Key{Name: "C", Rune: 'c', ShiftRune: 'C'}
+	D = Key{Name: "D", Rune: 'd', ShiftRune: 'D'}
+	E = Key{Name: "E", Rune: 'e', ShiftRune: 'E'}
+	F = Key{Name: "F", Rune: 'f', ShiftRune: 'F'}
+	G = Key{Name: "G", Rune: 'g', ShiftRune: 'G'}
+	H = Key{Name: "H", Rune: 'h', ShiftRune: 'H'}
+	I = Key{Name: "I", Rune: 'i', ShiftRune: 'I'}
+	J = Key{Name: "J", Rune: 'j', ShiftRune: 'J'}
+	K = Key{Name: "K", Rune: 'k', ShiftRune: 'K'}
+	L = Key{Name: "L", Rune: 'l', ShiftRune: 'L'}
+	M = Key{Name: "M", Rune: 'm', ShiftRune: 'M'}
+	N = Key{Name: "N", Rune: 'n', ShiftRune: 'N'}
+	O = Key{Name: "O", Rune: 'o', ShiftRune: 'O'}
+	P = Key{Name: "P", Rune: 'p', ShiftRune: 'P'}
+	Q = Key{Name: "Q", Rune: 'q', ShiftRune: 'Q'}
+	R = Key{Name: "R", Rune: 'r', ShiftRune: 'R'}
+	S = Key{Name: "S", Rune: 's', ShiftRune: 'S'}
+	T = Key{Name: "T", Rune: 't', ShiftRune: 'T'}
+	U = Key{Name: "U", Rune: 'u', ShiftRune: 'U'}
+	V = Key{Name: "V", Rune: 'v', ShiftRune: 'V'}
+	W = Key{Name: "W", Rune: 'w', ShiftRune: 'W'}
+	X = Key{Name: "X", Rune: 'x', ShiftRune: 'X'}
+	Y = Key{Name: "Y", Rune: 'y', ShiftRune: 'Y'}
+	Z = Key{Name: "Z", Rune: 'z', ShiftRune: 'Z'}
 
-	// D1 - D0 are the digits on the number row at the top of the keyboard.
-	D1 = Key{Code: 49}
-	D2 = Key{Code: 50}
-	D3 = Key{Code: 51}
-	D4 = Key{Code: 52}
-	D5 = Key{Code: 53}
-	D6 = Key{Code: 54}
-	D7 = Key{Code: 55}
-	D8 = Key{Code: 56}
-	D9 = Key{Code: 57}
-	D0 = Key{Code: 48}
+	// Number row.
+	D0 = Key{Name: "0/left paren", Rune: '0', ShiftRune: ')'}
+	D1 = Key{Name: "1/exclamation", Rune: '1', ShiftRune: '!'}
+	D2 = Key{Name: "2/at", Rune: '2', ShiftRune: '@'}
+	D3 = Key{Name: "3/hash", Rune: '3', ShiftRune: '#'}
+	D4 = Key{Name: "4/dollar", Rune: '4', ShiftRune: '$'}
+	D5 = Key{Name: "5/percent", Rune: '5', ShiftRune: '%'}
+	D6 = Key{Name: "6/caret", Rune: '6', ShiftRune: '^'}
+	D7 = Key{Name: "7/ampersand", Rune: '7', ShiftRune: '&'}
+	D8 = Key{Name: "8/asterisk", Rune: '8', ShiftRune: '*'}
+	D9 = Key{Name: "9/right paren", Rune: '9', ShiftRune: '('}
 
-	// Exclaim - RightParent are the symbols that share the number row keys.
-	Exclaim    = Key{Code: 49, Upper: true}
-	At         = Key{Code: 50, Upper: true}
-	Hash       = Key{Code: 51, Upper: true}
-	Dollar     = Key{Code: 52, Upper: true}
-	Percent    = Key{Code: 53, Upper: true}
-	Caret      = Key{Code: 54, Upper: true}
-	Ampersand  = Key{Code: 55, Upper: true}
-	Asterisk   = Key{Code: 56, Upper: true}
-	LeftParen  = Key{Code: 57, Upper: true}
-	RightParen = Key{Code: 48, Upper: true}
+	// Punctuation.
+	Backquote    = Key{Name: "backquote/tilde", Rune: '`', ShiftRune: '~'}
+	Minus        = Key{Name: "minus/underscore", Rune: '-', ShiftRune: '_'}
+	Equal        = Key{Name: "equal/plus", Rune: '=', ShiftRune: '+'}
+	LeftBracket  = Key{Name: "left bracket/brace", Rune: '[', ShiftRune: '{'}
+	RightBracket = Key{Name: "right bracket/brace", Rune: ']', ShiftRune: '}'}
+	Backslash    = Key{Name: "backslash/pipe", Rune: '\\', ShiftRune: '|'}
+	Semicolon    = Key{Name: "semicolon/colon", Rune: ';', ShiftRune: ':'}
+	Quote        = Key{Name: "quote/double quote", Rune: '\'', ShiftRune: '"'}
+	Comma        = Key{Name: "comma/less than", Rune: ',', ShiftRune: '<'}
+	Period       = Key{Name: "period/greater than", Rune: '.', ShiftRune: '>'}
+	Slash        = Key{Name: "slash/question", Rune: '/', ShiftRune: '?'}
 
-	// Backquote - Qusteion are the other punctuation characters.
-	Backquote    = Key{Code: 192}
-	Tilde        = Key{Code: 192, Upper: true}
-	Minus        = Key{Code: 189}
-	Underscore   = Key{Code: 189, Upper: true}
-	Equals       = Key{Code: 187}
-	Plus         = Key{Code: 187, Upper: true}
-	LeftBracket  = Key{Code: 219}
-	LeftBrace    = Key{Code: 219, Upper: true}
-	RightBracket = Key{Code: 221}
-	RightBrace   = Key{Code: 221, Upper: true}
-	Backslash    = Key{Code: 220}
-	Pipe         = Key{Code: 220, Upper: true}
-	Semicolon    = Key{Code: 186}
-	Colon        = Key{Code: 186, Upper: true}
-	Quote        = Key{Code: 222}
-	QuoteDbl     = Key{Code: 222, Upper: true}
-	Comma        = Key{Code: 188}
-	Less         = Key{Code: 188, Upper: true}
-	Period       = Key{Code: 190}
-	Greater      = Key{Code: 190, Upper: true}
-	Slash        = Key{Code: 191}
-	Question     = Key{Code: 191, Upper: true}
+	// Spacing.
+	Space     = Key{Name: "space", Rune: ' '}
+	Backspace = Key{Name: "backspace", Rune: '\u0008'}
+	Delete    = Key{Name: "delete", Rune: '\u007f'}
+	Tab       = Key{Name: "tab", Rune: '\u0009'}
+	Enter     = Key{Name: "enter", Rune: '\n'}
+	Escape    = Key{Name: "escape", Rune: '\u001b'}
 
-	// Space - Escape are the spacing related keys.
-	Space     = Key{Code: 32}
-	Backspace = Key{Code: 8}
-	Delete    = Key{Code: 46}
-	Tab       = Key{Code: 9}
-	Enter     = Key{Code: 13}
-	Escape    = Key{Code: 27}
+	// Numberpad. Names are the same as number row, but there's no ShiftRune.
+	Np0        = Key{Name: "numpad 0", Rune: '0'}
+	Np1        = Key{Name: "numpad 1", Rune: '1'}
+	Np2        = Key{Name: "numpad 2", Rune: '2'}
+	Np3        = Key{Name: "numpad 3", Rune: '3'}
+	Np4        = Key{Name: "numpad 4", Rune: '4'}
+	Np5        = Key{Name: "numpad 5", Rune: '5'}
+	Np6        = Key{Name: "numpad 6", Rune: '6'}
+	Np7        = Key{Name: "numpad 7", Rune: '7'}
+	Np8        = Key{Name: "numpad 8", Rune: '8'}
+	Np9        = Key{Name: "numpad 9", Rune: '9'}
+	NpPeriod   = Key{Name: "numpad period", Rune: '.'}
+	NpDivide   = Key{Name: "numpad divide", Rune: '/'}
+	NpMultiply = Key{Name: "numpad multiply", Rune: '*'}
+	NpMinus    = Key{Name: "numpad minus", Rune: '-'}
+	NpPlus     = Key{Name: "numpad plus", Rune: '+'}
+	NpEnter    = Key{Name: "numpad enter", Rune: '\r'}
 
-	// Np0 - NpEnter are the number pad keys. We need to use "Right" for some.
-	Np0        = Key{Code: 48, Right: true}
-	Np1        = Key{Code: 49, Right: true}
-	Np2        = Key{Code: 50, Right: true}
-	Np3        = Key{Code: 51, Right: true}
-	Np4        = Key{Code: 52, Right: true}
-	Np5        = Key{Code: 53, Right: true}
-	Np6        = Key{Code: 54, Right: true}
-	Np7        = Key{Code: 55, Right: true}
-	Np8        = Key{Code: 56, Right: true}
-	Np9        = Key{Code: 57, Right: true}
-	NpPeriod   = Key{Code: 110}
-	NpDivide   = Key{Code: 111}
-	NpMultiply = Key{Code: 106}
-	NpMinus    = Key{Code: 109}
-	NpPlus     = Key{Code: 107}
-	NpEnter    = Key{Code: 13, Right: true}
+	// Navigation.
+	Left     = Key{Name: "left", Rune: '\u2190'}
+	Up       = Key{Name: "up", Rune: '\u2191'}
+	Right    = Key{Name: "right", Rune: '\u2192'}
+	Down     = Key{Name: "down", Rune: '\u2193'}
+	Home     = Key{Name: "home", Rune: '\u21e6'}
+	PageUp   = Key{Name: "page up", Rune: '\u21e7'}
+	End      = Key{Name: "end", Rune: '\u21e8'}
+	PageDown = Key{Name: "page down", Rune: '\u21e9'}
 
-	// Up - PageDown are the navigation keys.
-	Up       = Key{Code: 38}
-	Down     = Key{Code: 40}
-	Right    = Key{Code: 39}
-	Left     = Key{Code: 37}
-	Home     = Key{Code: 36}
-	End      = Key{Code: 35}
-	PageUp   = Key{Code: 33}
-	PageDown = Key{Code: 34}
-	// Insert   = "insert"
+	// Function.
+	F1  = Key{Name: "F1"}
+	F2  = Key{Name: "F2"}
+	F3  = Key{Name: "F3"}
+	F4  = Key{Name: "F4"}
+	F5  = Key{Name: "F5"}
+	F6  = Key{Name: "F6"}
+	F7  = Key{Name: "F7"}
+	F8  = Key{Name: "F8"}
+	F9  = Key{Name: "F9"}
+	F10 = Key{Name: "F10"}
+	F11 = Key{Name: "F11"}
+	F12 = Key{Name: "F12"}
+	F13 = Key{Name: "F13"}
+	F14 = Key{Name: "F14"}
+	F15 = Key{Name: "F15"}
 
-	// F1 - F15 are the function keys.
-	F1  = Key{Code: 112}
-	F2  = Key{Code: 113}
-	F3  = Key{Code: 114}
-	F4  = Key{Code: 115}
-	F5  = Key{Code: 116}
-	F6  = Key{Code: 117}
-	F7  = Key{Code: 118}
-	F8  = Key{Code: 119}
-	F9  = Key{Code: 120}
-	F10 = Key{Code: 121}
-	F11 = Key{Code: 122}
-	F12 = Key{Code: 123}
-	F13 = Key{Code: 124}
-	F14 = Key{Code: 125}
-	F15 = Key{Code: 126}
+	// Modifiers.
+	LShift = Key{Name: "left shift"}
+	RShift = Key{Name: "right shift"}
+	LCtrl  = Key{Name: "left ctrl"}
+	RCtrl  = Key{Name: "right ctrl"}
+	LAlt   = Key{Name: "left alt"}
+	RAlt   = Key{Name: "right alt"}
+	LMeta  = Key{Name: "left meta"}
+	RMeta  = Key{Name: "right meta"}
 
-	// NumLock - Print are the lock and print screen keys.
-	NumLock  = Key{Code: 12}
-	CapsLock = Key{Code: 20}
-	// ScrolLock = Key{Code: }
-	// Print     = Key{Code: }
-
-	// LShift - RMeta are the modifier keys.
-	LShift = Key{Code: 16}
-	RShift = Key{Code: 16, Right: true}
-	LCtrl  = Key{Code: 17}
-	RCtrl  = Key{Code: 17, Right: true}
-	LAlt   = Key{Code: 18}
-	RAlt   = Key{Code: 18, Right: true}
-	LMeta  = Key{Code: 91}
-	RMeta  = Key{Code: 93, Right: true}
+	// Misc.
+	NumLock  = Key{Name: "num lock"}
+	CapsLock = Key{Name: "caps lock"}
 )
-
-var keyName = map[Key]string{
-	A:            "a",
-	B:            "b",
-	C:            "c",
-	D:            "d",
-	E:            "e",
-	F:            "f",
-	G:            "g",
-	H:            "h",
-	I:            "i",
-	J:            "j",
-	K:            "k",
-	L:            "l",
-	M:            "m",
-	N:            "n",
-	O:            "o",
-	P:            "p",
-	Q:            "q",
-	R:            "r",
-	S:            "s",
-	T:            "t",
-	U:            "u",
-	V:            "v",
-	W:            "w",
-	X:            "x",
-	Y:            "y",
-	Z:            "z",
-	D1:           "1",
-	D2:           "2",
-	D3:           "3",
-	D4:           "4",
-	D5:           "5",
-	D6:           "6",
-	D7:           "7",
-	D8:           "8",
-	D9:           "9",
-	D0:           "0",
-	Exclaim:      "exclaim",
-	At:           "at",
-	Hash:         "hash",
-	Dollar:       "dollar",
-	Percent:      "percent",
-	Caret:        "caret",
-	Ampersand:    "ampersand",
-	Asterisk:     "asterisk",
-	LeftParen:    "left parenthesis",
-	RightParen:   "right parenthesis",
-	Backquote:    "backquote",
-	Tilde:        "tilde",
-	Minus:        "minus sign",
-	Underscore:   "underscore",
-	Equals:       "equals sign",
-	Plus:         "plus sign",
-	LeftBracket:  "left bracket",
-	LeftBrace:    "left brace",
-	RightBracket: "right bracket",
-	RightBrace:   "right brace",
-	Backslash:    "backslash",
-	Pipe:         "pipe",
-	Semicolon:    "semicolon",
-	Colon:        "colon",
-	Quote:        "quote",
-	QuoteDbl:     "quotedbl",
-	Comma:        "comma",
-	Less:         "less-than sign",
-	Period:       "period",
-	Greater:      "greater-than sign",
-	Slash:        "slash",
-	Question:     "question",
-	Space:        "Space",
-	Backspace:    "Backspace",
-	Delete:       "Delete",
-	Tab:          "Tab",
-	Enter:        "Enter",
-	Escape:       "Escape",
-	Np0:          "numpad 0",
-	Np1:          "numpad 1",
-	Np2:          "numpad 2",
-	Np3:          "numpad 3",
-	Np4:          "numpad 4",
-	Np5:          "numpad 5",
-	Np6:          "numpad 6",
-	Np7:          "numpad 7",
-	Np8:          "numpad 8",
-	Np9:          "numpad 9",
-	NpPeriod:     "numpad period",
-	NpDivide:     "numpad divide",
-	NpMultiply:   "numpad multiply",
-	NpMinus:      "numpad minus",
-	NpPlus:       "numpad plus",
-	NpEnter:      "numpad enter",
-	Up:           "up arrow",
-	Down:         "down arrow",
-	Right:        "right arrow",
-	Left:         "left arrow",
-	Home:         "home",
-	End:          "end",
-	PageUp:       "page up",
-	PageDown:     "page down",
-	F1:           "f1",
-	F2:           "f2",
-	F3:           "f3",
-	F4:           "f4",
-	F5:           "f5",
-	F6:           "f6",
-	F7:           "f7",
-	F8:           "f8",
-	F9:           "f9",
-	F10:          "f10",
-	F11:          "f11",
-	F12:          "f12",
-	F13:          "f13",
-	F14:          "f14",
-	F15:          "f15",
-	NumLock:      "numlock",
-	CapsLock:     "capslock",
-	LShift:       "left shift",
-	RShift:       "right shift",
-	LCtrl:        "left ctrl",
-	RCtrl:        "right ctrl",
-	LAlt:         "left alt",
-	RAlt:         "right alt",
-	LMeta:        "left meta",
-	RMeta:        "right meta",
-	// LSuper:       "left windows key",
-	// RSuper:       "right windows key",
-}
 
 // IsMod returns true if the key is a modifier key.
 func (k Key) IsMod() bool {
@@ -311,157 +144,6 @@ func (k Key) IsMod() bool {
 		k == LMeta || k == RMeta
 }
 
-var keyRune = map[Key]rune{
-	A:            'a',
-	B:            'b',
-	C:            'c',
-	D:            'd',
-	E:            'e',
-	F:            'f',
-	G:            'g',
-	H:            'h',
-	I:            'i',
-	J:            'j',
-	K:            'k',
-	L:            'l',
-	M:            'm',
-	N:            'n',
-	O:            'o',
-	P:            'p',
-	Q:            'q',
-	R:            'r',
-	S:            's',
-	T:            't',
-	U:            'u',
-	V:            'v',
-	W:            'w',
-	X:            'x',
-	Y:            'y',
-	Z:            'z',
-	D1:           '1',
-	D2:           '2',
-	D3:           '3',
-	D4:           '4',
-	D5:           '5',
-	D6:           '6',
-	D7:           '7',
-	D8:           '8',
-	D9:           '9',
-	D0:           '0',
-	Exclaim:      '!',
-	At:           '@',
-	Hash:         '#',
-	Dollar:       '$',
-	Percent:      '%',
-	Caret:        '^',
-	Ampersand:    '&',
-	Asterisk:     '*',
-	LeftParen:    '(',
-	RightParen:   ')',
-	Backquote:    '`',
-	Tilde:        '~',
-	Minus:        '-',
-	Underscore:   '_',
-	Equals:       '=',
-	Plus:         '+',
-	LeftBracket:  '[',
-	LeftBrace:    '{',
-	RightBracket: ']',
-	RightBrace:   '}',
-	Backslash:    '\\',
-	Pipe:         '|',
-	Semicolon:    ';',
-	Colon:        ':',
-	Quote:        '\'',
-	QuoteDbl:     '"',
-	Comma:        ',',
-	Less:         '<',
-	Period:       '.',
-	Greater:      '>',
-	Slash:        '/',
-	Question:     '?',
-	Space:        ' ',
-	Backspace:    '\b',
-	Delete:       '\u007f',
-	Tab:          '\t',
-	Enter:        '\n',
-	Escape:       '\u001b',
-	Np0:          '0',
-	Np1:          '1',
-	Np2:          '2',
-	Np3:          '3',
-	Np4:          '4',
-	Np5:          '5',
-	Np6:          '6',
-	Np7:          '7',
-	Np8:          '8',
-	Np9:          '9',
-	NpPeriod:     '.',
-	NpDivide:     '/',
-	NpMultiply:   '*',
-	NpMinus:      '-',
-	NpPlus:       '+',
-	NpEnter:      '\n',
-	Up:           '\u2191',
-	Down:         '\u2193',
-	Right:        '\u2192',
-	Left:         '\u2190',
-}
-
-// String returns a human readable name for the key if one is known, otherwise it returns
-// a string representation of the Key struct and its fields.
 func (k Key) String() string {
-	if s, ok := keyName[k]; ok {
-		return s
-	}
-	return fmt.Sprintf("%#v", k)
-}
-
-// Rune returns the printable rune equivalent of the Key if one exists, otherwise it returns
-// the unicode null character.
-func (k Key) Rune() rune {
-	if s, ok := keyRune[k]; ok {
-		return s
-	}
-	return '\u0000'
-}
-
-var upperMap = map[rune]rune{
-	'1':  '!',
-	'2':  '@',
-	'3':  '#',
-	'4':  '$',
-	'5':  '%',
-	'6':  '^',
-	'7':  '&',
-	'8':  '*',
-	'9':  '(',
-	'0':  ')',
-	'`':  '~',
-	'-':  '_',
-	'=':  '+',
-	'[':  '{',
-	']':  '}',
-	'\\': '|',
-	';':  ':',
-	'\'': '"',
-	',':  '<',
-	'.':  '>',
-	'/':  '?',
-}
-
-var numpadRe = regexp.MustCompile(`Numpad((Enter)|\d+)`)
-
-// FromJsEvent returns the Key for the corresponding js event. It is not necessarily one of
-// the predefined Keys.
-func FromJsEvent(event *js.Object) Key {
-	name := event.Get("code").String()
-	k := Key{
-		Code: event.Get("keyCode").Int(),
-		Right: (strings.Contains(name, "Right") && (strings.Contains(name, "Shift") || strings.Contains(name, "Control") ||
-			strings.Contains(name, "Alt") || strings.Contains(name, "Meta"))) ||
-			numpadRe.MatchString(name),
-	}
-	k.Upper = event.Get("key").String() == string(upperMap[k.Rune()])
-	return k
+	return k.Name
 }
