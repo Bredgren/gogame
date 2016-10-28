@@ -40,17 +40,17 @@ func Init(onReady func()) {
 }
 
 func addGlobalEvents() {
-	// js.Global.Call("addEventListener", "resize", func(e *js.Object) {
-	// 	if err := event.Post(event.Event{
-	// 		Type: event.VideoResize,
-	// 		Data: event.ResizeData{
-	// 			W: js.Global.Get("innerWidth").Int(),
-	// 			H: js.Global.Get("innerHeight").Int(),
-	// 		},
-	// 	}); err != nil {
-	// 		Warn("Event skipped because queue is full", e)
-	// 	}
-	// })
+	js.Global.Call("addEventListener", "resize", func(e *js.Object) {
+		if err := event.Post(event.Event{
+			Type: event.WindowResize,
+			Data: event.ResizeData{
+				W: js.Global.Get("innerWidth").Int(),
+				H: js.Global.Get("innerHeight").Int(),
+			},
+		}); err != nil {
+			Warn("Event skipped because queue is full", e)
+		}
+	})
 
 	// js.Global.Set("onbeforeunload", func(e *js.Object) {
 	// 	if err := event.Post(event.Event{Type: event.Quit}); err != nil {

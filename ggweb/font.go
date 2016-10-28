@@ -5,7 +5,7 @@ import "fmt"
 // Font describes the style of text.
 type Font struct {
 	// Size is the Font's height in pixels
-	Size    int
+	Size    float64
 	Family  FontFamily
 	Style   FontStyle
 	Variant FontVariant
@@ -41,7 +41,7 @@ func (f *Font) String() string {
 	if s != "" {
 		s += sep
 	}
-	s += fmt.Sprintf("%dpx", f.Size)
+	s += fmt.Sprintf("%fpx", f.Size)
 
 	family := f.Family
 	if f.Family == "" {

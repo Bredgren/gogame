@@ -184,8 +184,8 @@ const (
 	MouseButtonUp
 	// MouseWheel is when the mouse wheel is moved.
 	MouseWheel
-	// VideoResize is when the window's dimensions change. Its data will be of type ResizeData.
-	VideoResize
+	// WindowResize is when the window's dimensions change. Its data will be of type ResizeData.
+	WindowResize
 	// UserEvent is the base for user events. Users may define custom Types but they're value
 	// shuold be at least equal to UserEvent. Their data is whatever the user defines it to be.
 	UserEvent
