@@ -5,6 +5,7 @@ package event
 import (
 	"fmt"
 
+	"github.com/Bredgren/gogame/geo"
 	"github.com/Bredgren/gogame/key"
 )
 
@@ -139,8 +140,8 @@ type KeyData struct {
 // the display, the position relative to it's previous position, and which buttons where
 // held down.
 type MouseMotionData struct {
-	Pos     struct{ X, Y float64 }
-	Rel     struct{ X, Y float64 }
+	Pos     geo.Vec
+	Rel     geo.Vec
 	Buttons map[int]bool
 }
 
@@ -152,7 +153,7 @@ type MouseWheelData struct {
 // MouseData holds the position of the mouse relative to the uppert left corner of the
 // display and the button of interest to the event.
 type MouseData struct {
-	Pos    struct{ X, Y float64 }
+	Pos    geo.Vec
 	Button int
 }
 

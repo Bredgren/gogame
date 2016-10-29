@@ -27,12 +27,17 @@ func onReady() {
 	display.StyleColor(ggweb.Fill, color.Black)
 	display.DrawRect(ggweb.Fill, display.Rect())
 
+	ggweb.RegisterEvents(display)
+
 	charSurf = ggweb.NewSurface(width, height)
 	evtSurf = ggweb.NewSurface(100, 150)
 
 	// Prevent scrolling
 	ggweb.PreventKeyDefault[key.Space] = true
 	ggweb.PreventKeyDefault[key.Tab] = true
+
+	// ggweb.PromptBeforeQuit = "Are you sure?"
+	ggweb.DisableContextMenu = true
 
 	ggweb.SetMainLoop(mainLoop)
 }
@@ -62,7 +67,6 @@ func mainLoop(t time.Duration) {
 	evtLogs := []string{}
 	for evt := event.Poll(); evt.Type != event.NoEvent; evt = event.Poll() {
 		switch evt.Type {
-		case event.Quit:
 		case event.WindowResize:
 			data := evt.Data.(event.ResizeData)
 			evtLogs = append(evtLogs, fmt.Sprintf("resize: (%d, %d)", data.W, data.H))
@@ -83,47 +87,63 @@ func mainLoop(t time.Duration) {
 					newChars = append(newChars, k.Rune)
 				}
 			}
+			switch k {
+			// case key.R:
+			// 	ggweb.Log("Register events")
+			// 	ggweb.RegisterEvents(display)
+			// case key.U:
+			// 	ggweb.Log("Unregister events")
+			// 	ggweb.UnregisterEvents(display)
+			}
 		case event.KeyUp:
 			data := evt.Data.(event.KeyData)
 			k := data.Key
 			evtLogs = append(evtLogs, fmt.Sprintf("keyup: %s", k.Name))
 		case event.MouseMotion:
+			data := evt.Data.(event.MouseMotionData)
+			evtLogs = append(evtLogs, fmt.Sprintf("mouse move: (%.0f, %.0f) (%.0f, %.0f)",
+				data.Pos.X, data.Pos.Y, data.Rel.X, data.Rel.Y))
 		case event.MouseButtonDown:
+			data := evt.Data.(event.MouseData)
+			evtLogs = append(evtLogs, fmt.Sprintf("mouse down: %d (%.0f, %.0f)",
+				data.Button, data.Pos.X, data.Pos.Y))
 		case event.MouseButtonUp:
+			data := evt.Data.(event.MouseData)
+			evtLogs = append(evtLogs, fmt.Sprintf("mouse up: %d (%.0f, %.0f)",
+				data.Button, data.Pos.X, data.Pos.Y))
 		case event.MouseWheel:
 		}
 	}
 
-	logSurf := ggweb.NewSurface(0, 0)
-	logSurf.StyleColor(ggweb.Fill, color.White)
-	logSurf.SetFont(&font2)
-	logSurf.SetTextAlign(ggweb.TextAlignLeft)
-	logSurf.SetTextBaseline(ggweb.TextBaselineTop)
-	maxWidth := 0.0
-	for _, e := range evtLogs {
-		w := logSurf.TextWidth(e)
-		ggweb.Log(e, w)
-		if w > maxWidth {
-			maxWidth = w
-		}
-	}
-	logSurf.SetSize(int(math.Max(maxWidth, evtSurf.Rect().W)), len(evtLogs)*int(font2.Size))
-	for i, e := range evtLogs {
-		logSurf.DrawText(ggweb.Fill, e, 0, float64(i)*font2.Size)
-		display.StyleColor(ggweb.Fill, color.White)
-		display.SetFont(&font2)
-		display.SetTextAlign(ggweb.TextAlignLeft)
-		display.SetTextBaseline(ggweb.TextBaselineTop)
-		display.DrawText(ggweb.Fill, e, 20, 20)
-	}
-
 	if len(evtLogs) > 0 {
-		evtSurfCopy := evtSurf.Copy()
-		if logSurf.Rect().W > evtSurf.Rect().W {
-			evtSurf.SetSize(int(logSurf.Rect().W), int(evtSurf.Rect().H))
+		// We need to resize evtSurf if any of the new logs would be too wide
+		newEvtSurf := ggweb.NewSurface(0, 0)
+		newEvtSurf.SetFont(&font2)
+		maxWidth := 0.0
+		for _, e := range evtLogs {
+			w := newEvtSurf.TextWidth(e)
+			if w > maxWidth {
+				maxWidth = w
+			}
 		}
-		evtSurf.Blit(logSurf, 0, 0)
-		evtSurf.Blit(evtSurfCopy, 0, logSurf.Rect().H)
+
+		newEvtSurf.SetSize(int(math.Max(maxWidth, evtSurf.Rect().W)), len(evtLogs)*int(font2.Size))
+		// Reapply font since it is lost with SetSize
+		newEvtSurf.SetFont(&font2)
+		newEvtSurf.StyleColor(ggweb.Fill, color.White)
+		newEvtSurf.SetTextAlign(ggweb.TextAlignLeft)
+		newEvtSurf.SetTextBaseline(ggweb.TextBaselineTop)
+		for i, e := range evtLogs {
+			newEvtSurf.DrawText(ggweb.Fill, e, 0, float64(i)*font2.Size)
+		}
+
+		evtSurfCopy := evtSurf.Copy()
+		if newEvtSurf.Rect().W > evtSurf.Rect().W {
+			evtSurf.SetSize(int(newEvtSurf.Rect().W), int(evtSurf.Rect().H))
+		}
+		evtSurf.ClearRect(evtSurf.Rect())
+		evtSurf.Blit(newEvtSurf, 0, 0)
+		evtSurf.Blit(evtSurfCopy, 0, newEvtSurf.Rect().H)
 	}
 
 	charSurf.StyleColor(ggweb.Fill, color.RGBA{0, 0, 0, 5})
@@ -153,7 +173,10 @@ func mainLoop(t time.Duration) {
 	}
 
 	display.Blit(charSurf, 0, 0)
-	display.Blit(logSurf, display.Rect().W-evtSurf.Rect().W, display.Rect().H-evtSurf.Rect().H)
+
+	r := evtSurf.Rect()
+	r.Move(display.Rect().W-r.W, display.Rect().H-r.H)
+	display.Blit(evtSurf, r.X, r.Y)
 
 	display.StyleColor(ggweb.Stroke, color.White)
 	display.SetLineWidth(2)

@@ -74,11 +74,10 @@ func (s *Surface) Rect() geo.Rect {
 	}
 }
 
-// SetSize resizes the surface.
+// SetSize resizes the surface. Resizing the surface clears it's contents and context state.
 func (s *Surface) SetSize(w, h int) {
 	s.Canvas.Set("width", w)
 	s.Canvas.Set("height", h)
-	// s.Ctx = s.Canvas.Call("getContext", "2d")
 }
 
 // Blit draws the source surface to s with source's top left corner at x, y.

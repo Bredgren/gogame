@@ -15,7 +15,7 @@ var console *js.Object
 // Init sets up ggweb and waits for the page to load then calls the onReady function.
 // Calling Init more than once will have no effect. Init takes care of setting up the events
 // for window resizing, quiting, and key presses. These can be retrieved via the gogame/events
-// package. Don't forget to call RegisterEvents for the surface you would like to recieve
+// package. Don't forget to call RegisterEvents for the surface you would like to receive
 // the others event types.
 func Init(onReady func()) {
 	onload := func() {
@@ -39,6 +39,12 @@ func Init(onReady func()) {
 	console = js.Global.Get("console")
 }
 
+// PromptBeforeQuit will ask the user for confirmation before leaving the page if not an
+// empty string. The browser may or may not use this string in its message to the user.
+var PromptBeforeQuit string
+
+var DisableContextMenu bool
+
 func addGlobalEvents() {
 	js.Global.Call("addEventListener", "resize", func(e *js.Object) {
 		if err := event.Post(event.Event{
@@ -52,15 +58,25 @@ func addGlobalEvents() {
 		}
 	})
 
-	// js.Global.Set("onbeforeunload", func(e *js.Object) {
-	// 	if err := event.Post(event.Event{Type: event.Quit}); err != nil {
-	// 		Warn("Event skipped because queue is full", e)
-	// 	}
-	// })
+	js.Global.Call("addEventListener", "beforeunload", func(e *js.Object) {
+		// The Quit event is a bit tricky for the browser, and I don't think it's worth the
+		// trouble right now. We'll just stick with providing an easy way to prompt before
+		// leaving.
+		// if err := event.Post(event.Event{Type: event.Quit}); err != nil {
+		// 	Warn("Event skipped because queue is full", e)
+		// }
+		if PromptBeforeQuit != "" {
+			e.Set("returnValue", PromptBeforeQuit)
+		}
+	})
+	js.Global.Call("addEventListener", "contextmenu", func(e *js.Object) {
+		if DisableContextMenu {
+			e.Call("preventDefault")
+		}
+	})
 
 	js.Global.Call("addEventListener", "keydown", func(e *js.Object) {
 		k := EventToKey(e)
-
 		if PreventKeyDefault[k] {
 			e.Call("preventDefault")
 		}
@@ -81,6 +97,10 @@ func addGlobalEvents() {
 
 	js.Global.Call("addEventListener", "keyup", func(e *js.Object) {
 		k := EventToKey(e)
+		if PreventKeyDefault[k] {
+			e.Call("preventDefault")
+		}
+
 		keyState[k] = false
 		if err := event.Post(event.Event{
 			Type: event.KeyUp,
@@ -91,61 +111,72 @@ func addGlobalEvents() {
 	})
 }
 
+func handleMouseMove(e *js.Object) {
+	x, y := e.Get("offsetX").Float(), e.Get("offsetY").Float()
+	dx, dy := e.Get("movementX").Float(), e.Get("movementY").Float()
+	mouseState.Pos.X = x
+	mouseState.Pos.Y = y
+	mouseState.Rel.X = dx
+	mouseState.Rel.Y = dy
+	if err := event.Post(event.Event{
+		Type: event.MouseMotion,
+		Data: event.MouseMotionData{
+			Pos:     geo.Vec{X: x, Y: y},
+			Rel:     geo.Vec{X: dx, Y: dy},
+			Buttons: MousePressed(),
+		},
+	}); err != nil {
+		Warn("Event skipped because queue is full", e)
+	}
+}
+
+func handleMouseDown(e *js.Object) {
+	button := e.Get("button").Int()
+	mouseState.Buttons[button] = true
+	if err := event.Post(event.Event{
+		Type: event.MouseButtonDown,
+		Data: event.MouseData{
+			Pos: geo.Vec{
+				X: e.Get("offsetX").Float(),
+				Y: e.Get("offsetY").Float(),
+			},
+			Button: button,
+		},
+	}); err != nil {
+		Warn("Event skipped because queue is full", e)
+	}
+}
+
+func handleMouseUp(e *js.Object) {
+	button := e.Get("button").Int()
+	mouseState.Buttons[button] = false
+	if err := event.Post(event.Event{
+		Type: event.MouseButtonUp,
+		Data: event.MouseData{
+			Pos: geo.Vec{
+				X: e.Get("offsetX").Float(),
+				Y: e.Get("offsetY").Float(),
+			},
+			Button: button,
+		},
+	}); err != nil {
+		Warn("Event skipped because queue is full", e)
+	}
+}
+
+var eventsRegisteredTo *Surface
+
+// RegisterEvents sets up the surface to receive mouse events. Only one surface can accept
+// events at a time, calling RegisterEvents on a multiple surfaces will unregister them on
+// previous ones.
 func RegisterEvents(s *Surface) {
-	// 	canvas := display.frontSurface.Canvas()
+	if eventsRegisteredTo != nil {
+		UnregisterEvents(eventsRegisteredTo)
+	}
 
-	// 	canvas.Call("addEventListener", "mousemove", func(e *js.Object) {
-	// 		x, y := e.Get("offsetX").Float(), e.Get("offsetY").Float()
-	// 		dx, dy := e.Get("movementX").Float(), e.Get("movementY").Float()
-	// 		mouseState.PosX = x
-	// 		mouseState.PosY = y
-	// 		mouseState.RelX = dx
-	// 		mouseState.RelY = dy
-	// 		if err := event.Post(event.Event{
-	// 			Type: event.MouseMotion,
-	// 			Data: event.MouseMotionData{
-	// 				Pos:     struct{ X, Y float64 }{X: x, Y: y},
-	// 				Rel:     struct{ X, Y float64 }{X: dx, Y: dy},
-	// 				Buttons: MousePressed(),
-	// 			},
-	// 		}); err != nil {
-	// 			Warn("Event skipped because queue is full", e)
-	// 		}
-	// 	})
-
-	// 	canvas.Call("addEventListener", "mousedown", func(e *js.Object) {
-	// 		button := e.Get("button").Int()
-	// 		mouseState.Buttons[button] = true
-	// 		if err := event.Post(event.Event{
-	// 			Type: event.MouseButtonDown,
-	// 			Data: event.MouseData{
-	// 				Pos: struct{ X, Y float64 }{
-	// 					X: e.Get("offsetX").Float(),
-	// 					Y: e.Get("offsetY").Float(),
-	// 				},
-	// 				Button: button,
-	// 			},
-	// 		}); err != nil {
-	// 			Warn("Event skipped because queue is full", e)
-	// 		}
-	// 	})
-
-	// 	canvas.Call("addEventListener", "mouseup", func(e *js.Object) {
-	// 		button := e.Get("button").Int()
-	// 		mouseState.Buttons[button] = false
-	// 		if err := event.Post(event.Event{
-	// 			Type: event.MouseButtonUp,
-	// 			Data: event.MouseData{
-	// 				Pos: struct{ X, Y float64 }{
-	// 					X: e.Get("offsetX").Float(),
-	// 					Y: e.Get("offsetY").Float(),
-	// 				},
-	// 				Button: button,
-	// 			},
-	// 		}); err != nil {
-	// 			Warn("Event skipped because queue is full", e)
-	// 		}
-	// 	})
+	s.Canvas.Call("addEventListener", "mousemove", handleMouseMove)
+	s.Canvas.Call("addEventListener", "mousedown", handleMouseDown)
+	s.Canvas.Call("addEventListener", "mouseup", handleMouseUp)
 
 	// 	canvas.Call("addEventListener", "wheel", func(e *js.Object) {
 	// 		dx, dy, dz := e.Get("deltaX").Float(), e.Get("deltaY").Float(), e.Get("deltaZ").Float()
@@ -162,7 +193,9 @@ func RegisterEvents(s *Surface) {
 	// 	})
 }
 
-func UnRegisterEvents(s *Surface) {
+// UnregisterEvents causes the surface to stop receiving events.
+func UnregisterEvents(s *Surface) {
+	s.Canvas.Call("removeEventListener", "mousemove", handleMouseMove)
 }
 
 // PreventKeyDefault is a set of key that should have their default behavior prevented.
@@ -191,7 +224,7 @@ func SetMainLoop(loop MainLoop) {
 		// start := time.Now()
 		loop(time.Duration(timestamp.Float()) * time.Millisecond)
 		// Stats.LoopDuration = time.Now().Sub(start)
-		// mouseState.RelX, mouseState.RelY = 0, 0
+		mouseState.Rel.X, mouseState.Rel.Y = 0, 0
 	}
 	f(&js.Object{})
 }
@@ -241,24 +274,24 @@ func Error(args ...interface{}) {
 
 var keyState = map[key.Key]bool{}
 
-// var mouseState = struct {
-// 	Buttons    map[int]bool
-// 	PosX, PosY float64
-// 	RelX, RelY float64
-// }{
-// 	Buttons: make(map[int]bool),
-// }
+var mouseState = struct {
+	Buttons map[int]bool
+	Pos     geo.Vec
+	Rel     geo.Vec
+}{
+	Buttons: make(map[int]bool),
+}
 
-// // PressedKeys returns a map that contoins all pressed keys mapping to true.
-// func PressedKeys() map[key.Key]bool {
-// 	m := make(map[key.Key]bool)
-// 	for k, press := range keyState {
-// 		if press {
-// 			m[k] = true
-// 		}
-// 	}
-// 	return m
-// }
+// PressedKeys returns a map that contoins all pressed keys mapping to true.
+func PressedKeys() map[key.Key]bool {
+	m := make(map[key.Key]bool)
+	for k, press := range keyState {
+		if press {
+			m[k] = true
+		}
+	}
+	return m
+}
 
 // ModKeys returns just the state for the modifier keys.
 func ModKeys() map[key.Key]bool {
@@ -271,26 +304,26 @@ func ModKeys() map[key.Key]bool {
 	return m
 }
 
-// // MousePressed returns a map that contains all pressed mouse buttons mapping to true.
-// func MousePressed() map[int]bool {
-// 	m := make(map[int]bool)
-// 	for b, press := range mouseState.Buttons {
-// 		if press {
-// 			m[b] = true
-// 		}
-// 	}
-// 	return m
-// }
+// MousePressed returns a map that contains all pressed mouse buttons mapping to true.
+func MousePressed() map[int]bool {
+	m := make(map[int]bool)
+	for b, press := range mouseState.Buttons {
+		if press {
+			m[b] = true
+		}
+	}
+	return m
+}
 
-// // MousePos returns the mouses current x and y positions.
-// func MousePos() (x, y float64) {
-// 	return mouseState.PosX, mouseState.PosY
-// }
+// MousePos returns the mouses current x and y positions.
+func MousePos() geo.Vec {
+	return mouseState.Pos
+}
 
-// // MouseRel returns the last relative change in mouse position.
-// func MouseRel() (dx, dy float64) {
-// 	return mouseState.RelX, mouseState.RelY
-// }
+// MouseRel returns the last relative change in mouse position.
+func MouseRel() geo.Vec {
+	return mouseState.Rel
+}
 
 // WindowRect returns a rectangle that covers the entire inner window of the browser.
 func WindowRect() geo.Rect {
@@ -300,22 +333,22 @@ func WindowRect() geo.Rect {
 	}
 }
 
-// // LocalStorageGet retrieves the value associated with the given key. If there is no value
-// // then ok will be false.
-// func LocalStorageGet(key string) (val string, ok bool) {
-// 	v := js.Global.Get("localStorage").Call("getItem", key)
-// 	if v == nil {
-// 		return "", false
-// 	}
-// 	return v.String(), true
-// }
+// LocalStorageGet retrieves the value associated with the given key. If there is no value
+// then ok will be false.
+func LocalStorageGet(key string) (val string, ok bool) {
+	v := js.Global.Get("localStorage").Call("getItem", key)
+	if v == nil {
+		return "", false
+	}
+	return v.String(), true
+}
 
-// // LocalStorageSet sets the given key's value to val.
-// func LocalStorageSet(key, val string) {
-// 	js.Global.Get("localStorage").Call("setItem", key, val)
-// }
+// LocalStorageSet sets the given key's value to val.
+func LocalStorageSet(key, val string) {
+	js.Global.Get("localStorage").Call("setItem", key, val)
+}
 
-// // LocalStorageRemove removes the given key (and it's value) from local storage.
-// func LocalStorageRemove(key string) {
-// 	js.Global.Get("localStorage").Call("removeItem", key)
-// }
+// LocalStorageRemove removes the given key (and it's value) from local storage.
+func LocalStorageRemove(key string) {
+	js.Global.Get("localStorage").Call("removeItem", key)
+}
