@@ -172,6 +172,10 @@ func mainLoop(t time.Duration) {
 		default:
 			charSurf.DrawText(ggweb.Fill, c, charX, charY)
 			charX += w + charPadding
+			if charX > charSurf.Rect().W {
+				charY += font1.Size + charPadding
+				charX = padding
+			}
 		}
 	}
 
