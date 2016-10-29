@@ -206,13 +206,11 @@ func UnregisterEvents(s *Surface) {
 // PreventKeyDefault is a set of key that should have their default behavior prevented.
 var PreventKeyDefault = map[key.Key]bool{}
 
-// var PreventDefaultMouse = map[int]bool{}
-
-// // Stats holds various bits of information that one may find useful.
-// var Stats = struct {
-// 	// LoopDuration is the amount of time that the last execution of the main loop took.
-// 	LoopDuration time.Duration
-// }{}
+// Stats holds various bits of information that one may find useful.
+var Stats = struct {
+	// LoopDuration is the amount of time that the last execution of the main loop took.
+	LoopDuration time.Duration
+}{}
 
 // MainLoop is a callback function that returns a time value that can be compared to
 // previous calls to determine the elapsed time.
@@ -226,9 +224,9 @@ func SetMainLoop(loop MainLoop) {
 	var f func(timestamp *js.Object)
 	f = func(timestamp *js.Object) {
 		mainLoop = js.Global.Call("requestAnimationFrame", f)
-		// start := time.Now()
+		start := time.Now()
 		loop(time.Duration(timestamp.Float()) * time.Millisecond)
-		// Stats.LoopDuration = time.Now().Sub(start)
+		Stats.LoopDuration = time.Now().Sub(start)
 		mouseState.Rel.X, mouseState.Rel.Y = 0, 0
 	}
 	f(&js.Object{})
