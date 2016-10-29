@@ -164,6 +164,20 @@ func handleMouseUp(e *js.Object) {
 	}
 }
 
+func handleMouseWheel(e *js.Object) {
+	dx, dy, dz := e.Get("deltaX").Float(), e.Get("deltaY").Float(), e.Get("deltaZ").Float()
+	if err := event.Post(event.Event{
+		Type: event.MouseWheel,
+		Data: event.MouseWheelData{
+			Dx: dx,
+			Dy: dy,
+			Dz: dz,
+		},
+	}); err != nil {
+		Warn("Event skipped because queue is full", e)
+	}
+}
+
 var eventsRegisteredTo *Surface
 
 // RegisterEvents sets up the surface to receive mouse events. Only one surface can accept
@@ -177,25 +191,16 @@ func RegisterEvents(s *Surface) {
 	s.Canvas.Call("addEventListener", "mousemove", handleMouseMove)
 	s.Canvas.Call("addEventListener", "mousedown", handleMouseDown)
 	s.Canvas.Call("addEventListener", "mouseup", handleMouseUp)
-
-	// 	canvas.Call("addEventListener", "wheel", func(e *js.Object) {
-	// 		dx, dy, dz := e.Get("deltaX").Float(), e.Get("deltaY").Float(), e.Get("deltaZ").Float()
-	// 		if err := event.Post(event.Event{
-	// 			Type: event.MouseWheel,
-	// 			Data: event.MouseWheelData{
-	// 				Dx: dx,
-	// 				Dy: dy,
-	// 				Dz: dz,
-	// 			},
-	// 		}); err != nil {
-	// 			Warn("Event skipped because queue is full", e)
-	// 		}
-	// 	})
+	s.Canvas.Call("addEventListener", "wheel", handleMouseWheel)
 }
 
 // UnregisterEvents causes the surface to stop receiving events.
 func UnregisterEvents(s *Surface) {
 	s.Canvas.Call("removeEventListener", "mousemove", handleMouseMove)
+	s.Canvas.Call("removeEventListener", "mousemove", handleMouseMove)
+	s.Canvas.Call("removeEventListener", "mousedown", handleMouseDown)
+	s.Canvas.Call("removeEventListener", "mouseup", handleMouseUp)
+	s.Canvas.Call("removeEventListener", "wheel", handleMouseWheel)
 }
 
 // PreventKeyDefault is a set of key that should have their default behavior prevented.

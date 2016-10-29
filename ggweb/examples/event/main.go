@@ -112,6 +112,9 @@ func mainLoop(t time.Duration) {
 			evtLogs = append(evtLogs, fmt.Sprintf("mouse up: %d (%.0f, %.0f)",
 				data.Button, data.Pos.X, data.Pos.Y))
 		case event.MouseWheel:
+			data := evt.Data.(event.MouseWheelData)
+			evtLogs = append(evtLogs, fmt.Sprintf("mouse wheel: (%.1f, %.1f %.1f)",
+				data.Dx, data.Dy, data.Dz))
 		}
 	}
 
