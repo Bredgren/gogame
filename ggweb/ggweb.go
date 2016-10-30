@@ -240,41 +240,6 @@ func UnsetMainLoop() {
 	}
 }
 
-// // var isFullscreen bool
-
-// // SetFullscreen sets or unsetd fullscreen mode.
-// // func SetFullscreen(fullscreen bool) {
-// // 	// display.canvas.Call("requestFullScreen")
-// // 	display.frontSurface.Canvas().Call("webkitRequestFullScreen")
-// // 	// display.canvas.Call("mozRequestFullScreen")
-// // 	isFullscreen = fullscreen
-// // }
-
-// // Fullscreen returns true if fullscreen is currently active.
-// // func Fullscreen() bool {
-// // 	return isFullscreen
-// // }
-
-// Log prints to the console. This won't work until ggweb is initialized.
-func Log(args ...interface{}) {
-	console.Call("log", args...)
-}
-
-// Warn prints a warning to the console. This won't work until ggweb is initialized.
-func Warn(args ...interface{}) {
-	console.Call("warn", args...)
-}
-
-// Info prints an info log to the console. This won't work until ggweb is initialized.
-func Info(args ...interface{}) {
-	console.Call("info", args...)
-}
-
-// Error prints an error to the console. This won't work until ggweb is initialized.
-func Error(args ...interface{}) {
-	console.Call("error", args...)
-}
-
 var keyState = map[key.Key]bool{}
 
 var mouseState = struct {
@@ -354,4 +319,39 @@ func LocalStorageSet(key, val string) {
 // LocalStorageRemove removes the given key (and it's value) from local storage.
 func LocalStorageRemove(key string) {
 	js.Global.Get("localStorage").Call("removeItem", key)
+}
+
+// // var isFullscreen bool
+
+// // SetFullscreen sets or unsetd fullscreen mode.
+// // func SetFullscreen(fullscreen bool) {
+// // 	// display.canvas.Call("requestFullScreen")
+// // 	display.frontSurface.Canvas().Call("webkitRequestFullScreen")
+// // 	// display.canvas.Call("mozRequestFullScreen")
+// // 	isFullscreen = fullscreen
+// // }
+
+// // Fullscreen returns true if fullscreen is currently active.
+// // func Fullscreen() bool {
+// // 	return isFullscreen
+// // }
+
+// Log prints to the console. This won't work until ggweb is initialized.
+func Log(args ...interface{}) {
+	console.Call("log", args...)
+}
+
+// Warn prints a warning to the console. This won't work until ggweb is initialized.
+func Warn(args ...interface{}) {
+	console.Call("warn", args...)
+}
+
+// Info prints an info log to the console. This won't work until ggweb is initialized.
+func Info(args ...interface{}) {
+	console.Call("info", args...)
+}
+
+// Error prints an error to the console. This won't work until ggweb is initialized.
+func Error(args ...interface{}) {
+	console.Call("error", args...)
 }

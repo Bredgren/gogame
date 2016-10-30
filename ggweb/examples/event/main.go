@@ -79,7 +79,7 @@ func mainLoop(t time.Duration) {
 		case event.KeyDown:
 			data := evt.Data.(event.KeyData)
 			k := data.Key
-			evtLogs = append(evtLogs, fmt.Sprintf("keydown: %s", k.Name))
+			evtLogs = append(evtLogs, fmt.Sprintf("keydown: %s", k))
 			if k.Rune != '\u0000' {
 				if k.ShiftRune != '\u0000' && (data.Mod[key.LShift] || data.Mod[key.RShift]) {
 					newChars = append(newChars, k.ShiftRune)
@@ -98,7 +98,7 @@ func mainLoop(t time.Duration) {
 		case event.KeyUp:
 			data := evt.Data.(event.KeyData)
 			k := data.Key
-			evtLogs = append(evtLogs, fmt.Sprintf("keyup: %s", k.Name))
+			evtLogs = append(evtLogs, fmt.Sprintf("keyup: %s", k))
 		case event.MouseMotion:
 			data := evt.Data.(event.MouseMotionData)
 			evtLogs = append(evtLogs, fmt.Sprintf("mouse move: (%.0f, %.0f) (%.0f, %.0f)",

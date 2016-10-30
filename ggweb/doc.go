@@ -18,10 +18,5 @@
 //
 // TODO
 //  - Touch input
-//  - Support for browsers other than Chrome
-//  - Sprite?
-//  - Spritesheet?
-//  - Primitive shape collision?
-//  - Circles, rectangles, lines, rays
-//  - Network?
+//  - Network
 package ggweb
