@@ -40,7 +40,7 @@ var ps2 *particle.System
 var explosionPos geo.Vec
 
 func setup() {
-	ps1 = particle.NewSystem(400)
+	ps1 = particle.NewSystem(500)
 	ps1.InitLife = time.Duration(3 * time.Second)
 	ps1.Rate = 100
 	ps1.InitMass = geo.RandNum(0.5, 3)
@@ -110,7 +110,7 @@ func mainLoop(t time.Duration) {
 		// pdata := display.PixelData(a)
 		// pdata[0].R = 255
 		// pdata[0].G = 255
-		// pdata[0].B = 255
+		// pdata[0].B = 255w
 		// display.SetPixelData(pdata, a)
 	})
 	ps2.ForEachParticle(func(p *particle.SystemParticle) {

@@ -72,6 +72,10 @@ func (p *Path) ArcTo(x1, y1, x2, y2, r float64) {
 // Ellipse draws an ellipse with the given rectangle. The ellipse will be rotated counterclockwise
 // by rotateRadians. Other parameters are the same as Arc.
 func (p *Path) Ellipse(r geo.Rect, rotateRadians, startRadians, endRadians float64, counterclockwise bool) {
+	if p.obj.Get("ellipse") == js.Undefined {
+		Warn("ellipse not supported")
+		return
+	}
 	p.obj.Call("ellipse", r.CenterX(), r.CenterY(), r.W/2, r.H/2, 2*math.Pi-rotateRadians,
 		2*math.Pi-startRadians, 2*math.Pi-endRadians, counterclockwise)
 }

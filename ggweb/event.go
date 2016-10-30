@@ -5,9 +5,14 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
-// EventToKey takes a js event and returns the key.Key described by the event.
+// EventToKey takes a js event and returns the key.Key described by the event. Note that
+// this function will not work on IE or Edge because they do not define the "code" property.
 func EventToKey(evt *js.Object) key.Key {
-	return jsToKey[evt.Get("code").String()]
+	code := evt.Get("code")
+	if code == js.Undefined {
+		Warn("Keyboard events unsupported")
+	}
+	return jsToKey[code.String()]
 }
 
 var jsToKey = map[string]key.Key{

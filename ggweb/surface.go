@@ -176,6 +176,10 @@ func (s *Surface) DrawCircle(t DrawType, x, y, radius float64) {
 
 // DrawEllipse draws an ellipse on the surface within the given rectangle.
 func (s *Surface) DrawEllipse(t DrawType, r geo.Rect) {
+	if s.Ctx.Get("ellipse") == js.Undefined {
+		Warn("ellipse not supported")
+		return
+	}
 	s.Ctx.Call("beginPath")
 	s.Ctx.Call("ellipse", math.Floor(r.CenterX()), math.Floor(r.CenterY()),
 		math.Floor(r.W/2), math.Floor(r.H/2), 0, 0, 2*math.Pi)
@@ -186,6 +190,10 @@ func (s *Surface) DrawEllipse(t DrawType, r geo.Rect) {
 // counterclockwise relative to the +x axis. The counterclockwise parameter is for the
 // direction to draw in.
 func (s *Surface) DrawArc(t DrawType, r geo.Rect, startRadians, endRadians float64, counterclockwise bool) {
+	if s.Ctx.Get("ellipse") == js.Undefined {
+		Warn("ellipse not supported")
+		return
+	}
 	s.Ctx.Call("beginPath")
 	s.Ctx.Call("ellipse", math.Floor(r.CenterX()), math.Floor(r.CenterY()), math.Floor(r.W/2),
 		math.Floor(r.H/2), 0, 2*math.Pi-startRadians, 2*math.Pi-endRadians, counterclockwise)
