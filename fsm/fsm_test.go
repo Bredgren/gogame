@@ -4,11 +4,11 @@ import "testing"
 
 func TestFSM(t *testing.T) {
 	sm := FSM{}
-	if sm.CurrentState() != InitialState {
-		t.Errorf("CurrentState is %s, wanted %s", sm.CurrentState(), InitialState)
+	if sm.Current() != InitialState {
+		t.Errorf("Current is %s, wanted %s", sm.Current(), InitialState)
 	}
-	if sm.PreviousState() != InitialState {
-		t.Errorf("PreviousState is %s, wanted %s", sm.PreviousState(), InitialState)
+	if sm.Previous() != InitialState {
+		t.Errorf("Previous is %s, wanted %s", sm.Previous(), InitialState)
 	}
 
 	EmptyToState1 := 0
@@ -41,12 +41,12 @@ func TestFSM(t *testing.T) {
 		t.Errorf("Expected transitions %#v, got %#v", expectedS1T, s1T)
 	}
 
-	err := sm.GotoState("State2")
+	err := sm.Goto("State2")
 	if err == nil {
-		t.Errorf("Transition to State2 from initial succeeded: %s -> %s", sm.PreviousState(), sm.CurrentState())
+		t.Errorf("Transition to State2 from initial succeeded: %s -> %s", sm.Previous(), sm.Current())
 	}
 
-	err = sm.GotoState("State1")
+	err = sm.Goto("State1")
 	if err != nil {
 		t.Error(err)
 	}
@@ -54,7 +54,7 @@ func TestFSM(t *testing.T) {
 		t.Errorf("EmptyToState1 is %d, expected 1", EmptyToState1)
 	}
 
-	err = sm.GotoState("State2")
+	err = sm.Goto("State2")
 	if err != nil {
 		t.Error(err)
 	}
@@ -62,7 +62,7 @@ func TestFSM(t *testing.T) {
 		t.Errorf("State1ToState2 is %d, expected 1", State1ToState2)
 	}
 
-	err = sm.GotoState("State1")
+	err = sm.Goto("State1")
 	if err != nil {
 		t.Error(err)
 	}
@@ -70,7 +70,12 @@ func TestFSM(t *testing.T) {
 		t.Errorf("State2ToState1 is %d, expected 1", State2ToState1)
 	}
 
-	err = sm.GotoState("State3")
+	err = sm.Goto("State3")
+	if err != nil {
+		t.Error(err)
+	}
+	// Check goto current state
+	err = sm.Goto("State3")
 	if err != nil {
 		t.Error(err)
 	}

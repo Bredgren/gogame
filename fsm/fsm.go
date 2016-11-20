@@ -26,21 +26,26 @@ type FSM struct {
 	previous    State
 }
 
-// CurrentState returns the current state.
-func (f *FSM) CurrentState() State {
+// Current returns the current state.
+func (f *FSM) Current() State {
 	return f.current
 }
 
-// PreviousState returns the previous state. This will be initally be equal to the current
+// Previous returns the previous state. This will be initally be equal to the current
 // state (the empty string), until the state has changed at least once.
-func (f *FSM) PreviousState() State {
+func (f *FSM) Previous() State {
 	return f.previous
 }
 
-// GotoState transitions to the new state given and calls the associated action callback
+// Goto transitions to the new state given and calls the associated action callback
 // if there is one. The callback takes place after the current and previous states have
 // been updated. If the given state is not a valid transition then an error is returned.
-func (f *FSM) GotoState(s State) error {
+// If the given state is the current state then this function does nothing.
+func (f *FSM) Goto(s State) error {
+	if f.current == s {
+		return nil
+	}
+
 	err := fmt.Errorf("cannot transition to state '%s' from '%s'", s, f.current)
 	current := f.current
 	for _, t := range f.Transitions {
