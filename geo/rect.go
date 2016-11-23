@@ -86,7 +86,7 @@ func (r Rect) TopLeft() (x, y float64) {
 // SetTopLeft sets the coordinates of the top left corner.
 func (r *Rect) SetTopLeft(x, y float64) {
 	r.SetLeft(x)
-	r.SetRight(y)
+	r.SetTop(y)
 }
 
 // BottomLeft returns the coordinates of the bottom left corner.
